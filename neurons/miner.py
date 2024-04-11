@@ -29,7 +29,8 @@ from openkaito.base.miner import BaseMinerNeuron
 from openkaito.crawlers.twitter.apidojo import ApiDojoTwitterCrawler
 from openkaito.crawlers.twitter.microworlds import MicroworldsTwitterCrawler
 from openkaito.protocol import SearchSynapse, StructuredSearchSynapse
-from openkaito.search.ranking import HeuristicRankingModel
+from openkaito.search.ranking import HeuristicRankingModel, \
+    HeuristicRankingModelV2
 from openkaito.search.structured_search_engine import StructuredSearchEngine
 from openkaito.utils.version import compare_version, get_version
 
@@ -59,7 +60,8 @@ class Miner(BaseMinerNeuron):
         )
 
         # for ranking recalled results
-        ranking_model = HeuristicRankingModel(length_weight=0.8, age_weight=0.2)
+        # ranking_model = HeuristicRankingModel(length_weight=0.8, age_weight=0.2)
+        ranking_model = HeuristicRankingModelV2()
 
         # optional, for crawling data
         twitter_crawler = (
