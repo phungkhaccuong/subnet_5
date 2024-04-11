@@ -35,7 +35,7 @@ def main():
         twitter_crawler=twitter_crawler,
     )
 
-    with open("../twitter_usernames.txt") as f:
+    with open("twitter_usernames.txt") as f:
         twitter_usernames = f.read().strip().splitlines()
 
     for username in twitter_usernames:
