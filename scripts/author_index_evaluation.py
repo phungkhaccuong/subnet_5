@@ -64,6 +64,10 @@ def main():
 
     responses = [search_engine.search(search_query=search_query) for search_engine in search_engines]
 
+    for i in range(0,3):
+        print(f"///////// [RANKING DOC] INDEX:{i} /////////////////////////////////////////////////////////////////////////////")
+        print(responses[i])
+
     rewards = evaluator.evaluate(search_query, responses)
 
     bt.logging.info(f"Scored responses: {rewards}")

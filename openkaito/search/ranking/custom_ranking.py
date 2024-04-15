@@ -29,9 +29,9 @@ class HeuristicRankingModelV2(AbstractRankingModel):
     def compute_score(self, query, doc):
         now = datetime.now(timezone.utc)
         age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
-        if datetime.fromisoformat(doc["created_at"].rstrip("Z")).date() < date(2024, 1, 1):
-            print(f"OUT_DATE:::{0.01}")
-            return 0.01
+        if datetime.fromisoformat(doc["created_at"].rstrip("Z")).date() < date(2024, 2, 1):
+            print(f"OUT_DATE:::{0.01 + (1/age)}")
+            return 0.01 + (1/age)
 
         result = self.get_amend(doc)
         print(f"[compute_score_word]:{result}")
@@ -56,6 +56,7 @@ class HeuristicRankingModelV2(AbstractRankingModel):
             print(f"[compute_score 0.1]:::: {0.1 + (1 / age)}")
             return 0.1 + (1 / age)
     #note: co nhunng cau 1 tu nhung ko co y nghia
+    # chu y nhung co 1 cau nhung so tu dai
 
     def text_length_score(self, text_length):
         return math.log(text_length + 1) / 10
