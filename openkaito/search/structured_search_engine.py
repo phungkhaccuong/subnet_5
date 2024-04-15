@@ -96,7 +96,7 @@ class StructuredSearchEngine:
                     "must": [],
                 }
             },
-            "size": recall_size,
+            "size": 200,
         }
 
         # if search_query.query_string:
