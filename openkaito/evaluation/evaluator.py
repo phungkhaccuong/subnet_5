@@ -194,9 +194,12 @@ class Evaluator:
         # age contribution to encourage recency
         avg_age_scores = 1 - (avg_ages / (max_avg_age + 1))
 
+        print(f"avg_age_scores::::{avg_age_scores}")
+        print(f"rank_scores::::{rank_scores}")
+        print(f"credit_author_scores::::{credit_author_scores}")
         scores = avg_age_scores * 0.2 + rank_scores * 0.7 + credit_author_scores * 0.1
         scores = scores * uniqueness_scores
-
+        print(f"scores final::::{scores}")
         # relative scores in a batch
         scores = scores / (scores.max() + 1e-5)
 

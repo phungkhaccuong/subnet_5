@@ -5,6 +5,7 @@ import openai
 from dotenv import load_dotenv
 from elasticsearch import Elasticsearch
 
+from openkaito.crawlers.twitter.apidojo import ApiDojoTwitterCrawler
 from openkaito.evaluation.evaluator import Evaluator
 from openkaito.search.ranking import HeuristicRankingModelV2, CustomRankingModel
 from openkaito.search.ranking.heuristic_ranking import HeuristicRankingModel
@@ -26,7 +27,7 @@ def main():
 
     twitter_crawler = None
     # # for integrity check
-    # twitter_crawler = ApiDojoTwitterCrawler(os.environ["APIFY_API_KEY"])
+    twitter_crawler = ApiDojoTwitterCrawler(os.environ["APIFY_API_KEY"])
     evaluator = Evaluator(llm_client, twitter_crawler)
 
     search_client = Elasticsearch(
