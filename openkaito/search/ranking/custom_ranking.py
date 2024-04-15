@@ -18,7 +18,7 @@ class HeuristicRankingModelV2(AbstractRankingModel):
         self.age_weight = age_weight
 
     def rank(self, query, documents):
-        bt.logging.info(f"[RANK]  start")
+        bt.logging.info(f"[RANKING]  starting.........")
         ranked_docs = sorted(
             documents,
             key=lambda doc: self.compute_score(query, doc),
@@ -27,28 +27,29 @@ class HeuristicRankingModelV2(AbstractRankingModel):
         return ranked_docs
 
     def compute_score(self, query, doc):
-        if datetime.fromisoformat(doc["created_at"].rstrip("Z")).date() < date(
-                2024, 1, 1):
+        now = datetime.now(timezone.utc)
+        age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
+        if datetime.fromisoformat(doc["created_at"].rstrip("Z")).date() < date(2024, 1, 1):
             bt.logging.info(f"OUT_DATE:::{0.01}")
             return 0.01
+
         result = self.get_amend(doc)
-        bt.logging.info(f"[compute_score]:{result}")
-        if (result is not None) and (
-                (result['flattened_words'] < 21) or (result['sentences'] < 2)):
-            bt.logging.info(
-                f"OPTIMIZE:::{0.01 + (result['flattened_words'] / 10000)}")
-            return 0.01 + (result['flattened_words'] / 10000)
+        bt.logging.info(f"[compute_score_word]:{result}")
+
+        if result is None:
+            bt.logging.info(f"[NONE_DATA]:")
+            return 0.1
+
+        if result['sentences'] >= 5:
+            return 0.5 + (1/age) + (1/result['flattened_words'])
+        if result['sentences'] == 4:
+            return 0.4 + (1 / age) + (1 / result['flattened_words'])
+        if result['sentences'] == 3:
+            return 0.3 + (1 / age) + (1 / result['flattened_words'])
+        if (result['sentences'] == 2) and (result['flattened_words'] > 35):
+            return 0.25 + (1 / age) + (1 / result['flattened_words'])
         else:
-            now = datetime.now(timezone.utc)
-            text_length = len(doc["text"])
-            age = (
-                    now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))
-            ).total_seconds()
-            bt.logging.info(
-                f"DEFAULT:{self.length_weight * self.text_length_score(text_length) + self.age_weight * self.age_score(age)}")
-            return self.length_weight * self.text_length_score(
-                text_length
-            ) + self.age_weight * self.age_score(age)
+            return 0.1 + (1 / age) + (1 / result['flattened_words'])
 
     def text_length_score(self, text_length):
         return math.log(text_length + 1) / 10
@@ -83,7 +84,7 @@ class HeuristicRankingModelV2(AbstractRankingModel):
 
     def get_clean_doc(self, doc):
         newline = "\n"
-        bt.logging.info(f"DOC: {doc}")
+        bt.logging.info(f"DOC::::::::::::: {doc} ::::::::::::::::::")
         bt.logging.info(f"Text: {doc['text'][:1000].replace(newline, '  ')}")
         return doc['text'][:1000].replace(newline, '  ')
 
