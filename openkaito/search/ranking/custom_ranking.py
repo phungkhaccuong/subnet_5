@@ -41,20 +41,21 @@ class HeuristicRankingModelV2(AbstractRankingModel):
             return 0.1
 
         if result['sentences'] >= 5:
-            print(f"[compute_score 0.5]:::: {0.5 + (1/age) + (1/result['flattened_words'])}")
+            print(f"[compute_score 0.5]:::: {0.5 + (1/age)}")
             return 0.5 + (1/age) + (1/result['flattened_words'])
         if result['sentences'] == 4:
-            print(f"[compute_score 0.4]:::: {0.4 + (1 / age) + (1 / result['flattened_words'])}")
+            print(f"[compute_score 0.4]:::: {0.4 + (1 / age)}")
             return 0.4 + (1 / age) + (1 / result['flattened_words'])
         if result['sentences'] == 3:
-            print(f"[compute_score 0.3]:::: {0.3 + (1 / age) + (1 / result['flattened_words'])}")
+            print(f"[compute_score 0.3]:::: {0.3 + (1 / age)}")
             return 0.3 + (1 / age) + (1 / result['flattened_words'])
         if (result['sentences'] == 2) and (result['flattened_words'] > 35):
-            print(f"[compute_score 0.25]:::: {0.25 + (1 / age) + (1 / result['flattened_words'])}")
+            print(f"[compute_score 0.25]:::: {0.25 + (1 / age)}")
             return 0.25 + (1 / age) + (1 / result['flattened_words'])
         else:
-            print(f"[compute_score 0.1]:::: {0.1 + (1 / age) + (1 / result['flattened_words'])}")
-            return 0.1 + (1 / age) + (1 / result['flattened_words'])
+            print(f"[compute_score 0.1]:::: {0.1 + (1 / age)}")
+            return 0.1 + (1 / age)
+    #note: co nhunng cau 1 tu nhung ko co y nghia
 
     def text_length_score(self, text_length):
         return math.log(text_length + 1) / 10
