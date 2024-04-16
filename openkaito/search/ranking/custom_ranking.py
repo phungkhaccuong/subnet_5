@@ -29,7 +29,7 @@ class HeuristicRankingModelV2(AbstractRankingModel):
     def compute_score(self, query, doc):
         now = datetime.now(timezone.utc)
         age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
-        if datetime.fromisoformat(doc["created_at"].rstrip("Z")).date() < date(2024, 2, 1):
+        if datetime.fromisoformat(doc["created_at"].rstrip("Z")).date() < date(2024, 1, 20):
             print(f"OUT_DATE:::{0.01 + (1/age)}")
             return 0.01 + (1/age)
 
@@ -40,16 +40,16 @@ class HeuristicRankingModelV2(AbstractRankingModel):
             bt.logging.info(f"[NONE_DATA]:")
             return 0.1
 
-        if result['sentences'] >= 5:
+        if result['flattened_words'] >= 60:
             print(f"[compute_score 0.5]:::: age :{age} : re::: {0.5 + (1/age)}")
             return 0.5 + (1/age)
-        if result['sentences'] == 4:
+        if result['flattened_words'] >= 50:
             print(f"[compute_score 0.4]:::: age :{age} : re::: {0.4 + (1 / age)}")
             return 0.4 + (1 / age)
-        if result['sentences'] == 3:
+        if result['flattened_words'] >= 40:
             print(f"[compute_score 0.3]:::: age :{age} : re::: {0.3 + (1 / age)}")
             return 0.3 + (1 / age)
-        if (result['sentences'] == 2) and (result['flattened_words'] > 35):
+        if (result['flattened_words'] >= 30):
             print(f"[compute_score 0.25]:::: age :{age} : re::: {0.25 + (1 / age)}")
             return 0.25 + (1 / age)
         else:
