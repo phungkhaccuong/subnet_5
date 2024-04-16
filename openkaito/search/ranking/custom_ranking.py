@@ -112,10 +112,7 @@ class CustomRankingModel(AbstractRankingModel):
 
     def rank(self, query, documents):
         now = datetime.now(timezone.utc)
-        ages = [(
-                        now - datetime.fromisoformat(
-                    doc["created_at"].rstrip("Z"))
-                ).total_seconds() for doc in documents]
+        ages = [(now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds() for doc in documents]
         max_age = 0 if len(ages) == 0 else max(ages)
 
         ranked_docs = sorted(
@@ -130,24 +127,10 @@ class CustomRankingModel(AbstractRankingModel):
                 now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))
         ).total_seconds()
 
-        llm_score = self.llm_score(doc)
         age_score = self.age_score(age, max_age)
         length_score = self.length_score(doc)
 
         return self.length_weight * length_score + self.age_weight * age_score
-
-    def llm_score(self, doc):
-        choice_mapping = {
-            "outdated": 0,
-            "insightless": 0,
-            "somewhat insightful": 0.5,
-            "insightful": 1,
-        }
-
-        choice = doc.get('choice')
-        if choice is None:
-            return 0
-        return choice_mapping[choice];
 
     def length_score(self, doc):
         if len(doc['text']) > 200:
