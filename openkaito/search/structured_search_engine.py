@@ -35,9 +35,7 @@ class StructuredSearchEngine:
             "quote_count": doc["quote_count"],
             "reply_count": doc["reply_count"],
             "retweet_count": doc["retweet_count"],
-            "favorite_count": doc["favorite_count"],
-            "choice": doc["choice"] | "",
-            "reason": doc["reason"] | ""
+            "favorite_count": doc["favorite_count"]
         }
 
     def init_indices(self):
@@ -60,9 +58,7 @@ class StructuredSearchEngine:
                             "quote_count": {"type": "long"},
                             "reply_count": {"type": "long"},
                             "retweet_count": {"type": "long"},
-                            "favorite_count": {"type": "long"},
-                            "choice": {"type": "text"},
-                            "reason": {"type": "text"}
+                            "favorite_count": {"type": "long"}
                         }
                     }
                 },
