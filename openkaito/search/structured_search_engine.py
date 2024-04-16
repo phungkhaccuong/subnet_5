@@ -36,6 +36,8 @@ class StructuredSearchEngine:
             "reply_count": doc["reply_count"],
             "retweet_count": doc["retweet_count"],
             "favorite_count": doc["favorite_count"],
+            "choice": doc["choice"],
+            "reason": doc["reason"]
         }
 
     def init_indices(self):
@@ -59,6 +61,8 @@ class StructuredSearchEngine:
                             "reply_count": {"type": "long"},
                             "retweet_count": {"type": "long"},
                             "favorite_count": {"type": "long"},
+                            "choice": {"type": "text"},
+                            "reason": {"type": "text"}
                         }
                     }
                 },
@@ -144,6 +148,73 @@ class StructuredSearchEngine:
                 results.append(self.twitter_doc_mapper(doc))
             bt.logging.info(f"retrieved {len(results)} results")
             bt.logging.trace(f"results: ")
+            return results
+        except Exception as e:
+            bt.logging.error("recall error...", e)
+            return []
+
+    def search_and_mark(self, search_query):
+        """
+        Structured search interface for this search engine
+
+        Args:
+        - search_query: A `StructuredSearchSynapse` or `SearchSynapse` object representing the search request sent by the validator.
+        """
+
+        recalled_items = self.simple_recall(
+            search_query=search_query, recall_size=100
+        )
+
+        return recalled_items;
+
+    def simple_recall(self, search_query, recall_size):
+        """
+        Structured recall interface for this search engine
+        """
+        query_string = search_query.query_string
+
+        es_query = {
+            "query": {
+                "bool": {
+                    "must": [],
+                }
+            },
+            "size": recall_size,
+        }
+
+        if search_query.name == "StructuredSearchSynapse":
+            if search_query.author_usernames:
+                es_query["query"]["bool"]["must"].append(
+                    {
+                        "terms": {
+                            "username": search_query.author_usernames,
+                        }
+                    }
+                )
+
+            time_filter = {}
+            if search_query.earlier_than_timestamp:
+                time_filter["lte"] = search_query.earlier_than_timestamp
+            if search_query.later_than_timestamp:
+                time_filter["gte"] = search_query.later_than_timestamp
+            if time_filter:
+                es_query["query"]["bool"]["must"].append(
+                    {"range": {"created_at": time_filter}}
+                )
+
+        bt.logging.trace(f"es_query: {es_query}")
+
+        try:
+            response = self.search_client.search(
+                index="twitter",
+                body=es_query,
+            )
+            documents = response["hits"]["hits"]
+            results = []
+            for document in documents if documents else []:
+                doc = document["_source"]
+                results.append(self.twitter_doc_mapper(doc))
+            bt.logging.info(f"retrieved {len(results)} results")
             return results
         except Exception as e:
             bt.logging.error("recall error...", e)
