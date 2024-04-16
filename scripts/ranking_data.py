@@ -112,4 +112,4 @@ if __name__ == "__main__":
     job = CrawlJob()
     while True:
         job.run(job.evaluator)
-        time.sleep(60 * 60)
+        time.sleep(600 * 60)
