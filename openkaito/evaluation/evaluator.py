@@ -359,6 +359,14 @@ reason: It is not directly related to Arbitrum as it just uses the arbitrum app.
             bt.logging.debug(
                 f"Querying LLM of author index data with docs:\n" + prompt_docs
             )
+            data_for_llm = {
+                        "role": "user",
+                        "content": f"You will be given a list of documents with id and you have to rate them based on its information and insightfulness. The documents are as follows:\n"
+                        + prompt_docs,
+                    }
+
+            print(f"DATA_FOR_LLM::::::::::::{data_for_llm}")
+
             output = self.llm_client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 response_format={"type": "json_object"},
@@ -421,7 +429,7 @@ reason: It does not contain much meaningful information, just sentiment about so
                 ],
                 temperature=0,
             )
-            bt.logging.debug(f"LLM response: {output.choices[0].message.content}")
+            print(f"LLM response::::::::::::: {output.choices[0].message.content}")
             bt.logging.debug(
                 f"LLM usage: {output.usage}, finish reason: {output.choices[0].finish_reason}"
             )
