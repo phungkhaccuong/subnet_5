@@ -42,7 +42,7 @@ def main():
 
     ranking_models = [
         HeuristicRankingModel(length_weight=0.3, age_weight=0.7),
-        HeuristicRankingModelV2(length_weight=0.4, age_weight=0.6),
+        HeuristicRankingModelV2(length_weight=0.77, age_weight=0.23),
         CustomRankingModel(length_weight=0.77, age_weight=0.23),
     ]
     search_engines = [
@@ -64,13 +64,13 @@ def main():
 
     responses = [search_engine.search(search_query=search_query) for search_engine in search_engines]
 
-    for i in range(0,2):
+    for i in range(0,3):
         print(f"///////// [RANKING DOC] INDEX:{i} /////////////////////////////////////////////////////////////////////////////")
         print(responses[i])
 
     rewards = evaluator.evaluate(search_query, responses)
 
-    bt.logging.info(f"Scored responses: {rewards}")
+    print(f"Scored responses: {rewards}")
 
 
 if __name__ == "__main__":
