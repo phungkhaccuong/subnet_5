@@ -223,11 +223,11 @@ class Evaluator:
         bt.logging.info(f"[CST] max_avg_age final: {max_avg_age}")
         avg_age_scores = 1 - (avg_ages / (max_avg_age + 1))
         bt.logging.info(f"[CST] avg_age_scores final: {avg_age_scores}")
-        bt.logging.info(f"[CST] before compute scores avg_age_scores: {avg_age_scores}, rank_scores: {rank_scores}, credit_author_scores: {credit_author_scores}")
+        print(f"[CST] before compute scores avg_age_scores: {avg_age_scores}, rank_scores: {rank_scores}, credit_author_scores: {credit_author_scores}")
         scores = avg_age_scores * 0.2 + rank_scores * 0.7 + credit_author_scores * 0.1
         bt.logging.info(f"[CST] uniqueness_scores final: {uniqueness_scores}")
         scores = scores * uniqueness_scores
-        bt.logging.info(f"[CST] scores final1: {scores}")
+        print(f"[CST] scores final1: {scores}")
         # relative scores in a batch
         scores = scores / (scores.max() + 1e-5)
         bt.logging.info(f"[CST] scores final2 with scores.max: {scores.max()}: {scores}")
