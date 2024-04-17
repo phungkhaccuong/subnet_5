@@ -38,7 +38,8 @@ class HeuristicRankingModelV2(AbstractRankingModel):
         print(f"age_score::::{age_score}")
         author_score = self.get_author_score(doc)
         print(f"author_score::::{author_score}")
-        print(f"RESULT - length_weight: {self.length_weight} - age_weight:{self.age_weight}:::{self.length_weight * length_score * author_score + self.age_weight * age_score}")
+        print(
+            f"RESULT - length_weight: {self.length_weight} - age_weight:{self.age_weight}:::{self.length_weight * length_score * author_score + self.age_weight * age_score}")
 
         return self.length_weight * length_score * author_score + self.age_weight * age_score
 
@@ -109,22 +110,34 @@ class HeuristicRankingModelV2(AbstractRankingModel):
         return 0 if len(founds) == 0 else founds[0]['score']
 
     def get_length_score(self, doc):
-        result = self.get_amend(doc)
-        print(f"[compute_score_word]:{result}")
-
-        if result is None:
-            return 0.1
-
-        if result['flattened_words'] >= 50:
+        if len(doc['text']) > 200:
             return 1
-        if result['flattened_words'] >= 40:
+        elif len(doc['text']) > 150:
             return 0.75
-        if result['flattened_words'] >= 30:
+        elif len(doc['text']) > 100:
             return 0.5
-        if result['flattened_words'] >= 20:
+        elif len(doc['text']) > 75:
             return 0.25
         else:
             return 0
+
+    # def get_length_score(self, doc):
+    #     result = self.get_amend(doc)
+    #     print(f"[compute_score_word]:{result}")
+    #
+    #     if result is None:
+    #         return 0.1
+    #
+    #     if result['flattened_words'] >= 50:
+    #         return 1
+    #     if result['flattened_words'] >= 40:
+    #         return 0.75
+    #     if result['flattened_words'] >= 30:
+    #         return 0.5
+    #     if result['flattened_words'] >= 20:
+    #         return 0.25
+    #     else:
+    #         return 0
 
     # def compute_score1(self, query, doc):
     #     now = datetime.now(timezone.utc)
