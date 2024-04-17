@@ -38,6 +38,7 @@ class HeuristicRankingModelV2(AbstractRankingModel):
         print(f"age_score::::{age_score}")
         author_score = self.get_author_score(doc)
         print(f"author_score::::{author_score}")
+        print(f"RESULT - length_weight: {self.length_weight} - age_weight:{self.age_weight}:::{self.length_weight * length_score * author_score + self.age_weight * age_score}")
 
         return self.length_weight * length_score * author_score + self.age_weight * age_score
 
