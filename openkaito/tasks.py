@@ -49,10 +49,16 @@ def generate_author_index_task(
     size: int = 5,
     num_authors: int = 2,
 ):
-    author_usernames = random_twitter_username(num_authors=num_authors)
+    #author_usernames = random_twitter_username(num_authors=num_authors)
+    authors = ['WuBlockchain', 'sleepdiplomat', 'stefancoh', 'ProdigalWiz', 'ProdigalWiz',
+               'RPC_20', 'mondoir', 'DefiSquared', 'WSBChairman', '0xPhoenixCap', 'jacko_eth', '0xPrismatic',
+               'KyleSamani', 'sweatystartup', 'ThorHartvigsen', 'achiwoya', 'TVS_Kolia', '0x5f_eth', 'QuantMeta',
+               'LordDurden', 'nftboi_', 'NedRyersonBing', 'franzfarm', 'TrungTranNft', '0xwassies', 'rektguyNFT',
+               'ZoomerOracle', 'NachoTrades', 'GrimaceOdysseus', 'trebooomin', 'ScizRtrading']
+    random_authors = random.sample(authors, 2)
     return StructuredSearchSynapse(
         size=size,
-        author_usernames=author_usernames,
+        author_usernames=random_authors,
         version=get_version(),
     )
 

@@ -19,50 +19,150 @@ class HeuristicRankingModelV2(AbstractRankingModel):
 
     def rank(self, query, documents):
         print(f"[RANKING]  starting.........")
+        now = datetime.now(timezone.utc)
+        ages = [(now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds() for doc in documents]
+        max_age = 1 if len(ages) == 0 else max(ages)
         ranked_docs = sorted(
             documents,
-            key=lambda doc: self.compute_score(query, doc),
+            key=lambda doc: self.compute_score(query, doc, max_age, now),
             reverse=True,
         )
         return ranked_docs
 
-    def compute_score(self, query, doc):
-        now = datetime.now(timezone.utc)
+    def compute_score(self, query, doc, max_age, now):
         age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
-        if datetime.fromisoformat(doc["created_at"].rstrip("Z")).date() < date(2024, 1, 20):
-            print(f"OUT_DATE:::{0.01 + (1/age)}")
-            return 0.01 + (1/age)
 
+        length_score = self.get_length_score(doc)
+        print(f"length_score::::{length_score}")
+        age_score = self.age_score(age, max_age)
+        print(f"age_score::::{age_score}")
+        author_score = self.get_author_score(doc)
+        print(f"author_score::::{author_score}")
+
+        return self.length_weight * length_score * author_score + self.age_weight * age_score
+
+    def get_author_score(self, doc):
+        author_scores = [{"author": "WuBlockchain",
+                          "score": 0.8},
+                         {"author": "sleepdiplomat",
+                          "score": 0.8},
+                         {"author": "stefancoh",
+                          "score": 0.7},
+                         {"author": "ProdigalWiz",
+                          "score": 0.6},
+                         {"author": "RPC_20",
+                          "score": 0.6},
+                         {"author": "mondoir",
+                          "score": 0.5},
+                         {"author": "DefiSquared",
+                          "score": 0.5},
+                         {"author": "WSBChairman",
+                          "score": 0.5},
+                         {"author": "0xPhoenixCap",
+                          "score": 0.4},
+                         {"author": "jacko_eth",
+                          "score": 0.4},
+                         {"author": "0xPrismatic",
+                          "score": 0.4},
+                         {"author": "KyleSamani",
+                          "score": 0.3},
+                         {"author": "sweatystartup",
+                          "score": 0.3},
+                         {"author": "ThorHartvigsen",
+                          "score": 0.3},
+                         {"author": "achiwoya",
+                          "score": 0.3},
+                         {"author": "TVS_Kolia",
+                          "score": 0.3},
+                         {"author": "0x5f_eth",
+                          "score": 0.2},
+                         {"author": "QuantMeta",
+                          "score": 0.2},
+                         {"author": "LordDurden",
+                          "score": 0.2},
+                         {"author": "nftboi_",
+                          "score": 0.2},
+                         {"author": "NedRyersonBing",
+                          "score": 0.1},
+                         {"author": "franzfarm",
+                          "score": 0.1},
+                         {"author": "TrungTranNft",
+                          "score": 0.1},
+                         {"author": "0xwassies",
+                          "score": 0.1},
+                         {"author": "rektguyNFT",
+                          "score": 0.0},
+                         {"author": "ZoomerOracle",
+                          "score": 0.0},
+                         {"author": "NachoTrades",
+                          "score": 0.0},
+                         {"author": "GrimaceOdysseus",
+                          "score": 0.0},
+                         {"author": "trebooomin",
+                          "score": 0.0},
+                         {"author": "ScizRtrading",
+                          "score": 0.0}
+                         ]
+
+        founds = [author_score for author_score in author_scores if author_score['author'] == doc['username']]
+        return 0 if len(founds) == 0 else founds[0]['score']
+
+    def get_length_score(self, doc):
         result = self.get_amend(doc)
         print(f"[compute_score_word]:{result}")
 
         if result is None:
-            bt.logging.info(f"[NONE_DATA]:")
             return 0.1
 
-        if result['flattened_words'] >= 60:
-            print(f"[compute_score 0.5]:::: age :{age} : re::: {0.5 + (1/age)}")
-            return 0.5 + (1/age)
         if result['flattened_words'] >= 50:
-            print(f"[compute_score 0.4]:::: age :{age} : re::: {0.4 + (1 / age)}")
-            return 0.4 + (1 / age)
+            return 1
         if result['flattened_words'] >= 40:
-            print(f"[compute_score 0.3]:::: age :{age} : re::: {0.3 + (1 / age)}")
-            return 0.3 + (1 / age)
-        if (result['flattened_words'] >= 30):
-            print(f"[compute_score 0.25]:::: age :{age} : re::: {0.25 + (1 / age)}")
-            return 0.25 + (1 / age)
+            return 0.75
+        if result['flattened_words'] >= 30:
+            return 0.5
+        if result['flattened_words'] >= 20:
+            return 0.25
         else:
-            print(f"[compute_score 0.1]:::: age :{age} : re::: {0.1 + (1 / age)}")
-            return 0.1 + (1 / age)
-    #note: co nhunng cau 1 tu nhung ko co y nghia
+            return 0
+
+    # def compute_score1(self, query, doc):
+    #     now = datetime.now(timezone.utc)
+    #     age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
+    #     if datetime.fromisoformat(doc["created_at"].rstrip("Z")).date() < date(2024, 1, 20):
+    #         print(f"OUT_DATE:::{0.01 + (1 / age)}")
+    #         return 0.01 + (1 / age)
+    #
+    #     result = self.get_amend(doc)
+    #     print(f"[compute_score_word]:{result}")
+    #
+    #     if result is None:
+    #         bt.logging.info(f"[NONE_DATA]:")
+    #         return 0.1
+    #
+    #     if result['flattened_words'] >= 60:
+    #         print(f"[compute_score 0.5]:::: age :{age} : re::: {0.5 + (1 / age)}")
+    #         return 0.5 + (1 / age)
+    #     if result['flattened_words'] >= 50:
+    #         print(f"[compute_score 0.4]:::: age :{age} : re::: {0.4 + (1 / age)}")
+    #         return 0.4 + (1 / age)
+    #     if result['flattened_words'] >= 40:
+    #         print(f"[compute_score 0.3]:::: age :{age} : re::: {0.3 + (1 / age)}")
+    #         return 0.3 + (1 / age)
+    #     if (result['flattened_words'] >= 30):
+    #         print(f"[compute_score 0.25]:::: age :{age} : re::: {0.25 + (1 / age)}")
+    #         return 0.25 + (1 / age)
+    #     else:
+    #         print(f"[compute_score 0.1]:::: age :{age} : re::: {0.1 + (1 / age)}")
+    #         return 0.1 + (1 / age)
+
+    # note: co nhunng cau 1 tu nhung ko co y nghia
     # chu y nhung co 1 cau nhung so tu dai
 
     def text_length_score(self, text_length):
         return math.log(text_length + 1) / 10
 
-    def age_score(self, age):
-        return 60 * 60 / (age + 1)
+    def age_score(self, age, max_age):
+        return 1 - (age / (max_age + 1))
 
     def filter_useful_words(self, words):
         pos_tags = nltk.pos_tag(words)
