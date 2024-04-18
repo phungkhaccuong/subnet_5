@@ -73,7 +73,7 @@ class HeuristicRankingModelV2(AbstractRankingModel):
         result = self.get_amend(doc)
         print(f"[compute_score_word]:{result}")
 
-        if ('!' in doc['text']) or ('?' in doc['text']):
+        if '?' in doc['text']:
             return 0.1
 
         if result is None:
