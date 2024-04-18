@@ -54,38 +54,41 @@ class HeuristicRankingModelV2(AbstractRankingModel):
             data_dict = [row for row in reader]
         return data_dict
 
-    def get_length_score(self, doc):
-        if ('!' in doc['text']) or ('?' in doc['text']):
-            return 0.1
-
-        if len(doc['text']) > 200:
-            return 1
-        elif len(doc['text']) > 150:
-            return 0.75
-        elif len(doc['text']) > 100:
-            return 0.5
-        elif len(doc['text']) > 75:
-            return 0.25
-        else:
-            return 0
-
     # def get_length_score(self, doc):
-    #     result = self.get_amend(doc)
-    #     print(f"[compute_score_word]:{result}")
-    #
-    #     if result is None:
+    #     if ('!' in doc['text']) or ('?' in doc['text']):
     #         return 0.1
     #
-    #     if result['flattened_words'] >= 50:
+    #     if len(doc['text']) > 200:
     #         return 1
-    #     if result['flattened_words'] >= 40:
+    #     elif len(doc['text']) > 150:
     #         return 0.75
-    #     if result['flattened_words'] >= 30:
+    #     elif len(doc['text']) > 100:
     #         return 0.5
-    #     if result['flattened_words'] >= 20:
+    #     elif len(doc['text']) > 75:
     #         return 0.25
     #     else:
     #         return 0
+
+    def get_length_score(self, doc):
+        result = self.get_amend(doc)
+        print(f"[compute_score_word]:{result}")
+
+        if ('!' in doc['text']) or ('?' in doc['text']):
+            return 0.1
+
+        if result is None:
+            return 0.1
+
+        if result['sentences'] >= 5:
+            return 1
+        if result['sentences'] >= 4:
+            return 0.75
+        if result['sentences'] >= 3:
+            return 0.5
+        if result['sentences'] >= 2:
+            return 0.25
+        else:
+            return 0
 
     # def compute_score1(self, query, doc):
     #     now = datetime.now(timezone.utc)
