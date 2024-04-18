@@ -41,7 +41,7 @@ def main():
     )
 
     ranking_models = [
-        HeuristicRankingModel(length_weight=0.3, age_weight=0.7),
+        #HeuristicRankingModel(length_weight=0.3, age_weight=0.7),
         HeuristicRankingModelV2(length_weight=0.77, age_weight=0.23),
         CustomRankingModel(length_weight=0.77, age_weight=0.23),
     ]
@@ -64,7 +64,7 @@ def main():
 
     responses = [search_engine.search(search_query=search_query) for search_engine in search_engines]
 
-    for i in range(0,3):
+    for i in range(0,2):
         print(f"///////// [RANKING DOC] INDEX:{i} /////////////////////////////////////////////////////////////////////////////")
         print(responses[i])
 
