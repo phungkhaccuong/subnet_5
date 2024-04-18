@@ -55,6 +55,9 @@ class HeuristicRankingModelV2(AbstractRankingModel):
         return data_dict
 
     def get_length_score(self, doc):
+        if ('!' in doc['text']) or ('?' in doc['text']):
+            return 0.1
+
         if len(doc['text']) > 200:
             return 1
         elif len(doc['text']) > 150:
