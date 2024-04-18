@@ -42,7 +42,7 @@ def main():
 
     ranking_models = [
         #HeuristicRankingModel(length_weight=0.3, age_weight=0.7),
-        HeuristicRankingModelV2(length_weight=0.77, age_weight=0.23),
+        HeuristicRankingModelV2(length_weight=0.8, age_weight=0.2),
         CustomRankingModel(length_weight=0.77, age_weight=0.23),
     ]
     search_engines = [
