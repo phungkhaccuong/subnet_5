@@ -1,3 +1,4 @@
+import csv
 import itertools
 import math
 from datetime import datetime, date, timezone
@@ -36,78 +37,20 @@ class HeuristicRankingModelV2(AbstractRankingModel):
         print(f"length_score::::{length_score}")
         age_score = self.age_score(age, max_age)
         print(f"age_score::::{age_score}")
-        author_score = self.get_author_score(doc)
+        author_score = self.get_author_score_of(doc)
         print(f"author_score::::{author_score}")
-        print(
-            f"RESULT - length_weight: {self.length_weight} - age_weight:{self.age_weight}:::{self.length_weight * length_score * author_score + self.age_weight * age_score}")
-
         return self.length_weight * length_score * author_score + self.age_weight * age_score
 
-    def get_author_score(self, doc):
-        author_scores = [{"author": "WuBlockchain",
-                          "score": 0.8},
-                         {"author": "sleepdiplomat",
-                          "score": 0.8},
-                         {"author": "stefancoh",
-                          "score": 0.7},
-                         {"author": "ProdigalWiz",
-                          "score": 0.6},
-                         {"author": "RPC_20",
-                          "score": 0.6},
-                         {"author": "mondoir",
-                          "score": 0.5},
-                         {"author": "DefiSquared",
-                          "score": 0.5},
-                         {"author": "WSBChairman",
-                          "score": 0.5},
-                         {"author": "0xPhoenixCap",
-                          "score": 0.4},
-                         {"author": "jacko_eth",
-                          "score": 0.4},
-                         {"author": "0xPrismatic",
-                          "score": 0.4},
-                         {"author": "KyleSamani",
-                          "score": 0.3},
-                         {"author": "sweatystartup",
-                          "score": 0.3},
-                         {"author": "ThorHartvigsen",
-                          "score": 0.3},
-                         {"author": "achiwoya",
-                          "score": 0.3},
-                         {"author": "TVS_Kolia",
-                          "score": 0.3},
-                         {"author": "0x5f_eth",
-                          "score": 0.2},
-                         {"author": "QuantMeta",
-                          "score": 0.2},
-                         {"author": "LordDurden",
-                          "score": 0.2},
-                         {"author": "nftboi_",
-                          "score": 0.2},
-                         {"author": "NedRyersonBing",
-                          "score": 0.1},
-                         {"author": "franzfarm",
-                          "score": 0.1},
-                         {"author": "TrungTranNft",
-                          "score": 0.1},
-                         {"author": "0xwassies",
-                          "score": 0.1},
-                         {"author": "rektguyNFT",
-                          "score": 0.0},
-                         {"author": "ZoomerOracle",
-                          "score": 0.0},
-                         {"author": "NachoTrades",
-                          "score": 0.0},
-                         {"author": "GrimaceOdysseus",
-                          "score": 0.0},
-                         {"author": "trebooomin",
-                          "score": 0.0},
-                         {"author": "ScizRtrading",
-                          "score": 0.0}
-                         ]
-
-        founds = [author_score for author_score in author_scores if author_score['author'] == doc['username']]
+    def get_author_score_of(self, doc):
+        author_scores = self.load_author_scores()
+        founds = [author_score for author_score in author_scores if author_score['username'] == doc['username']]
         return 0 if len(founds) == 0 else founds[0]['score']
+
+    def load_author_scores(self):
+        with open('author_score.csv', 'r') as file:
+            reader = csv.DictReader(file)
+            data_dict = [row for row in reader]
+        return data_dict
 
     def get_length_score(self, doc):
         if len(doc['text']) > 200:
