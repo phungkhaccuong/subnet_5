@@ -31,6 +31,7 @@ class HeuristicRankingModelV2(AbstractRankingModel):
         return ranked_docs
 
     def compute_score(self, query, doc, max_age, now):
+        print(f"[DOC]::::::::::::::::{doc}:::::::::::::::::::::::::::::::::::::::::::::")
         age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
 
         length_score = self.get_length_score(doc)
@@ -39,6 +40,7 @@ class HeuristicRankingModelV2(AbstractRankingModel):
         print(f"age_score::::{age_score}")
         author_score = self.get_author_score_of(doc)
         print(f"author_score::::{author_score}")
+        print(f"[RESULT]::::{self.length_weight * length_score * author_score + self.age_weight * age_score}")
         return self.length_weight * length_score * author_score + self.age_weight * age_score
 
     def get_author_score_of(self, doc):
