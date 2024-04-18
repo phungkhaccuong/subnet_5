@@ -387,8 +387,15 @@ reason: It is not directly related to Arbitrum as it just uses the arbitrum app.
                 ]
             )
 
+            prompt_docs1 = "\n\n".join(
+                [
+                    f"ItemId: {i}\nId:{doc['id']}\nTime: {doc['created_at'].split('T')[0]}\nText: {doc['text'][:1000].replace(newline, '  ')}"
+                    for i, doc in enumerate(docs)
+                ]
+            )
+
             print(
-                f"[CST] Querying LLM of author index data with docs:\n" + prompt_docs
+                f"[CST] Querying LLM of author index data with docs:\n" + prompt_docs1
             )
             output = self.llm_client.chat.completions.create(
                 model="gpt-3.5-turbo",
