@@ -44,7 +44,7 @@ class HeuristicRankingModelV2(AbstractRankingModel):
     def get_author_score_of(self, doc):
         author_scores = self.load_author_scores()
         founds = [author_score for author_score in author_scores if author_score['username'] == doc['username']]
-        return 0 if len(founds) == 0 else founds[0]['score']
+        return 0 if len(founds) == 0 else float(founds[0]['score'])
 
     def load_author_scores(self):
         with open('author_score.csv', 'r') as file:
