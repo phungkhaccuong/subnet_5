@@ -387,7 +387,7 @@ reason: It is not directly related to Arbitrum as it just uses the arbitrum app.
                 ]
             )
 
-            bt.logging.debug(
+            print(
                 f"[CST] Querying LLM of author index data with docs:\n" + prompt_docs
             )
             output = self.llm_client.chat.completions.create(
@@ -464,7 +464,7 @@ reason: It does not contain much meaningful information, just sentiment about so
             result = json.loads(output.choices[0].message.content)
             bt.logging.debug(f"LLM result: {result}")
             ranking = parse_llm_result_for_author_index(result)
-            bt.logging.info(f"LLM ranking: {ranking}")
+            print(f"LLM ranking: {ranking}")
             if len(ranking) != len(docs):
                 raise ValueError(
                     f"Length of ranking {len(ranking)} does not match input docs length {len(docs)}"
