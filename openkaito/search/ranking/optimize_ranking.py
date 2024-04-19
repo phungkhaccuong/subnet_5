@@ -12,14 +12,14 @@ nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
 
 
-class HeuristicRankingModelV2(AbstractRankingModel):
+class OptimizeRankingModel(AbstractRankingModel):
     def __init__(self, length_weight=0.4, age_weight=0.6):
         super().__init__()
         self.length_weight = length_weight
         self.age_weight = age_weight
 
     def rank(self, query, documents):
-        print(f"[RANKING]  starting.:::::::::::::::::::::::::::::::::::::::::")
+        print(f"[RANKING]  starting.........")
         now = datetime.now(timezone.utc)
         ages = [(now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds() for doc in documents]
         max_age = 1 if len(ages) == 0 else max(ages)
@@ -35,12 +35,10 @@ class HeuristicRankingModelV2(AbstractRankingModel):
         age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
 
         length_score = self.get_length_score(doc)
-        print(f"length_score::::{length_score}")
         age_score = self.age_score(age, max_age)
-        print(f"age_score::::{age_score}")
         author_score = self.get_author_score_of(doc)
-        print(f"author_score::::{author_score}")
-        print(f"[RESULT]::::{self.length_weight * length_score * author_score + self.age_weight * age_score}")
+        print(f"length_score::::{length_score} - age_score::::{age_score} - author_score::::{author_score} - result::::"
+              f"{self.length_weight * length_score * author_score + self.age_weight * age_score}")
         return self.length_weight * length_score * author_score + self.age_weight * age_score
 
     def get_author_score_of(self, doc):
@@ -70,8 +68,7 @@ class HeuristicRankingModelV2(AbstractRankingModel):
     #         return 0
 
     def get_length_score(self, doc):
-        result = self.get_amend(doc)
-        print(f"[compute_score_word]:{result}")
+        result = self.classify_doc(doc)
 
         if '?' in doc['text']:
             return 0.1
@@ -79,49 +76,41 @@ class HeuristicRankingModelV2(AbstractRankingModel):
         if result is None:
             return 0.1
 
-        if result['sentences'] >= 5:
+        if result['flattened_words'] >= 70:
             return 1
-        if result['sentences'] >= 4:
-            return 0.75
-        if result['sentences'] >= 3:
-            return 0.5
-        if result['sentences'] >= 2:
-            return 0.25
+        if result['sentences'] >= 60:
+            return 0.8
+        if result['sentences'] >= 50:
+            return 0.6
+        if result['sentences'] >= 40:
+            return 0.4
+        if result['sentences'] >= 30:
+            return 0.2
+        if result['sentences'] >= 20:
+            return 0.1
         else:
             return 0
 
-    # def compute_score1(self, query, doc):
-    #     now = datetime.now(timezone.utc)
-    #     age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
-    #     if datetime.fromisoformat(doc["created_at"].rstrip("Z")).date() < date(2024, 1, 20):
-    #         print(f"OUT_DATE:::{0.01 + (1 / age)}")
-    #         return 0.01 + (1 / age)
-    #
+    # def get_length_score(self, doc):
     #     result = self.get_amend(doc)
     #     print(f"[compute_score_word]:{result}")
     #
-    #     if result is None:
-    #         bt.logging.info(f"[NONE_DATA]:")
+    #     if '?' in doc['text']:
     #         return 0.1
     #
-    #     if result['flattened_words'] >= 60:
-    #         print(f"[compute_score 0.5]:::: age :{age} : re::: {0.5 + (1 / age)}")
-    #         return 0.5 + (1 / age)
-    #     if result['flattened_words'] >= 50:
-    #         print(f"[compute_score 0.4]:::: age :{age} : re::: {0.4 + (1 / age)}")
-    #         return 0.4 + (1 / age)
-    #     if result['flattened_words'] >= 40:
-    #         print(f"[compute_score 0.3]:::: age :{age} : re::: {0.3 + (1 / age)}")
-    #         return 0.3 + (1 / age)
-    #     if (result['flattened_words'] >= 30):
-    #         print(f"[compute_score 0.25]:::: age :{age} : re::: {0.25 + (1 / age)}")
-    #         return 0.25 + (1 / age)
+    #     if result is None:
+    #         return 0.1
+    #
+    #     if result['sentences'] >= 5:
+    #         return 1
+    #     if result['sentences'] >= 4:
+    #         return 0.75
+    #     if result['sentences'] >= 3:
+    #         return 0.5
+    #     if result['sentences'] >= 2:
+    #         return 0.25
     #     else:
-    #         print(f"[compute_score 0.1]:::: age :{age} : re::: {0.1 + (1 / age)}")
-    #         return 0.1 + (1 / age)
-
-    # note: co nhunng cau 1 tu nhung ko co y nghia
-    # chu y nhung co 1 cau nhung so tu dai
+    #         return 0
 
     def text_length_score(self, text_length):
         return math.log(text_length + 1) / 10
@@ -156,11 +145,10 @@ class HeuristicRankingModelV2(AbstractRankingModel):
 
     def get_clean_doc(self, doc):
         newline = "\n"
-        print(f"DOC::::::::::::: {doc} ::::::::::::::::::")
         bt.logging.info(f"Text: {doc['text'][:1000].replace(newline, '  ')}")
         return doc['text'][:1000].replace(newline, '  ')
 
-    def get_amend(self, doc):
+    def classify_doc(self, doc):
         try:
             clean_text = self.get_clean_doc(doc)
             return self.get_useful_words_score(clean_text)
@@ -169,7 +157,7 @@ class HeuristicRankingModelV2(AbstractRankingModel):
             return None
 
 
-class CustomRankingModel(AbstractRankingModel):
+class OptimizeRankingModelV1(AbstractRankingModel):
     def __init__(self, length_weight=0.77, age_weight=0.23):
         super().__init__()
         self.length_weight = length_weight

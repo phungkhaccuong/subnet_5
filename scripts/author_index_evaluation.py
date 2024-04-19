@@ -1,14 +1,12 @@
 import os
 
-import bittensor as bt
 import openai
 from dotenv import load_dotenv
 from elasticsearch import Elasticsearch
 
 from openkaito.crawlers.twitter.apidojo import ApiDojoTwitterCrawler
 from openkaito.evaluation.evaluator import Evaluator
-from openkaito.search.ranking import HeuristicRankingModelV2, CustomRankingModel
-from openkaito.search.ranking.heuristic_ranking import HeuristicRankingModel
+from openkaito.search.ranking import OptimizeRankingModel, OptimizeRankingModelV1
 from openkaito.search.structured_search_engine import StructuredSearchEngine
 from openkaito.tasks import generate_author_index_task
 
@@ -42,8 +40,8 @@ def main():
 
     ranking_models = [
         #HeuristicRankingModel(length_weight=0.3, age_weight=0.7),
-        HeuristicRankingModelV2(length_weight=0.8, age_weight=0.2),
-        CustomRankingModel(length_weight=0.77, age_weight=0.23),
+        OptimizeRankingModel(length_weight=0.8, age_weight=0.2),
+        OptimizeRankingModelV1(length_weight=0.77, age_weight=0.23),
     ]
     search_engines = [
         StructuredSearchEngine(
@@ -64,12 +62,7 @@ def main():
 
     responses = [search_engine.search(search_query=search_query) for search_engine in search_engines]
 
-    # for i in range(0,2):
-    #     print(f"///////// [RANKING DOC] INDEX:{i} /////////////////////////////////////////////////////////////////////////////")
-    #     print(responses[i])
-
     rewards = evaluator.evaluate(search_query, responses)
-
     print(f"Scored responses: {rewards}")
 
 
