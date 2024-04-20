@@ -54,43 +54,43 @@ class OptimizeRankingModel(AbstractRankingModel):
             data_dict = [row for row in reader]
         return data_dict
 
-    # def get_length_score(self, doc):
-    #     if ('!' in doc['text']) or ('?' in doc['text']):
-    #         return 0.1
-    #
-    #     if len(doc['text']) > 200:
-    #         return 1
-    #     elif len(doc['text']) > 150:
-    #         return 0.75
-    #     elif len(doc['text']) > 100:
-    #         return 0.5
-    #     elif len(doc['text']) > 75:
-    #         return 0.25
-    #     else:
-    #         return 0
-
     def get_length_score(self, doc):
-        result = self.classify_doc(doc)
-        print(f"len_doc_original:::{len(doc['text'])}")
-        print(f"result:::::{result}")
-        if '?' in doc['text']:
+        if ('!' in doc['text']) or ('?' in doc['text']):
             return 0.1
 
-        if result is None:
-            return 0.1
-
-        if result['flattened_words'] >= 60:
+        if len(doc['text']) > 200:
             return 1
-        if result['flattened_words'] >= 50:
+        elif len(doc['text']) > 150:
             return 0.75
-        if result['flattened_words'] >= 40:
+        elif len(doc['text']) > 100:
             return 0.5
-        if result['flattened_words'] >= 30:
+        elif len(doc['text']) > 75:
             return 0.25
-        if result['flattened_words'] >= 20:
-            return 0.15
         else:
             return 0
+
+    # def get_length_score(self, doc):
+    #     result = self.classify_doc(doc)
+    #     print(f"len_doc_original:::{len(doc['text'])}")
+    #     print(f"result:::::{result}")
+    #     if '?' in doc['text']:
+    #         return 0.1
+    #
+    #     if result is None:
+    #         return 0.1
+    #
+    #     if result['flattened_words'] >= 60:
+    #         return 1
+    #     if result['flattened_words'] >= 50:
+    #         return 0.75
+    #     if result['flattened_words'] >= 40:
+    #         return 0.5
+    #     if result['flattened_words'] >= 30:
+    #         return 0.25
+    #     if result['flattened_words'] >= 20:
+    #         return 0.15
+    #     else:
+    #         return 0
 
     # def get_length_score(self, doc):
     #     result = self.get_amend(doc)
