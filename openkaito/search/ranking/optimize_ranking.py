@@ -35,10 +35,12 @@ class OptimizeRankingModel(AbstractRankingModel):
         age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
 
         length_score = self.get_length_score(doc)
+        print(f"length_score::::{length_score}")
         age_score = self.age_score(age, max_age)
+        print(f"age_score::::{age_score}")
         author_score = self.get_author_score_of(doc)
-        print(f"length_score::::{length_score} - age_score::::{age_score} - author_score::::{author_score} - result::::"
-              f"{self.length_weight * length_score * author_score + self.age_weight * age_score}")
+        print(f"author_score::::{author_score}")
+        print(f"RESULT::::{self.length_weight * length_score * author_score + self.age_weight * age_score}")
         return self.length_weight * length_score * author_score + self.age_weight * age_score
 
     def get_author_score_of(self, doc):
@@ -80,11 +82,11 @@ class OptimizeRankingModel(AbstractRankingModel):
             return 1
         if result['flattened_words'] >= 50:
             return 0.75
-        if result['sentences'] >= 40:
+        if result['flattened_words'] >= 40:
             return 0.5
-        if result['sentences'] >= 30:
+        if result['flattened_words'] >= 30:
             return 0.25
-        if result['sentences'] >= 20:
+        if result['flattened_words'] >= 20:
             return 0.15
         else:
             return 0
