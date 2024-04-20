@@ -76,18 +76,16 @@ class OptimizeRankingModel(AbstractRankingModel):
         if result is None:
             return 0.1
 
-        if result['flattened_words'] >= 70:
+        if result['flattened_words'] >= 60:
             return 1
-        if result['sentences'] >= 60:
-            return 0.8
-        if result['sentences'] >= 50:
-            return 0.6
+        if result['flattened_words'] >= 50:
+            return 0.75
         if result['sentences'] >= 40:
-            return 0.4
+            return 0.5
         if result['sentences'] >= 30:
-            return 0.2
+            return 0.25
         if result['sentences'] >= 20:
-            return 0.1
+            return 0.15
         else:
             return 0
 
