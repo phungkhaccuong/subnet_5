@@ -23,6 +23,10 @@ class OptimizeRankingModel(AbstractRankingModel):
         now = datetime.now(timezone.utc)
         ages = [(now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds() for doc in documents]
         max_age = 1 if len(ages) == 0 else max(ages)
+
+        print(f"query::::{query}")
+
+
         ranked_docs = sorted(
             documents,
             key=lambda doc: self.compute_score(query, doc, max_age, now),
