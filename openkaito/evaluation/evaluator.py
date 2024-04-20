@@ -394,9 +394,7 @@ reason: It is not directly related to Arbitrum as it just uses the arbitrum app.
                 ]
             )
 
-            print(
-                f"[CST] Querying LLM of author index data with docs:\n" + prompt_docs1
-            )
+            #print(f"[CST] Querying LLM of author index data with docs:\n" + prompt_docs1)
             output = self.llm_client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 response_format={"type": "json_object"},
