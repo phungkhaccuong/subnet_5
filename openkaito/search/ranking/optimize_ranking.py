@@ -43,7 +43,7 @@ class OptimizeRankingModel(AbstractRankingModel):
     def check_to_switch(self, documents):
         unique_names = list({item["username"] for item in documents})
         scores = self.load_author_scores()
-        scores_of_unique_names = [score["score"] for score in scores if score["username"] in unique_names]
+        scores_of_unique_names = [float(score["score"]) for score in scores if score["username"] in unique_names]
         print(f"LIST_SCORE::::{scores_of_unique_names}")
         return any(score >= 0.3 for score in scores_of_unique_names)
 
