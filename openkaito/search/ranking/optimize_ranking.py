@@ -129,7 +129,7 @@ class OptimizeRankingModel(AbstractRankingModel):
     #         return 0
 
     def get_length_score(self, doc):
-        result = self.get_amend(doc)
+        result = self.classify_doc(doc)
         print(f"[compute_score_word]:{result}")
 
         if '?' in doc['text']:
