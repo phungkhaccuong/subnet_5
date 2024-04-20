@@ -26,6 +26,7 @@ class OptimizeRankingModel(AbstractRankingModel):
 
         check = self.check_to_switch(documents)
         if (check):
+            print("HEEEEEEEEEEEEEEEEEEEEEEE")
             ranked_docs = sorted(
                 documents,
                 key=lambda doc: self.compute_score(query, doc, max_age, now),
@@ -33,6 +34,7 @@ class OptimizeRankingModel(AbstractRankingModel):
             )
             return ranked_docs
         else:
+            print("HIIIIIIIIIIIIIIIIIIIIIIII")
             ranked_docs = sorted(
                 documents,
                 key=lambda doc: self.compute_score_v1(query, doc, max_age, now),
@@ -67,7 +69,7 @@ class OptimizeRankingModel(AbstractRankingModel):
         return self.length_weight * length_score * author_score + self.age_weight * age_score
 
     def compute_score_v1(self, query, doc, max_age, now):
-        print(f"[DOC]::::::::::::::::{doc}:::::::::::::::::::::::::::::::::::::::::::::")
+        #print(f"[DOC]::::::::::::::::{doc}:::::::::::::::::::::::::::::::::::::::::::::")
         age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
         length_score = self.get_length_score_v1(doc)
         print(f"length_score::::{length_score}")
