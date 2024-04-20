@@ -71,6 +71,7 @@ class OptimizeRankingModel(AbstractRankingModel):
 
     def get_length_score(self, doc):
         result = self.classify_doc(doc)
+        print(f"len_doc_original:::{len(doc['text'])}")
         print(f"result:::::{result}")
         if '?' in doc['text']:
             return 0.1
