@@ -60,23 +60,27 @@ class OptimizeRankingModel(AbstractRankingModel):
         age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
 
         length_score = self.get_length_score(doc)
-        print(f"length_score::::{length_score}")
+        #print(f"length_score::::{length_score}")
         age_score = self.age_score(age, max_age)
-        print(f"age_score::::{age_score}")
+        #print(f"age_score::::{age_score}")
         author_score = self.get_author_score_of(doc)
-        print(f"author_score::::{author_score}")
-        print(f"RESULT::::{self.length_weight * length_score * author_score + self.age_weight * age_score}")
-        return self.length_weight * length_score * author_score + self.age_weight * age_score
+        #(f"author_score::::{author_score}")
+        #print(f"RESULT::::{self.length_weight * length_score * author_score + self.age_weight * age_score}")
+        #return self.length_weight * length_score * author_score + self.age_weight * age_score
+
+        return 0.8 * length_score * author_score + 0.2 * age_score
 
     def compute_score_v1(self, query, doc, max_age, now):
         #print(f"[DOC]::::::::::::::::{doc}:::::::::::::::::::::::::::::::::::::::::::::")
         age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
         length_score = self.get_length_score_v1(doc)
-        print(f"length_score::::{length_score}")
+        #print(f"length_score::::{length_score}")
         age_score = self.age_score(age, max_age)
-        print(f"age_score::::{age_score}")
-        print(f"RESULT::::{self.length_weight * length_score + self.age_weight * age_score}")
-        return self.length_weight * length_score + self.age_weight * age_score
+        #print(f"age_score::::{age_score}")
+        #print(f"RESULT::::{self.length_weight * length_score + self.age_weight * age_score}")
+        #return self.length_weight * length_score + self.age_weight * age_score
+
+        return 0.77 * length_score + 0.23 * age_score
 
     def get_author_score_of(self, doc):
         author_scores = self.load_author_scores()
@@ -90,9 +94,9 @@ class OptimizeRankingModel(AbstractRankingModel):
         return data_dict
 
     def get_length_score_v1(self, doc):
-        result = self.classify_doc(doc)
-        print(f"len_doc_original:::{len(doc['text'])}")
-        print(f"result:::::{result}")
+        #result = self.classify_doc(doc)
+        #print(f"len_doc_original:::{len(doc['text'])}")
+        #print(f"result:::::{result}")
         if '?' in doc['text']:
             return 0.1
 
