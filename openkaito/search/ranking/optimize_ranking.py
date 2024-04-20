@@ -55,7 +55,8 @@ class OptimizeRankingModel(AbstractRankingModel):
         return data_dict
 
     def get_length_score(self, doc):
-        if ('!' in doc['text']) or ('?' in doc['text']):
+        print(f"len_doc_original:::{len(doc['text'])}")
+        if '?' in doc['text']:
             return 0.1
 
         if len(doc['text']) > 200:
