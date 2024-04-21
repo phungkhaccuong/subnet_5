@@ -53,7 +53,7 @@ def generate_author_index_task(
     random_authors = random.sample(author_usernames, 2)
     return StructuredSearchSynapse(
         size=size,
-        author_usernames=['AllThingsETH'],
+        author_usernames=['MetaHunter168'],
         version=get_version(),
     )
 
