@@ -33,7 +33,7 @@ class OptimizeRankingModel(AbstractRankingModel):
                 reverse=True,
             )
 
-            print("HEEEEEEEEEEEEEEEEEEEEEEE")
+            print("OptimizeRankingModelllllllllllllllllllllllllllllll")
             print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs[:10]}")
             return ranked_docs
         else:
@@ -43,7 +43,7 @@ class OptimizeRankingModel(AbstractRankingModel):
                 key=lambda doc: self.compute_score_v1(query, doc, max_age, now),
                 reverse=True,
             )
-            print("HIIIIIIIIIIIIIIIIIIIIIIII")
+            print("OptimizeRankingModelllllllllllllllllllllllllllllllllll")
             print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs[:10]}")
             return ranked_docs
 
@@ -99,12 +99,6 @@ class OptimizeRankingModel(AbstractRankingModel):
         return data_dict
 
     def get_length_score_v1(self, doc):
-        #result = self.classify_doc(doc)
-        #print(f"len_doc_original:::{len(doc['text'])}")
-        #print(f"result:::::{result}")
-        if '?' in doc['text']:
-            return 0.1
-
         if len(doc['text']) > 200:
             return 1
         elif len(doc['text']) > 150:
@@ -221,6 +215,8 @@ class OptimizeRankingModelV1(AbstractRankingModel):
             key=lambda doc: self.compute_score(query, doc, max_age, now),
             reverse=True,
         )
+        print("OptimizeRankingModelV11111111111111111111111111111111111111111111111111111111111")
+        print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs[:10]}")
         return ranked_docs
 
     def compute_score(self, query, doc, max_age, now):
