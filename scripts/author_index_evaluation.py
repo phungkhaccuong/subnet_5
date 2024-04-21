@@ -39,7 +39,7 @@ def main():
     )
 
     ranking_models = [
-        HeuristicRankingModel(length_weight=0.3, age_weight=0.7),
+        HeuristicRankingModel(length_weight=0.8, age_weight=0.2),
         OptimizeRankingModel(length_weight=0.8, age_weight=0.2),
         OptimizeRankingModelV1(length_weight=0.77, age_weight=0.23),
     ]
