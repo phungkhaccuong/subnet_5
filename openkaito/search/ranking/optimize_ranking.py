@@ -32,6 +32,9 @@ class OptimizeRankingModel(AbstractRankingModel):
                 key=lambda doc: self.compute_score(query, doc, max_age, now),
                 reverse=True,
             )
+
+            print("HEEEEEEEEEEEEEEEEEEEEEEE")
+            print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs}")
             return ranked_docs
         else:
             print("HIIIIIIIIIIIIIIIIIIIIIIII")
@@ -40,6 +43,8 @@ class OptimizeRankingModel(AbstractRankingModel):
                 key=lambda doc: self.compute_score_v1(query, doc, max_age, now),
                 reverse=True,
             )
+            print("HIIIIIIIIIIIIIIIIIIIIIIII")
+            print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs}")
             return ranked_docs
 
     def check_to_switch(self, documents):
