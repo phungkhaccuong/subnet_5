@@ -58,7 +58,7 @@ class CrawlJob():
     def load_authors(self):
         with open("twitter_usernames.txt") as f:
             twitter_usernames = f.read().strip().splitlines()
-        self.twitter_usernames = ['WuBlockchain', 'MetaHunter168', 'AlexanderGrieve', 'NorthRockLP', 'HerculesFromLJ', 'AllThingsETH', 'BrainBroCrypto', '0xchichi','plantofcrypto', 'odnumrey', 'MrOppa_Eth', 'Thothofcrypto']
+        self.twitter_usernames = ['WuBlockchain']
 
     def run(self, evaluator):
         self.load_authors()
