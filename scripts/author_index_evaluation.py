@@ -6,7 +6,7 @@ from elasticsearch import Elasticsearch
 
 from openkaito.crawlers.twitter.apidojo import ApiDojoTwitterCrawler
 from openkaito.evaluation.evaluator import Evaluator
-from openkaito.search.ranking import OptimizeRankingModel, OptimizeRankingModelV1
+from openkaito.search.ranking import OptimizeRankingModel, OptimizeRankingModelV1, HeuristicRankingModel
 from openkaito.search.structured_search_engine import StructuredSearchEngine
 from openkaito.tasks import generate_author_index_task
 
@@ -39,7 +39,7 @@ def main():
     )
 
     ranking_models = [
-        #HeuristicRankingModel(length_weight=0.3, age_weight=0.7),
+        HeuristicRankingModel(length_weight=0.3, age_weight=0.7),
         OptimizeRankingModel(length_weight=0.8, age_weight=0.2),
         OptimizeRankingModelV1(length_weight=0.77, age_weight=0.23),
     ]
