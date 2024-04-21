@@ -162,7 +162,7 @@ class StructuredSearchEngine:
         """
 
         recalled_items = self.simple_recall(
-            search_query=search_query, recall_size=100
+            search_query=search_query, recall_size=200
         )
 
         return recalled_items;
