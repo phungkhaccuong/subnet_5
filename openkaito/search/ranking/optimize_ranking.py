@@ -37,7 +37,7 @@ class OptimizeRankingModel(AbstractRankingModel):
             print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs}")
             return ranked_docs
         else:
-            print("HIIIIIIIIIIIIIIIIIIIIIIII ")
+            print("HIIIIIIIIIIIIIIIIIIIIIIII   ")
             ranked_docs = sorted(
                 documents,
                 key=lambda doc: self.compute_score_v1(query, doc, max_age, now),
