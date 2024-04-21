@@ -36,8 +36,10 @@ class StructuredSearchEngine:
             "reply_count": doc["reply_count"],
             "retweet_count": doc["retweet_count"],
             "favorite_count": doc["favorite_count"],
-            "choice": "",
-            "reason": ""
+            # "choice": "",
+            # "reason": "",
+            "choice": doc["choice"],
+            "reason": doc["reason"],
         }
 
     def init_indices(self):
