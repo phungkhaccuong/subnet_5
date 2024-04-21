@@ -36,7 +36,7 @@ def main():
     )
 
     with open("twitter_usernames.txt") as f:
-        twitter_usernames = f.read().strip().splitlines()
+        twitter_usernames = ['WuBlockchain', 'sleepdiplomat', 'fusionistio', 'MetaHunter168', 'AlexanderGrieve', 'NorthRockLP', 'HerculesFromLJ', 'AllThingsETH', 'BrainBroCrypto', '0xchichi','plantofcrypto', 'odnumrey', 'MrOppa_Eth', 'Thothofcrypto']
 
     for username in twitter_usernames:
         query = StructuredSearchSynapse(
