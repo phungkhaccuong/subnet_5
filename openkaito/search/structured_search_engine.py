@@ -36,8 +36,8 @@ class StructuredSearchEngine:
             "reply_count": doc["reply_count"],
             "retweet_count": doc["retweet_count"],
             "favorite_count": doc["favorite_count"],
-            "choice": doc["choice"] if(isinstance(doc["choice"], str)) else " ",
-            "reason": doc["reason"] if(isinstance(doc["reason"], str)) else " "
+            "choice": "",
+            "reason": ""
         }
 
     def init_indices(self):
