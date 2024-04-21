@@ -110,49 +110,49 @@ class OptimizeRankingModel(AbstractRankingModel):
         else:
             return 0
 
-    # def get_length_score(self, doc):
-    #     result = self.classify_doc(doc)
-    #     print(f"len_doc_original:::{len(doc['text'])}")
-    #     print(f"result:::::{result}")
-    #     if '?' in doc['text']:
-    #         return 0.1
-    #
-    #     if result is None:
-    #         return 0.1
-    #
-    #     if result['flattened_words'] >= 60:
-    #         return 1
-    #     if result['flattened_words'] >= 50:
-    #         return 0.75
-    #     if result['flattened_words'] >= 40:
-    #         return 0.5
-    #     if result['flattened_words'] >= 30:
-    #         return 0.25
-    #     if result['flattened_words'] >= 20:
-    #         return 0.15
-    #     else:
-    #         return 0
-
     def get_length_score(self, doc):
         result = self.classify_doc(doc)
-        #print(f"[compute_score_word]:{result}")
-
+        # print(f"len_doc_original:::{len(doc['text'])}")
+        # print(f"result:::::{result}")
         if '?' in doc['text']:
             return 0.1
 
         if result is None:
             return 0.1
 
-        if result['sentences'] >= 5:
+        if result['flattened_words'] >= 60:
             return 1
-        if result['sentences'] >= 4:
+        if result['flattened_words'] >= 50:
             return 0.75
-        if result['sentences'] >= 3:
+        if result['flattened_words'] >= 40:
             return 0.5
-        if result['sentences'] >= 2:
+        if result['flattened_words'] >= 30:
             return 0.25
+        if result['flattened_words'] >= 20:
+            return 0.15
         else:
             return 0
+
+    # def get_length_score(self, doc):
+    #     result = self.classify_doc(doc)
+    #     #print(f"[compute_score_word]:{result}")
+    #
+    #     if '?' in doc['text']:
+    #         return 0.1
+    #
+    #     if result is None:
+    #         return 0.1
+    #
+    #     if result['sentences'] >= 5:
+    #         return 1
+    #     if result['sentences'] >= 4:
+    #         return 0.75
+    #     if result['sentences'] >= 3:
+    #         return 0.5
+    #     if result['sentences'] >= 2:
+    #         return 0.25
+    #     else:
+    #         return 0
 
     def text_length_score(self, text_length):
         return math.log(text_length + 1) / 10
