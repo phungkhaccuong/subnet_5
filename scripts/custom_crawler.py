@@ -15,7 +15,7 @@ def main():
     load_dotenv()
     bt.logging.set_debug(True)
 
-    crawl_size = 150
+    crawl_size = 100
 
     twitter_crawler = ApiDojoTwitterCrawler(os.environ["APIFY_API_KEY"])
     search_client = Elasticsearch(
