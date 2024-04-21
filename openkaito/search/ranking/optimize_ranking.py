@@ -33,7 +33,7 @@ class OptimizeRankingModel(AbstractRankingModel):
                 reverse=True,
             )
 
-            print("OptimizeRankingModelllllllllllllllllllllllllllllll")
+            print("OptimizeRankingModelllllllllllllllllllllllllllllll-HEEEEEEEEEEEEEEEEEEEEEEEEE")
             print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs[:10]}")
             return ranked_docs
         else:
@@ -43,7 +43,7 @@ class OptimizeRankingModel(AbstractRankingModel):
                 key=lambda doc: self.compute_score_v1(query, doc, max_age, now),
                 reverse=True,
             )
-            print("OptimizeRankingModelllllllllllllllllllllllllllllllllll")
+            print("OptimizeRankingModelllllllllllllllllllllllllllllllllll-HIIIIIIIIIIIIIIIIIIIIIIIII")
             print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs[:10]}")
             return ranked_docs
 
