@@ -36,8 +36,8 @@ class StructuredSearchEngine:
             "reply_count": doc["reply_count"],
             "retweet_count": doc["retweet_count"],
             "favorite_count": doc["favorite_count"],
-            "choice": "",
-            "reason": ""
+            "choice": doc["choice"],
+            "reason": doc["reason"]
         }
 
     def init_indices(self):
@@ -79,14 +79,20 @@ class StructuredSearchEngine:
         result_size = search_query.size
 
         recalled_items = self.recall(
-            search_query=search_query, recall_size=self.recall_size
+            search_query=search_query, recall_size=200
         )
+
+        print(f"///////////////////////////////////////////////////////////////////////////////////////////////////////////")
+
+        print(f"ITEM:::{recalled_items}")
+
+        print(f"///////////////////////////////////////////////////////////////////////////////////////////////////////////")
 
         ranking_model = self.relevance_ranking_model
 
         results = ranking_model.rank(search_query.query_string, recalled_items)
 
-        return results[:result_size]
+        return results[:50]
 
     def recall(self, search_query, recall_size):
         """

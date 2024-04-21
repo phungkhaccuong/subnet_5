@@ -10,8 +10,10 @@ from elasticsearch import Elasticsearch
 from openkaito.crawlers.twitter.microworlds import MicroworldsTwitterCrawler
 from openkaito.evaluation.evaluator import Evaluator
 from openkaito.protocol import SearchSynapse, SortType, StructuredSearchSynapse
+from openkaito.search.ranking import OptimizeRankingModelV1
 from openkaito.search.ranking.heuristic_ranking import HeuristicRankingModel
 from openkaito.search.structured_search_engine import StructuredSearchEngine
+from openkaito.tasks import generate_author_index_task
 
 
 def parse_args():
@@ -53,7 +55,7 @@ def main():
     )
 
     # for ranking recalled results
-    ranking_model = HeuristicRankingModel(length_weight=0.8, age_weight=0.2)
+    ranking_model = OptimizeRankingModelV1(length_weight=0.8, age_weight=0.2)
 
     search_engine = StructuredSearchEngine(
         search_client=search_client,
@@ -66,6 +68,8 @@ def main():
         size=args.size,
     )
 
+    search_query = generate_author_index_task(size=10, num_authors=2)
+
     print(search_query)
 
     ranked_docs = search_engine.search(search_query=search_query)
@@ -73,9 +77,9 @@ def main():
     print(ranked_docs)
 
     # note this is the llm score, skipped integrity check and batch age score
-    score = evaluator.llm_keyword_ranking_evaluation(args.query, ranked_docs)
-    print("======LLM Score======")
-    print(score)
+    # score = evaluator.llm_keyword_ranking_evaluation(args.query, ranked_docs)
+    # print("======LLM Score======")
+    # print(score)
 
 
 if __name__ == "__main__":
