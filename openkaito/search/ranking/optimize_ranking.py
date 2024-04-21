@@ -46,7 +46,7 @@ class OptimizeRankingModel(AbstractRankingModel):
         unique_names = list({item["username"] for item in documents})
         scores = self.load_author_scores()
         scores_of_unique_names = [float(score["score"]) for score in scores if score["username"] in unique_names]
-        print(f"LIST_SCORE::::{scores_of_unique_names}")
+        print(f"LIST_SCORE:::::::::::::::::::::::::::::::::::::::::::::::::::::{scores_of_unique_names}")
         return any(score >= 0.3 for score in scores_of_unique_names)
 
     def get_author_score_of(self, doc):
@@ -56,28 +56,28 @@ class OptimizeRankingModel(AbstractRankingModel):
 
 
     def compute_score(self, query, doc, max_age, now):
-        #print(f"[DOC]::::::::::::::::{doc}:::::::::::::::::::::::::::::::::::::::::::::")
+        print(f"[DOC]::::::::::::::::{doc}:::::::::::::::::::::::::::::::::::::::::::::")
         age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
 
         length_score = self.get_length_score(doc)
-        #print(f"length_score::::{length_score}")
+        print(f"length_score::::{length_score}")
         age_score = self.age_score(age, max_age)
-        #print(f"age_score::::{age_score}")
+        print(f"age_score::::{age_score}")
         author_score = self.get_author_score_of(doc)
-        #(f"author_score::::{author_score}")
-        #print(f"RESULT::::{self.length_weight * length_score * author_score + self.age_weight * age_score}")
+        print(f"author_score::::{author_score}")
+        print(f"RESULT::::{self.length_weight * length_score * author_score + self.age_weight * age_score}")
         #return self.length_weight * length_score * author_score + self.age_weight * age_score
 
         return 0.8 * length_score * author_score + 0.2 * age_score
 
     def compute_score_v1(self, query, doc, max_age, now):
-        #print(f"[DOC]::::::::::::::::{doc}:::::::::::::::::::::::::::::::::::::::::::::")
+        print(f"[DOC]::::::::::::::::{doc}:::::::::::::::::::::::::::::::::::::::::::::")
         age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
         length_score = self.get_length_score_v1(doc)
-        #print(f"length_score::::{length_score}")
+        print(f"length_score::::{length_score}")
         age_score = self.age_score(age, max_age)
-        #print(f"age_score::::{age_score}")
-        #print(f"RESULT::::{self.length_weight * length_score + self.age_weight * age_score}")
+        print(f"age_score::::{age_score}")
+        print(f"RESULT::::{self.length_weight * length_score + self.age_weight * age_score}")
         #return self.length_weight * length_score + self.age_weight * age_score
 
         return 0.77 * length_score + 0.23 * age_score
