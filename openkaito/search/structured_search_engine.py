@@ -36,8 +36,8 @@ class StructuredSearchEngine:
             "reply_count": doc["reply_count"],
             "retweet_count": doc["retweet_count"],
             "favorite_count": doc["favorite_count"],
-            "choice": doc["choice"],
-            "reason": doc["reason"]
+            "choice": doc["choice"] if(isinstance(doc["choice"], str)) else " ",
+            "reason": doc["reason"] if(isinstance(doc["reason"], str)) else " "
         }
 
     def init_indices(self):
@@ -149,8 +149,10 @@ class StructuredSearchEngine:
             )
             documents = response["hits"]["hits"]
             results = []
+            print("hererer")
             for document in documents if documents else []:
                 doc = document["_source"]
+                print("ok")
                 results.append(self.twitter_doc_mapper(doc))
             bt.logging.info(f"retrieved {len(results)} results")
             bt.logging.trace(f"results: ")
