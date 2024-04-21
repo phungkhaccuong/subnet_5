@@ -34,7 +34,7 @@ class OptimizeRankingModel(AbstractRankingModel):
             )
 
             print("HEEEEEEEEEEEEEEEEEEEEEEE")
-            print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs}")
+            print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs[:10]}")
             return ranked_docs
         else:
             print("HIIIIIIIIIIIIIIIIIIIIIIII   ")
@@ -44,7 +44,7 @@ class OptimizeRankingModel(AbstractRankingModel):
                 reverse=True,
             )
             print("HIIIIIIIIIIIIIIIIIIIIIIII")
-            print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs}")
+            print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs[:10]}")
             return ranked_docs
 
     def check_to_switch(self, documents):
