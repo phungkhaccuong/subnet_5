@@ -15,7 +15,7 @@ def main():
     load_dotenv()
     bt.logging.set_debug(True)
 
-    crawl_size = 100
+    crawl_size = 80
 
     twitter_crawler = ApiDojoTwitterCrawler(os.environ["APIFY_API_KEY"])
     search_client = Elasticsearch(
@@ -36,7 +36,46 @@ def main():
     )
 
     with open("twitter_usernames.txt") as f:
-        twitter_usernames = ['WuBlockchain', 'sleepdiplomat', 'fusionistio', 'MetaHunter168', 'AlexanderGrieve', 'NorthRockLP', 'HerculesFromLJ', 'AllThingsETH', 'BrainBroCrypto', '0xchichi','plantofcrypto', 'odnumrey', 'MrOppa_Eth', 'Thothofcrypto']
+        twitter_usernames = ['HsakaTrades',
+'Cbb0fe',
+'0xCaptainLevi',
+'Vombatus_eth',
+'HerroCrypto',
+'dingalingts',
+'HanweChang',
+'0xLawliette',
+'blknoiz06',
+'machibigbrother',
+'CL207',
+'0x5f_eth',
+'CapitalGrug',
+'0xSisyphus',
+'Banks',
+'Christianeth',
+'saliencexbt',
+'pokerbrat2019',
+'zhusu',
+'ManifoldTrading',
+'pranksy',
+'0xmj23',
+'lBattleRhino',
+'LomahCrypto',
+'RookieXBT',
+'sayinshallah',
+'VentureCoinist',
+'const_phoenixed',
+'onetimebb',
+'pokeepandaa',
+'crypto_bitlord7',
+'iam4x',
+'cryptowilliamm',
+'Arthur_0x',
+'xcurveth',
+'lsp8940',
+'TeamUnibot',
+'Anonymoux2311',
+'iloveponzi',
+'0xAdelina']
 
     for username in twitter_usernames:
         query = StructuredSearchSynapse(
