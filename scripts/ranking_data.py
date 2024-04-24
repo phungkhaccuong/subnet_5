@@ -57,17 +57,17 @@ class CrawlJob():
 
     def load_authors(self):
         with open("twitter_usernames.txt") as f:
-            twitter_usernames = f.read().strip().splitlines()
-        self.twitter_usernames = ['AlexanderGrieve']
+            self.twitter_usernames = f.read().strip().splitlines()
 
     def run(self, evaluator):
         self.load_authors()
         bt.logging.info(f"load usernames successful")
         for i in range(0, len(self.twitter_usernames)):
             # get data from elas
+            print(f"START:::{i} user:::{self.twitter_usernames[i]}")
             search_query = StructuredSearchSynapse(
                 author_usernames=[self.twitter_usernames[i]],
-                size=90,
+                size=149,
             )
             results_search = self.structured_search_engine.search_and_mark(search_query)
             processed_docs = evaluator.llm_author_index_data_evaluation_optimize(results_search)
