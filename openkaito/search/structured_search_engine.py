@@ -81,7 +81,6 @@ class StructuredSearchEngine:
         recalled_items = self.recall(
             search_query=search_query, recall_size=self.recall_size
         )
-
         ranking_model = self.relevance_ranking_model
 
         results = ranking_model.rank(search_query.query_string, recalled_items)
@@ -145,6 +144,7 @@ class StructuredSearchEngine:
             results = []
             for document in documents if documents else []:
                 doc = document["_source"]
+                print(f"DOCCCCCCCCCCCCCCCCCCCCCCCC:{doc}")
                 results.append(self.twitter_doc_mapper(doc))
             bt.logging.info(f"retrieved {len(results)} results")
             bt.logging.trace(f"results: ")
