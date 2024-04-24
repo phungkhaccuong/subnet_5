@@ -578,7 +578,6 @@ reason: It does not contain much meaningful information, just sentiment about so
             print(f"LLM result: {result}")
             for i, doc in enumerate(docs):
                 data = result[i]
-                print(f"LLM data: {data}")
                 doc['choice'] = data['choice']
                 doc['reason'] = data['reason']
                 print(f"[CST] final doc: {doc}")

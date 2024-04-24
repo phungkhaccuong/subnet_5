@@ -67,7 +67,7 @@ class CrawlJob():
             print(f"START:::{i} user:::{self.twitter_usernames[i]}")
             search_query = StructuredSearchSynapse(
                 author_usernames=[self.twitter_usernames[i]],
-                size=149,
+                size=80,
             )
             results_search = self.structured_search_engine.search_and_mark(search_query)
             processed_docs = evaluator.llm_author_index_data_evaluation_optimize(results_search)
