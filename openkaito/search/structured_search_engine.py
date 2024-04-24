@@ -36,8 +36,10 @@ class StructuredSearchEngine:
             "reply_count": doc["reply_count"],
             "retweet_count": doc["retweet_count"],
             "favorite_count": doc["favorite_count"],
-            "choice": doc['choice'],
-            "reason": doc['reason']
+            # "choice": doc['choice'],
+            # "reason": doc['reason'],
+            "choice": "",
+            "reason": ""
         }
 
     def init_indices(self):
@@ -215,6 +217,7 @@ class StructuredSearchEngine:
             for document in documents if documents else []:
                 print(f"DOCUMENT:::{document}")
                 doc = document["_source"]
+                doc['']
                 results.append(self.twitter_doc_mapper(doc))
             bt.logging.info(f"retrieved {len(results)} results")
             return results
