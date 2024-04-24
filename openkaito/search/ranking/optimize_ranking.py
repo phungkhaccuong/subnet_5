@@ -26,25 +26,19 @@ class OptimizeRankingModel(AbstractRankingModel):
 
         check = self.check_to_switch(documents)
         if (check):
-            print("HEEEEEEEEEEEEEEEEEEEEEEE")
             ranked_docs = sorted(
                 documents,
                 key=lambda doc: self.compute_score(query, doc, max_age, now),
                 reverse=True,
             )
 
-            print("OptimizeRankingModelllllllllllllllllllllllllllllll-HEEEEEEEEEEEEEEEEEEEEEEEEE")
-            print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs[:10]}")
             return ranked_docs
         else:
-            print("HIIIIIIIIIIIIIIIIIIIIIIII   ")
             ranked_docs = sorted(
                 documents,
                 key=lambda doc: self.compute_score_v1(query, doc, max_age, now),
                 reverse=True,
             )
-            print("OptimizeRankingModelllllllllllllllllllllllllllllllllll-HIIIIIIIIIIIIIIIIIIIIIIIII")
-            print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs[:10]}")
             return ranked_docs
 
     def check_to_switch(self, documents):
@@ -73,7 +67,7 @@ class OptimizeRankingModel(AbstractRankingModel):
         print(f"RESULT::::{self.length_weight * length_score * author_score + self.age_weight * age_score}")
         #return self.length_weight * length_score * author_score + self.age_weight * age_score
 
-        return 0.8 * length_score * author_score + 0.2 * age_score
+        return 0.2 * length_score + 0.2*   + 0.4* author_score + 0.2 * age_score
 
     def compute_score_v1(self, query, doc, max_age, now):
         print(f"[DOC]::::::::::::::::{doc}:::::::::::::::::::::::::::::::::::::::::::::")
