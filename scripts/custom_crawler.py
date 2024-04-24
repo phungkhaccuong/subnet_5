@@ -39,6 +39,7 @@ def main():
         twitter_usernames = f.read().strip().splitlines()
 
     for username in twitter_usernames:
+        print(f"user::::{username}")
         query = StructuredSearchSynapse(
             size=crawl_size,
             author_usernames=[username],
