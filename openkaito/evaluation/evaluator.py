@@ -576,11 +576,11 @@ reason: It does not contain much meaningful information, just sentiment about so
             result = json.loads(output.choices[0].message.content)
             result = result['results']
             print(f"LLM result: {result}")
-            for i, doc in enumerate(docs):
-                data = result[i]
-                print(f"LLM data: {data}")
-                doc['choice'] = data['choice']
-                doc['reason'] = data['reason']
+            for i, re in enumerate(result):
+                doc = docs[i]
+                print(f"LLM data: {re}")
+                doc['choice'] = re['choice']
+                doc['reason'] = re['reason']
                 print(f"[CST] final doc: {doc}")
             return docs
         except Exception as e:
