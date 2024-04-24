@@ -217,7 +217,6 @@ class StructuredSearchEngine:
             for document in documents if documents else []:
                 print(f"DOCUMENT:::{document}")
                 doc = document["_source"]
-                doc['']
                 results.append(self.twitter_doc_mapper(doc))
             bt.logging.info(f"retrieved {len(results)} results")
             return results
