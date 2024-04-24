@@ -490,6 +490,7 @@ reason: It does not contain much meaningful information, just sentiment about so
         if docs is None or len(docs) == 0:
             return [0]
         try:
+            print(f"DOC_LENGTH:::::::::::::::::::::::::::::::::::::::::::::{len(docs)}")
             newline = "\n"
             prompt_docs = "\n\n".join(
                 [
