@@ -23,42 +23,12 @@ class OptimizeRankingModel(AbstractRankingModel):
         now = datetime.now(timezone.utc)
         ages = [(now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds() for doc in documents]
         max_age = 1 if len(ages) == 0 else max(ages)
-
-        check = self.check_to_switch(documents)
-        if (check):
-            print("HEEEEEEEEEEEEEEEEEEEEEEE")
-            ranked_docs = sorted(
-                documents,
-                key=lambda doc: self.compute_score(query, doc, max_age, now),
-                reverse=True,
-            )
-
-            print("OptimizeRankingModelllllllllllllllllllllllllllllll-HEEEEEEEEEEEEEEEEEEEEEEEEE")
-            print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs[:10]}")
-            return ranked_docs
-        else:
-            print("HIIIIIIIIIIIIIIIIIIIIIIII   ")
-            ranked_docs = sorted(
-                documents,
-                key=lambda doc: self.compute_score_v1(query, doc, max_age, now),
-                reverse=True,
-            )
-            print("OptimizeRankingModelllllllllllllllllllllllllllllllllll-HIIIIIIIIIIIIIIIIIIIIIIIII")
-            print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs[:10]}")
-            return ranked_docs
-
-    def check_to_switch(self, documents):
-        unique_names = list({item["username"] for item in documents})
-        scores = self.load_author_scores()
-        scores_of_unique_names = [float(score["score"]) for score in scores if score["username"] in unique_names]
-        print(f"LIST_SCORE:::::::::::::::::::::::::::::::::::::::::::::::::::::{scores_of_unique_names}")
-        return any(score >= 0.3 for score in scores_of_unique_names)
-
-    def get_author_score_of(self, doc):
-        author_scores = self.load_author_scores()
-        founds = [author_score for author_score in author_scores if author_score['username'] == doc['username']]
-        return 0 if len(founds) == 0 else float(founds[0]['score'])
-
+        ranked_docs = sorted(
+            documents,
+            key=lambda doc: self.compute_score(query, doc, max_age, now),
+            reverse=True,
+        )
+        return ranked_docs
 
     def compute_score(self, query, doc, max_age, now):
         print(f"[DOC]::::::::::::::::{doc}:::::::::::::::::::::::::::::::::::::::::::::")
@@ -66,28 +36,28 @@ class OptimizeRankingModel(AbstractRankingModel):
 
         length_score = self.get_length_score(doc)
         print(f"length_score::::{length_score}")
+        choice = self.get_choice_score(doc)
         age_score = self.age_score(age, max_age)
         print(f"age_score::::{age_score}")
-        author_score = self.get_author_score_of(doc)
-        print(f"author_score::::{author_score}")
-        print(f"RESULT::::{self.length_weight * length_score * author_score + self.age_weight * age_score}")
-        #return self.length_weight * length_score * author_score + self.age_weight * age_score
+        author_score = self.get_author_score(doc)
 
-        return 0.8 * length_score * author_score + 0.2 * age_score
+        return 0.2 * length_score + 0.2 * choice + 0.2 * author_score + 0.2 * age_score
 
-    def compute_score_v1(self, query, doc, max_age, now):
-        print(f"[DOC]::::::::::::::::{doc}:::::::::::::::::::::::::::::::::::::::::::::")
-        age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
-        length_score = self.get_length_score_v1(doc)
-        print(f"length_score::::{length_score}")
-        age_score = self.age_score(age, max_age)
-        print(f"age_score::::{age_score}")
-        print(f"RESULT::::{self.length_weight * length_score + self.age_weight * age_score}")
-        #return self.length_weight * length_score + self.age_weight * age_score
+    def get_choice_score(self, doc):
+        try:
+            choice = doc['choice']
+            if choice == 'insightful':
+                return 0.62
+            elif choice == 'somewhat insightful':
+                return 0.3358
+            elif choice == 'insightless':
+                return 0.0876
+            else:
+                return 0.04395
+        except Exception as e:
+            return 0.0876
 
-        return 0.77 * length_score + 0.23 * age_score
-
-    def get_author_score_of(self, doc):
+    def get_author_score(self, doc):
         author_scores = self.load_author_scores()
         founds = [author_score for author_score in author_scores if author_score['username'] == doc['username']]
         return 0 if len(founds) == 0 else float(founds[0]['score'])
@@ -98,64 +68,26 @@ class OptimizeRankingModel(AbstractRankingModel):
             data_dict = [row for row in reader]
         return data_dict
 
-    def get_length_score_v1(self, doc):
-        if len(doc['text']) > 200:
-            return 1
-        elif len(doc['text']) > 150:
-            return 0.75
-        elif len(doc['text']) > 100:
-            return 0.5
-        elif len(doc['text']) > 75:
-            return 0.25
-        else:
-            return 0
-
     def get_length_score(self, doc):
-        result = self.classify_doc(doc)
-        # print(f"len_doc_original:::{len(doc['text'])}")
-        # print(f"result:::::{result}")
-        if '?' in doc['text']:
-            return 0.1
-
-        if result is None:
-            return 0.1
-
-        if result['flattened_words'] >= 60:
-            return 1
-        if result['flattened_words'] >= 50:
-            return 0.75
-        if result['flattened_words'] >= 40:
-            return 0.5
-        if result['flattened_words'] >= 30:
-            return 0.25
-        if result['flattened_words'] >= 20:
-            return 0.15
+        len_doc = len(doc['text'])
+        if len_doc >= 244:
+            return 0.5744
+        elif (len_doc >= 150) and (len_doc < 244):
+            return 0.3667
+        elif (len_doc >= 139) and (len_doc < 150):
+            return 0.264
+        elif (len_doc >= 110) and (len_doc < 139):
+            return 0.1936
+        elif (len_doc >= 85) and (len_doc < 110):
+            return 0.134
+        elif (len_doc >= 65) and (len_doc < 85):
+            return 0.072
+        elif (len_doc >= 48) and (len_doc < 65):
+            return 0.043
+        elif (len_doc >= 30) and (len_doc < 48):
+            return 0.023
         else:
-            return 0
-
-    # def get_length_score(self, doc):
-    #     result = self.classify_doc(doc)
-    #     #print(f"[compute_score_word]:{result}")
-    #
-    #     if '?' in doc['text']:
-    #         return 0.1
-    #
-    #     if result is None:
-    #         return 0.1
-    #
-    #     if result['sentences'] >= 5:
-    #         return 1
-    #     if result['sentences'] >= 4:
-    #         return 0.75
-    #     if result['sentences'] >= 3:
-    #         return 0.5
-    #     if result['sentences'] >= 2:
-    #         return 0.25
-    #     else:
-    #         return 0
-
-    def text_length_score(self, text_length):
-        return math.log(text_length + 1) / 10
+            return 0.007
 
     def age_score(self, age, max_age):
         return 1 - (age / (max_age + 1))
