@@ -147,8 +147,7 @@ class OptimizeRankingModelV1(AbstractRankingModel):
             key=lambda doc: self.compute_score(query, doc, max_age, now),
             reverse=True,
         )
-        print("OptimizeRankingModelV11111111111111111111111111111111111111111111111111111111111")
-        print(f"RANKED_DOC::::::::::::::::::::::::::::::::::::::{ranked_docs[:10]}")
+
         return ranked_docs
 
     def compute_score(self, query, doc, max_age, now):
