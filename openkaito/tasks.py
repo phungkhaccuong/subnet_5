@@ -82,18 +82,7 @@ def generate_author_index_task(
 'pokeepandaa',
 'crypto_bitlord7',
 'iam4x',
-'cryptowilliamm',
-'Arthur_0x',
-'xcurveth',
-'lsp8940',
-'TeamUnibot',
-'Anonymoux2311',
-'iloveponzi',
-'0xAdelina',
-'friendtechindex',
-'The_Bogfather',
-'ag_dwf',
-'mooncat2878']
+'cryptowilliamm']
 
 
     random_authors = random.sample(author_usernames, 2)
