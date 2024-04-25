@@ -10,7 +10,7 @@ class StructuredSearchEngine:
         search_client,
         relevance_ranking_model,
         twitter_crawler=None,
-        recall_size=50,
+        recall_size=100,
     ):
         load_dotenv()
 

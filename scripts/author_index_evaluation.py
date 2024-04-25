@@ -48,7 +48,7 @@ def main():
             search_client=search_client,
             relevance_ranking_model=model,
             twitter_crawler=None,
-            recall_size=200
+            recall_size=100
         )
 
         for model in ranking_models
