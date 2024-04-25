@@ -31,13 +31,17 @@ class OptimizeRankingModel(AbstractRankingModel):
         return ranked_docs
 
     def compute_score(self, query, doc, max_age, now):
+        print(f"DOCCCCCCCCCCCCCC:{doc}")
         age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
-
         length_score = self.get_length_score(doc)
+        print(f"length_score::::::{length_score}")
         choice = self.get_choice_score(doc)
+        print(f"choice::::::{choice}")
         age_score = self.age_score(age, max_age)
+        print(f"age_score::::::{age_score}")
         author_score = self.get_author_score(doc)
-
+        print(f"author_score::::::{author_score}")
+        print(f"total score::::::{0.2 * length_score + 0.2 * choice + 0.2 * author_score + 0.2 * age_score}")
         return 0.2 * length_score + 0.2 * choice + 0.2 * author_score + 0.2 * age_score
 
     def get_choice_score(self, doc):
