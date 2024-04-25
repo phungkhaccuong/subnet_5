@@ -34,10 +34,10 @@ class OptimizeRankingModel(AbstractRankingModel):
         age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
 
         length_score = self.get_length_score(doc)
-        print(f"length_score::::{length_score}")
+        #print(f"length_score::::{length_score}")
         choice = self.get_choice_score(doc)
         age_score = self.age_score(age, max_age)
-        print(f"age_score::::{age_score}")
+        #print(f"age_score::::{age_score}")
         author_score = self.get_author_score(doc)
 
         return 0.2 * length_score + 0.2 * choice + 0.2 * author_score + 0.2 * age_score
