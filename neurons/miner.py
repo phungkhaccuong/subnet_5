@@ -78,7 +78,8 @@ class Miner(BaseMinerNeuron):
             search_client=search_client,
             relevance_ranking_model=ranking_model,
             twitter_crawler=twitter_crawler,
-            recall_size=self.config.neuron.search_recall_size,
+            #recall_size=self.config.neuron.search_recall_size,
+            recall_size=100,
         )
 
     async def forward_search(self, query: SearchSynapse) -> SearchSynapse:
@@ -97,12 +98,12 @@ class Miner(BaseMinerNeuron):
 
         if not self.config.neuron.disable_crawling:
             crawl_size = max(self.config.neuron.crawl_size, query.size)
-            self.structured_search_engine.crawl_and_index_data(
-                query_string=query.query_string,
-                author_usernames=None,
-                # crawl and index more data than needed to ensure we have enough to rank
-                max_size=crawl_size,
-            )
+            # self.structured_search_engine.crawl_and_index_data(
+            #     query_string=query.query_string,
+            #     author_usernames=None,
+            #     # crawl and index more data than needed to ensure we have enough to rank
+            #     max_size=crawl_size,
+            # )
 
         ranked_docs = self.structured_search_engine.search(query)
 
@@ -128,13 +129,13 @@ class Miner(BaseMinerNeuron):
         # miners may adjust this timeout config by themselves according to their own crawler speed and latency
         if query.timeout > 12:
             # do crawling and indexing, otherwise search from the existing index directly
-            crawl_size = max(self.config.neuron.crawl_size, query.size)
-            self.structured_search_engine.crawl_and_index_data(
-                query_string=query.query_string,
-                author_usernames=query.author_usernames,
-                # crawl and index more data than needed to ensure we have enough to rank
-                max_size=crawl_size,
-            )
+            # crawl_size = max(self.config.neuron.crawl_size, query.size)
+            # self.structured_search_engine.crawl_and_index_data(
+            #     query_string=query.query_string,
+            #     author_usernames=query.author_usernames,
+            #     # crawl and index more data than needed to ensure we have enough to rank
+            #     max_size=crawl_size,
+            # )
 
         # disable crawling for structured search by default
         ranked_docs = self.structured_search_engine.search(query)

@@ -8,11 +8,11 @@ from ..utils.embeddings import pad_tensor, text_embedding, MAX_EMBEDDING_DIM
 
 class StructuredSearchEngine:
     def __init__(
-        self,
-        search_client,
-        relevance_ranking_model,
-        twitter_crawler=None,
-        recall_size=50,
+            self,
+            search_client,
+            relevance_ranking_model,
+            twitter_crawler=None,
+            recall_size=50,
     ):
         load_dotenv()
 
@@ -75,6 +75,8 @@ class StructuredSearchEngine:
         """
 
         result_size = search_query.size
+
+        bt.logging.info(f"recall_size:::{self.recall_size}")
 
         recalled_items = self.recall(
             search_query=search_query, recall_size=self.recall_size
