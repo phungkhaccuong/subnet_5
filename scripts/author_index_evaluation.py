@@ -74,3 +74,4 @@ if __name__ == "__main__":
         else:
             default += 1
         print(f"optimize::{optimize} default::{default}")
+        time.sleep(4)
