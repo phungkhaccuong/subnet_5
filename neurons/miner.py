@@ -127,7 +127,7 @@ class Miner(BaseMinerNeuron):
         self.check_version(query)
 
         # miners may adjust this timeout config by themselves according to their own crawler speed and latency
-        if query.timeout > 12:
+        #if query.timeout > 12:
             # do crawling and indexing, otherwise search from the existing index directly
             # crawl_size = max(self.config.neuron.crawl_size, query.size)
             # self.structured_search_engine.crawl_and_index_data(
