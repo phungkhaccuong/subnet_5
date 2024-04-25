@@ -64,7 +64,16 @@ def main():
 
     rewards = evaluator.evaluate(search_query, responses)
     print(f"Scored responses: {rewards}")
+    return rewards
 
 
 if __name__ == "__main__":
-    main()
+    optimize = 0
+    default = 0
+    for i in range(0, 50):
+        result = main()
+        if result[1] >= result[0] and result[1] >= result[2]:
+            optimize += 1
+        else:
+            default += 1
+        print(f"optimize::{optimize} default::{default}")
