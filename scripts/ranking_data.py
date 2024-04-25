@@ -57,32 +57,8 @@ class CrawlJob():
 
     def load_authors(self):
         with open("twitter_usernames.txt") as f:
-            twitter_usernames = f.read().strip().splitlines()
-        self.twitter_usernames = ['HsakaTrades',
-'Cbb0fe',
-'0xCaptainLevi',
-'Vombatus_eth',
-'HerroCrypto',
-'dingalingts',
-'HanweChang',
-'0xLawliette',
-'blknoiz06',
-'machibigbrother',
-'CL207',
-'0x5f_eth',
-'CapitalGrug',
-'0xSisyphus',
-'Banks',
-'Christianeth',
-'saliencexbt',
-'pokerbrat2019',
-'zhusu',
-'ManifoldTrading',
-'pranksy',
-'0xmj23',
-'lBattleRhino',
-'LomahCrypto',
-'RookieXBT']
+            self.twitter_usernames = f.read().strip().splitlines()
+
     def run(self, evaluator):
         self.load_authors()
         bt.logging.info(f"load usernames successful")
