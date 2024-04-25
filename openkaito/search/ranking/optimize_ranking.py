@@ -31,7 +31,6 @@ class OptimizeRankingModel(AbstractRankingModel):
         return ranked_docs
 
     def compute_score(self, query, doc, max_age, now):
-        print(f"[DOC]::::::::::::::::{doc}:::::::::::::::::::::::::::::::::::::::::::::")
         age = (now - datetime.fromisoformat(doc["created_at"].rstrip("Z"))).total_seconds()
 
         length_score = self.get_length_score(doc)
