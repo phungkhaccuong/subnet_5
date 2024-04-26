@@ -106,32 +106,42 @@ def indexing_docs(search_client):
     ):
         with open(doc_file, "r") as f:
             doc = json.load(f)
+            print(f"DOCCCCCCCCCCCCCCCCC:::::::{doc}")
             search_client.index(index=index_name, body=doc, id=doc["doc_id"])
 
 
 def indexing_embeddings(search_client):
     """Index embeddings of documents in Elasticsearch"""
+    i = 0;
     for doc in tqdm(
         helpers.scan(search_client, index=index_name),
         desc="Indexing embeddings",
         total=search_client.count(index=index_name)["count"],
     ):
+        i += 1
+        print(f"[indexing_embeddings DOC] :::{doc}")
         doc_id = doc["_id"]
         text = doc["_source"]["text"]
         embedding = text_embedding(text)[0]
+        print(f"[indexing_embeddings embedding] :::{embedding}")
         embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+        print(f"[indexing_embeddings embedding end] :::{embedding}")
         search_client.update(
             index=index_name,
             id=doc_id,
             body={"doc": {"embedding": embedding.tolist()}, "doc_as_upsert": True},
         )
+        if i == 999:
+            break
 
 
 def test_retrieval(search_client, query, topk=5):
     """Test retrieval of top-k similar documents to query"""
 
     embedding = text_embedding(query)[0]
+    print(f"[test_retrieval embedding] ::: {embedding}")
     embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+    print(f"[test_retrieval embedding end] ::: {embedding}")
     body = {
         "knn": {
             "field": "embedding",
@@ -184,9 +194,10 @@ if __name__ == "__main__":
 
     indexing_embeddings(search_client)
 
+    print("end indexing_embeddings")
     query = "What is the future of blockchain?"
     response = test_retrieval(search_client, query, topk=5)
-    # print(response)
+    print(f"{response}")
     for response in response["hits"]["hits"]:
         print(response["_source"]["created_at"])
         print(response["_source"]["episode_title"])

@@ -214,9 +214,10 @@ if __name__ == "__main__":
 
     dataset_dir = root_dir + "datasets/eth_denver_dataset"
     dataset_path = Path(dataset_dir)
+    print(f"dataset_path:::{dataset_path}")
 
     num_files = len(list(dataset_path.glob("*.json")))
-
+    print(f"num_files:::{num_files}")
     extract_eth_denver_dataset()
 
     search_client = Elasticsearch(
@@ -229,7 +230,7 @@ if __name__ == "__main__":
         ssl_show_warn=False,
     )
 
-    # drop_index(search_client, index_name)
+    drop_index(search_client, index_name)
     init_eth_denver_index(search_client)
 
     r = search_client.count(index=index_name)
