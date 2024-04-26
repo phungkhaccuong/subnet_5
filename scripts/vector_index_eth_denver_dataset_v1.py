@@ -180,6 +180,8 @@ def index_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_
                 embedding = text_embedding(text)
                 if isinstance(embedding, str):
                     embedding = [embedding]  # Convert to list if embedding is a string
+                elif isinstance(embedding, list) and isinstance(embedding[0], str):
+                    embedding = [float(emb) for emb in embedding]  # Convert string elements to float
 
                 embedding = pad_tensor(embedding[0], max_len=MAX_EMBEDDING_DIM)
                 batch_updates.append({
