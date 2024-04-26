@@ -20,8 +20,8 @@ from openkaito.utils.embeddings import pad_tensor, text_embedding, MAX_EMBEDDING
 root_dir = __file__.split("scripts")[0]
 index_name = "eth_denver"
 # Define your scroll timeout and batch size
-scroll_timeout = '10m'  # Adjust as needed
-batch_size = 1000  # Adjust as needed
+scroll_timeout = '30m'  # Adjust as needed
+batch_size = 800  # Adjust as needed
 
 
 ### Extract Eth Denver dataset
@@ -151,7 +151,7 @@ def test_retrieval(search_client, query, topk=5):
 
 
 # Function to index embeddings
-def index_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM):
+def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM):
     # Get total count of documents
     total_docs = search_client.count(index=index_name)["count"]
 
@@ -166,47 +166,22 @@ def index_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_
 
     pbar = tqdm(total=total_docs, desc="Indexing embeddings")
 
-    # Iterate over batches of documents
-    while True:
-        try:
-            batch = next(scroll)
-            batch_updates = []
-
-            for doc in batch:
-                if isinstance(doc, dict):
-                    doc = doc["_source"]
-                else:
-                    continue
-
-                doc_id = doc["_id"]
-                text = doc["text"]
-
-                # Ensure that text_embedding returns a list or array
-                embedding = text_embedding(text)
-                if isinstance(embedding, str):
-                    embedding = [embedding]  # Convert to list if embedding is a string
-                elif isinstance(embedding, list) and isinstance(embedding[0], str):
-                    embedding = [float(emb) for emb in embedding]  # Convert string elements to float
-
-                embedding = pad_tensor(embedding[0], max_len=MAX_EMBEDDING_DIM)
-                batch_updates.append({
-                    "_op_type": "update",
-                    "index": index_name,  # Use "index" instead of "_index"
-                    "id": doc_id,
-                    "doc": {"embedding": embedding.tolist()},
-                    "doc_as_upsert": True
-                })
-
-            # Bulk update
-            if batch_updates:
-                helpers.bulk(search_client, batch_updates)
-
-            pbar.update(len(batch))
-
-        except StopIteration:
-            break
+    # Iterate over documents
+    for doc in scroll:
+        doc_id = doc["_id"]
+        text = doc["_source"]["text"]
+        embedding = text_embedding(text)[0]
+        embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+        search_client.update(
+            index=index_name,
+            id=doc_id,
+            body={"doc": {"embedding": embedding.tolist()}, "doc_as_upsert": True},
+        )
+        pbar.update(1)
 
     pbar.close()
+
+
 
 
 if __name__ == "__main__":
@@ -229,7 +204,7 @@ if __name__ == "__main__":
         ssl_show_warn=False,
     )
 
-    # drop_index(search_client, index_name)
+    drop_index(search_client, index_name)
     init_eth_denver_index(search_client)
 
     r = search_client.count(index=index_name)
@@ -243,8 +218,7 @@ if __name__ == "__main__":
             f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
         )
     # Call the function to index embeddings
-    index_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM)
-    #indexing_embeddings(search_client)
+    indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM)
 
     query = "What is the future of blockchain?"
     response = test_retrieval(search_client, query, topk=5)
