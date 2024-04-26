@@ -173,7 +173,11 @@ def index_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_
             batch_updates = []
 
             for doc in batch:
-                doc = doc["_source"]
+                if isinstance(doc, dict):
+                    doc = doc["_source"]
+                else:
+                    continue
+
                 doc_id = doc["_id"]
                 text = doc["text"]
 
