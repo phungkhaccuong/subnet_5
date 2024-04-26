@@ -15,9 +15,7 @@ import torch
 from elasticsearch import Elasticsearch, helpers
 from dotenv import load_dotenv
 
-
 from openkaito.utils.embeddings import pad_tensor, text_embedding, MAX_EMBEDDING_DIM
-
 
 root_dir = __file__.split("scripts")[0]
 index_name = "eth_denver"
@@ -36,7 +34,7 @@ def extract_eth_denver_dataset():
         import tarfile
 
         with tarfile.open(
-            root_dir + "datasets/eth_denver_dataset.tar.gz", "r:gz"
+                root_dir + "datasets/eth_denver_dataset.tar.gz", "r:gz"
         ) as tar:
             tar.extractall(root_dir + "datasets")
 
@@ -102,7 +100,7 @@ def indexing_docs(search_client):
     num_files = len(list(dataset_path.glob("*.json")))
     print(f"Indexing {num_files} files in {dataset_dir}")
     for doc_file in tqdm(
-        dataset_path.glob("*.json"), total=num_files, desc="Indexing docs"
+            dataset_path.glob("*.json"), total=num_files, desc="Indexing docs"
     ):
         with open(doc_file, "r") as f:
             doc = json.load(f)
@@ -113,9 +111,9 @@ def indexing_embeddings(search_client):
     """Index embeddings of documents in Elasticsearch"""
 
     for doc in tqdm(
-        helpers.scan(search_client, index=index_name),
-        desc="Indexing embeddings",
-        total=search_client.count(index=index_name)["count"],
+            helpers.scan(search_client, index=index_name),
+            desc="Indexing embeddings",
+            total=search_client.count(index=index_name)["count"],
     ):
         doc_id = doc["_id"]
         text = doc["_source"]["text"]
@@ -149,6 +147,53 @@ def test_retrieval(search_client, query, topk=5):
     return response
 
 
+# Function to index embeddings
+def index_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM):
+    # Get total count of documents
+    total_docs = search_client.count(index=index_name)["count"]
+
+    # Initialize the scroll
+    scroll = helpers.scan(
+        search_client,
+        index=index_name,
+        scroll=scroll_timeout,
+        size=batch_size,
+        clear_scroll=False
+    )
+
+    pbar = tqdm(total=total_docs, desc="Indexing embeddings")
+
+    # Iterate over batches of documents
+    while True:
+        try:
+            batch = next(scroll)
+            batch_updates = []
+
+            for doc in batch:
+                doc_id = doc["_id"]
+                text = doc["_source"]["text"]
+                embedding = text_embedding(text)[0]
+                embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+                batch_updates.append({
+                    "_op_type": "update",
+                    "_index": index_name,
+                    "_id": doc_id,
+                    "doc": {"embedding": embedding.tolist()},
+                    "doc_as_upsert": True
+                })
+
+            # Bulk update
+            if batch_updates:
+                helpers.bulk(search_client, batch_updates)
+
+            pbar.update(len(batch))
+
+        except StopIteration:
+            break
+
+    pbar.close()
+
+
 if __name__ == "__main__":
     load_dotenv()
 
@@ -169,28 +214,29 @@ if __name__ == "__main__":
         ssl_show_warn=False,
     )
 
-    drop_index(search_client, index_name)
-    # init_eth_denver_index(search_client)
-    #
-    # r = search_client.count(index=index_name)
-    # if r["count"] != num_files:
-    #     print(
-    #         f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
-    #     )
-    #     indexing_docs(search_client)
-    # else:
-    #     print(
-    #         f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
-    #     )
-    #
-    # indexing_embeddings(search_client)
-    #
-    # query = "What is the future of blockchain?"
-    # response = test_retrieval(search_client, query, topk=5)
-    # # print(response)
-    # for response in response["hits"]["hits"]:
-    #     print(response["_source"]["created_at"])
-    #     print(response["_source"]["episode_title"])
-    #     print(response["_source"]["speaker"])
-    #     print(response["_source"]["text"])
-    #     print(response["_score"])
+    # drop_index(search_client, index_name)
+    init_eth_denver_index(search_client)
+
+    r = search_client.count(index=index_name)
+    if r["count"] != num_files:
+        print(
+            f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
+        )
+        indexing_docs(search_client)
+    else:
+        print(
+            f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
+        )
+    # Call the function to index embeddings
+    index_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM)
+    #indexing_embeddings(search_client)
+
+    query = "What is the future of blockchain?"
+    response = test_retrieval(search_client, query, topk=5)
+    # print(response)
+    for response in response["hits"]["hits"]:
+        print(response["_source"]["created_at"])
+        print(response["_source"]["episode_title"])
+        print(response["_source"]["speaker"])
+        print(response["_source"]["text"])
+        print(response["_score"])
