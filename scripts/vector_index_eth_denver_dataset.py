@@ -7,6 +7,7 @@ This script is intentionally kept transparent and hackable, and miners may do th
 """
 
 import os
+import time
 from pathlib import Path
 import json
 from tqdm import tqdm
@@ -126,6 +127,7 @@ def indexing_embeddings(search_client):
         print(f"[indexing_embeddings embedding] :::{embedding}")
         embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
         print(f"[indexing_embeddings embedding end] :::{embedding}")
+        print(f"[embedding.tolist()] :::{embedding.tolist()}")
         search_client.update(
             index=index_name,
             id=doc_id,
