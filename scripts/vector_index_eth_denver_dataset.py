@@ -169,28 +169,28 @@ if __name__ == "__main__":
         ssl_show_warn=False,
     )
 
-    # drop_index(search_client, index_name)
-    init_eth_denver_index(search_client)
-
-    r = search_client.count(index=index_name)
-    if r["count"] != num_files:
-        print(
-            f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
-        )
-        indexing_docs(search_client)
-    else:
-        print(
-            f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
-        )
-
-    indexing_embeddings(search_client)
-
-    query = "What is the future of blockchain?"
-    response = test_retrieval(search_client, query, topk=5)
-    # print(response)
-    for response in response["hits"]["hits"]:
-        print(response["_source"]["created_at"])
-        print(response["_source"]["episode_title"])
-        print(response["_source"]["speaker"])
-        print(response["_source"]["text"])
-        print(response["_score"])
+    drop_index(search_client, index_name)
+    # init_eth_denver_index(search_client)
+    #
+    # r = search_client.count(index=index_name)
+    # if r["count"] != num_files:
+    #     print(
+    #         f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
+    #     )
+    #     indexing_docs(search_client)
+    # else:
+    #     print(
+    #         f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
+    #     )
+    #
+    # indexing_embeddings(search_client)
+    #
+    # query = "What is the future of blockchain?"
+    # response = test_retrieval(search_client, query, topk=5)
+    # # print(response)
+    # for response in response["hits"]["hits"]:
+    #     print(response["_source"]["created_at"])
+    #     print(response["_source"]["episode_title"])
+    #     print(response["_source"]["speaker"])
+    #     print(response["_source"]["text"])
+    #     print(response["_score"])
