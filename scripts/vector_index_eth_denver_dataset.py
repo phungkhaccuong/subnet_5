@@ -111,7 +111,6 @@ def indexing_docs(search_client):
 
 def indexing_embeddings(search_client):
     """Index embeddings of documents in Elasticsearch"""
-
     for doc in tqdm(
         helpers.scan(search_client, index=index_name),
         desc="Indexing embeddings",
@@ -169,7 +168,7 @@ if __name__ == "__main__":
         ssl_show_warn=False,
     )
 
-    drop_index(search_client, index_name)
+    #drop_index(search_client, index_name)
     init_eth_denver_index(search_client)
 
     r = search_client.count(index=index_name)
