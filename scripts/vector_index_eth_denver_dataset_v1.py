@@ -21,7 +21,7 @@ from openkaito.utils.embeddings import pad_tensor, text_embedding, MAX_EMBEDDING
 root_dir = __file__.split("scripts")[0]
 index_name = "eth_denver"
 # Define your scroll timeout and batch size
-scroll_timeout = '10m'  # Adjust as needed
+scroll_timeout = '30m'  # Adjust as needed
 batch_size = 1000  # Adjust as needed
 
 
@@ -152,8 +152,6 @@ def test_retrieval(search_client, query, topk=5):
     return response
 
 
-# Function to index embeddings
-# Function to index embeddings
 def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM):
     # Get total count of documents
     total_docs = search_client.count(index=index_name)["count"]
@@ -167,28 +165,40 @@ def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, M
         clear_scroll=False
     )
 
+    # Initialize batch updates list
+    batch_updates = []
+
     pbar = tqdm(total=total_docs, desc="Indexing embeddings")
-    i = 0;
+
     # Iterate over documents
     for doc in scroll:
-        i = i +1
-        print(f"docccccccc:::{doc}")
         doc_id = doc["_id"]
         text = doc["_source"]["text"]
         embedding = text_embedding(text)[0]
         embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
-        search_client.update(
-            index=index_name,
-            id=doc_id,
-            body={"doc": {"embedding": embedding.tolist()}, "doc_as_upsert": True},
-        )
-        pbar.update(1)
-        if i == 500:
-            break
+
+        # Append update request to batch updates list
+        batch_updates.append({
+            "_op_type": "update",
+            "_index": index_name,
+            "_id": doc_id,
+            "body": {"doc": {"embedding": embedding.tolist()}, "doc_as_upsert": True}
+        })
+
+        # Bulk update when batch size is reached
+        if len(batch_updates) == batch_size:
+            helpers.bulk(search_client, batch_updates)
+            batch_updates = []
+            pbar.update(batch_size)
+            print(f"update:::::::::::::::::::::::::::::::::")
+            time.sleep(20)
+
+    # Bulk update remaining documents
+    if batch_updates:
+        helpers.bulk(search_client, batch_updates)
+        pbar.update(len(batch_updates))
 
     pbar.close()
-
-
 
 if __name__ == "__main__":
     load_dotenv()
