@@ -175,8 +175,13 @@ def index_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_
             for doc in batch:
                 doc_id = doc["_id"]
                 text = doc["_source"]["text"]
-                embedding = text_embedding(text)[0]
-                embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+
+                # Ensure that text_embedding returns a list or array
+                embedding = text_embedding(text)
+                if isinstance(embedding, str):
+                    embedding = [embedding]  # Convert to list if embedding is a string
+
+                embedding = pad_tensor(embedding[0], max_len=MAX_EMBEDDING_DIM)
                 batch_updates.append({
                     "_op_type": "update",
                     "_index": index_name,
