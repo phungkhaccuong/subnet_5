@@ -19,6 +19,9 @@ from openkaito.utils.embeddings import pad_tensor, text_embedding, MAX_EMBEDDING
 
 root_dir = __file__.split("scripts")[0]
 index_name = "eth_denver"
+# Define your scroll timeout and batch size
+scroll_timeout = '10m'  # Adjust as needed
+batch_size = 1000  # Adjust as needed
 
 
 ### Extract Eth Denver dataset
