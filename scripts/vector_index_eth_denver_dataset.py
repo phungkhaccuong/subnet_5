@@ -165,6 +165,7 @@ if __name__ == "__main__":
     dataset_path = Path(dataset_dir)
 
     num_files = len(list(dataset_path.glob("*.json")))
+    print(f"num_files:::::::::::::{num_files}")
 
     extract_eth_denver_dataset()
 
@@ -178,19 +179,14 @@ if __name__ == "__main__":
         ssl_show_warn=False,
     )
 
-    #drop_index(search_client, index_name)
+    drop_index(search_client, index_name)
     init_eth_denver_index(search_client)
 
     r = search_client.count(index=index_name)
-    if r["count"] != num_files:
-        print(
-            f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
-        )
-        indexing_docs(search_client)
-    else:
-        print(
-            f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
-        )
+    indexing_docs(search_client)
+    print(
+        f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
+    )
 
     indexing_embeddings(search_client)
 
