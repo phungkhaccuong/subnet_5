@@ -173,8 +173,9 @@ def index_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_
             batch_updates = []
 
             for doc in batch:
+                doc = doc["_source"]
                 doc_id = doc["_id"]
-                text = doc["_source"]["text"]
+                text = doc["text"]
 
                 # Ensure that text_embedding returns a list or array
                 embedding = text_embedding(text)
