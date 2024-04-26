@@ -191,8 +191,8 @@ def index_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_
                 embedding = pad_tensor(embedding[0], max_len=MAX_EMBEDDING_DIM)
                 batch_updates.append({
                     "_op_type": "update",
-                    "_index": index_name,
-                    "_id": doc_id,
+                    "index": index_name,  # Use "index" instead of "_index"
+                    "id": doc_id,
                     "doc": {"embedding": embedding.tolist()},
                     "doc_as_upsert": True
                 })
