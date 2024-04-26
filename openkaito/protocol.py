@@ -72,7 +72,7 @@ class StructuredSearchSynapse(bt.Synapse):
     """
 
     query_string: Optional[str] = None
-    size: int = pydantic.Field(5, ge=1, le=50)
+    size: int = pydantic.Field(5, ge=1, le=150)
 
     # Note: use int instead of datetime to avoid serialization issues in dendrite.
     earlier_than_timestamp: int = pydantic.Field(None, ge=0)
