@@ -7,6 +7,7 @@ This script is intentionally kept transparent and hackable, and miners may do th
 """
 
 import os
+import time
 from pathlib import Path
 import json
 from tqdm import tqdm
@@ -107,6 +108,7 @@ def indexing_docs(search_client):
     ):
         with open(doc_file, "r") as f:
             doc = json.load(f)
+            print(f"DOCCCCCCCCCCCCCCCCC:::::::{doc}")
             search_client.index(index=index_name, body=doc, id=doc["doc_id"])
 
 
@@ -154,7 +156,7 @@ def test_retrieval(search_client, query, topk=5):
 def index_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM):
     # Get total count of documents
     total_docs = search_client.count(index=index_name)["count"]
-
+    print(f"total_doc::::{total_docs}")
     # Initialize the scroll
     scroll = helpers.scan(
         search_client,
@@ -171,8 +173,11 @@ def index_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_
         try:
             batch = next(scroll)
             batch_updates = []
+            print(f"[BATCH]:::::::::::::::::::{batch}")
+            time.sleep(20)
 
             for doc in batch:
+                print(f"[index_embeddings DOC] :::: {doc}")
                 if isinstance(doc, dict):
                     doc = doc["_source"]
                 else:
@@ -183,16 +188,20 @@ def index_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_
 
                 # Ensure that text_embedding returns a list or array
                 embedding = text_embedding(text)
+                print(f"[embedding1111111111111] :::: {embedding}")
                 if isinstance(embedding, str):
                     embedding = [embedding]  # Convert to list if embedding is a string
+                    print(f"[embedding2222222222222] :::: {embedding}")
                 elif isinstance(embedding, list) and isinstance(embedding[0], str):
                     embedding = [float(emb) for emb in embedding]  # Convert string elements to float
+                    print(f"[embedding333333333333] :::: {embedding}")
 
                 embedding = pad_tensor(embedding[0], max_len=MAX_EMBEDDING_DIM)
+                print(f"[embedding444444444444444] :::: {embedding}")
                 batch_updates.append({
                     "_op_type": "update",
-                    "index": index_name,  # Use "index" instead of "_index"
-                    "id": doc_id,
+                    "_index": index_name,  # Use "index" instead of "_index"
+                    "_id": doc_id,
                     "doc": {"embedding": embedding.tolist()},
                     "doc_as_upsert": True
                 })
@@ -234,22 +243,17 @@ if __name__ == "__main__":
     init_eth_denver_index(search_client)
 
     r = search_client.count(index=index_name)
-    if r["count"] != num_files:
-        print(
-            f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
-        )
-        indexing_docs(search_client)
-    else:
-        print(
-            f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
-        )
+    indexing_docs(search_client)
+    print(
+        f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
+    )
     # Call the function to index embeddings
     index_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM)
     #indexing_embeddings(search_client)
 
     query = "What is the future of blockchain?"
     response = test_retrieval(search_client, query, topk=5)
-    # print(response)
+    print(f"RESSSSSSSSSSSSSSSSS:::{response}")
     for response in response["hits"]["hits"]:
         print(response["_source"]["created_at"])
         print(response["_source"]["episode_title"])
