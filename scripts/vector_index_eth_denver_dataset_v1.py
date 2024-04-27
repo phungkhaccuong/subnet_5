@@ -192,7 +192,7 @@ if __name__ == "__main__":
 
     num_files = len(list(dataset_path.glob("*.json")))
 
-    extract_eth_denver_dataset()
+    #extract_eth_denver_dataset()
 
     search_client = Elasticsearch(
         os.environ["ELASTICSEARCH_HOST"],
@@ -204,21 +204,21 @@ if __name__ == "__main__":
         ssl_show_warn=False,
     )
 
-    drop_index(search_client, index_name)
-    init_eth_denver_index(search_client)
-
-    r = search_client.count(index=index_name)
-    if r["count"] != num_files:
-        print(
-            f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
-        )
-        indexing_docs(search_client)
-    else:
-        print(
-            f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
-        )
-    # Call the function to index embeddings
-    indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM)
+    # drop_index(search_client, index_name)
+    # init_eth_denver_index(search_client)
+    #
+    # r = search_client.count(index=index_name)
+    # if r["count"] != num_files:
+    #     print(
+    #         f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
+    #     )
+    #     indexing_docs(search_client)
+    # else:
+    #     print(
+    #         f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
+    #     )
+    # # Call the function to index embeddings
+    # indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM)
 
     query = "What is the future of blockchain?"
     response = test_retrieval(search_client, query, topk=5)
