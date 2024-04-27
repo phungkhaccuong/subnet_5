@@ -4,6 +4,7 @@ import openai
 from dotenv import load_dotenv
 from elasticsearch import Elasticsearch
 
+
 from openkaito.crawlers.twitter.apidojo import ApiDojoTwitterCrawler
 from openkaito.evaluation.evaluator import Evaluator
 from openkaito.search.ranking import OptimizeRankingModel, OptimizeRankingModelV1, HeuristicRankingModel
@@ -54,6 +55,7 @@ def main():
         for model in ranking_models
     ]
 
+
     search_query = generate_author_index_task(size=10, num_authors=2)
     print(search_query)
 
@@ -62,6 +64,7 @@ def main():
     rewards = evaluator.evaluate(search_query, responses)
     print(f"Scored responses: {rewards}")
     return rewards
+
 
 
 if __name__ == "__main__":

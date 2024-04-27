@@ -1,4 +1,5 @@
 import os
+
 import time
 
 import bittensor as bt
@@ -15,6 +16,7 @@ from openkaito.utils.version import get_version
 def main():
     load_dotenv()
     bt.logging.set_debug(True)
+
 
     crawl_size = 80
 

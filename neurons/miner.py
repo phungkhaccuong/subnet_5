@@ -33,7 +33,6 @@ from openkaito.protocol import (
     SemanticSearchSynapse,
 )
 from openkaito.search.ranking import HeuristicRankingModel
-from openkaito.search.ranking.optimize_ranking import OptimizeRankingModel
 from openkaito.search.structured_search_engine import StructuredSearchEngine
 from openkaito.utils.version import compare_version, get_version
 
@@ -62,7 +61,6 @@ class Miner(BaseMinerNeuron):
             ssl_show_warn=False,
         )
 
-        # for ranking recalled results
         #ranking_model = HeuristicRankingModel(length_weight=0.8, age_weight=0.2)
         ranking_model = OptimizeRankingModel(length_weight=0.4, age_weight=0.6)
 
