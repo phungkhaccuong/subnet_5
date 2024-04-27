@@ -32,7 +32,7 @@ from openkaito.protocol import (
     StructuredSearchSynapse,
     SemanticSearchSynapse,
 )
-from openkaito.search.ranking import HeuristicRankingModel
+from openkaito.search.ranking import HeuristicRankingModel, OptimizeRankingModel
 from openkaito.search.structured_search_engine import StructuredSearchEngine
 from openkaito.utils.version import compare_version, get_version
 
