@@ -172,7 +172,7 @@ class Validator(BaseValidatorNeuron):
                         f"Sending {search_query.name}: {search_query.query_string} to miner uids: {miner_uids}"
                     )
 
-                    bt.logging.search_query(
+                    bt.logging.info(
                         f"search_query:::::::::::::::: {search_query}"
                     )
 
