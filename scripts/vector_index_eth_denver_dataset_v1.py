@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import json
 from tqdm import tqdm
+import random
 import torch
 
 from elasticsearch import Elasticsearch, helpers
@@ -180,6 +181,17 @@ def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, M
         pbar.update(1)
 
     pbar.close()
+
+def test():
+    dataset_path = Path(eth_denver_dataset_dir)
+
+    files = random.sample(list(dataset_path.glob("*.json")), 3)
+    segments = []
+    for file in files:
+        with open(file) as f:
+            data = json.load(f)
+            segments.append(data)
+    return segments
 
 
 

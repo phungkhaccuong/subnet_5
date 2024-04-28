@@ -111,6 +111,7 @@ def random_eth_denver_segments(
         with open(file) as f:
             data = json.load(f)
             segments.append(data)
+    bt.logging.info(f"random_eth_denver_segments:::::: {segments}")
     return segments
 
 
@@ -129,6 +130,8 @@ def generate_question_from_eth_denver_segments(llm_client, segments):
             + "\n\n"
         )
 
+    bt.logging.info(f"generate_question_from_eth_denver_segments:::::: {knowledge_text}")
+
     prompt = (
         "You are a crypto researcher, and you will be given a list of speaker transcript segments as your source of knowledge in ETH Denver 2024. "
         "Your job is to look for a question about the speaker and text that can be answered by this segment"
@@ -140,7 +143,7 @@ def generate_question_from_eth_denver_segments(llm_client, segments):
         "Please give the question text only, without any additional context or explanation."
     )
 
-    bt.logging.debug(f"Prompt: {prompt}")
+    bt.logging.info(f"Prompt: {prompt}")
 
     try:
         output = llm_client.chat.completions.create(

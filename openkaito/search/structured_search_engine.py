@@ -174,7 +174,10 @@ class StructuredSearchEngine:
             },
         }
 
+        bt.logging.info(f"body search :::::::::::::::::: {body}")
+
         response = self.search_client.search(index=index_name, body=body)
+        bt.logging.info(f"miner response :::::::::::::::::: {response}")
         ranked_docs = [doc["_source"] for doc in response["hits"]["hits"]]
         # optional: you may implement yourselves additional post-processing filtering/ranking here
 
