@@ -5,7 +5,8 @@ import os
 
 
 def gen_question():
-    root_dir = __file__.split("neurons")[0]
+    root_dir = __file__.split("scripts")[0]
+    print(root_dir)
     dataset_dir = root_dir + "datasets/eth_denver_dataset"
     eth_denver_dataset_dir = dataset_dir
 
