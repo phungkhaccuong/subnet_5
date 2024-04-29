@@ -191,21 +191,38 @@ def search(search_client):
 
 
 def vector_search(search_client, query_embedding, index, top_n=10):
-    script_query = {
-        "script_score": {
-            "query": {"match_all": {}},
-            "script": {
-                "source": "cosineSimilarity(params.query_vector, doc['embedding']) + 1.0",
-                "params": {"query_vector": query_embedding}
-            }
-        }
-    }
+    # script_query = {
+    #     "script_score": {
+    #         "query": {"match_all": {}},
+    #         "script": {
+    #             "source": "cosineSimilarity(params.query_vector, doc['embedding']) + 1.0",
+    #             "params": {"query_vector": query_embedding}
+    #         }
+    #     }
+    # }
+    #
+    # search_query = {
+    #     "size": top_n,
+    #     "query": script_query,
+    #     "_source": ["episode_id", "episode_title", "episode_url", "created_at", "company_name",
+    #                 "segment_start_time", "segment_end_time", "text", "speaker", "segment_id", "doc_id"]
+    # }
+    #
+    # res = search_client.search(index=index, body=search_query)
+    # return res['hits']['hits']
 
     search_query = {
         "size": top_n,
-        "query": script_query,
-        "_source": ["episode_id", "episode_title", "episode_url", "created_at", "company_name",
-                    "segment_start_time", "segment_end_time", "text", "speaker", "segment_id", "doc_id"]
+        "query": {
+            "script_score": {
+                "query": {"match_all": {}},
+                "script": {
+                    "source": "cosineSimilarity(params.query_vector, doc['question_embedding']) + 1.0",
+                    "params": {"query_vector": query_embedding}
+                }
+            }
+        },
+        "_source": ["episode_id", "episode_title", "episode_url", "created_at", "company_name", "segment_start_time", "segment_end_time", "text", "speaker", "segment_id", "doc_id"]
     }
 
     res = search_client.search(index=index, body=search_query)
@@ -236,25 +253,25 @@ if __name__ == "__main__":
 
     num_files = len(list(dataset_path.glob("*.json")))
 
-    extract_dataset()
-
-    drop_index(search_client, index_name)
-    init_index(search_client)
-
-    r = search_client.count(index=index_name)
-    if r["count"] != num_files:
-        print(
-            f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
-        )
-        indexing_docs(search_client)
-    else:
-        print(
-            f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
-        )
-
-    update_questions(llm_client, search_client)
-
-    indexing_embeddings(search_client)
+    # extract_dataset()
+    #
+    # drop_index(search_client, index_name)
+    # init_index(search_client)
+    #
+    # r = search_client.count(index=index_name)
+    # if r["count"] != num_files:
+    #     print(
+    #         f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
+    #     )
+    #     indexing_docs(search_client)
+    # else:
+    #     print(
+    #         f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
+    #     )
+    #
+    # update_questions(llm_client, search_client)
+    #
+    # indexing_embeddings(search_client)
 
     # Example query
     query_text = "What new functionalities do Humane AI pin, Rabbit R1, and ChatGPT's voice interface offer?"
