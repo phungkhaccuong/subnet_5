@@ -233,32 +233,36 @@ def search(search_client):
 
 def search_similar_questions(search_client, query_embedding, top_n=10):
     """Search similar questions based on the query embedding"""
-    # query = {
-    #     "size": top_n,
-    #     "query": {
-    #         "script_score": {
-    #             "query": {"match_all": {}},
-    #             "script": {
-    #                 "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
-    #                 "params": {"query_vector": query_embedding.tolist()}
-    #             }
-    #         }
-    #     }
-    # }
+    try:
+        query = {
+            "size": top_n,
+            "query": {
+                "script_score": {
+                    "query": {"match_all": {}},
+                    "script": {
+                        "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
+                        "params": {"query_vector": query_embedding.tolist()}
+                    }
+                }
+            }
+        }
 
-    query = {
-        "knn": {
-            "field": "embedding",
-            "query_vector": embedding.tolist(),
-            "k": 5,
-            "num_candidates": 5 * 5,
-        },
-        # "_source": {
-        #     "excludes": ["embedding"],
-        # },
-    }
-    res = search_client.search(index=index_name, body=query)
-    return res["hits"]["hits"]
+        # query = {
+        #     "knn": {
+        #         "field": "embedding",
+        #         "query_vector": embedding.tolist(),
+        #         "k": 5,
+        #         "num_candidates": 5 * 5,
+        #     },
+        #     # "_source": {
+        #     #     "excludes": ["embedding"],
+        #     # },
+        # }
+        res = search_client.search(index=index_name, body=query)
+        return res["hits"]["hits"]
+    except Exception as inst:
+        print(f'TYPE ERROR:::{type(inst)}')
+        print(f'ERROR:::{json.dumps(inst.args)}')
 
 
 if __name__ == "__main__":
