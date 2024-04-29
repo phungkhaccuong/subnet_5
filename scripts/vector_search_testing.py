@@ -231,7 +231,30 @@ if __name__ == "__main__":
         max_retries=3,
     )
 
-    #indexing_embeddings(search_client)
+    dataset_dir = root_dir + "datasets/eth_denver_dataset"
+    dataset_path = Path(dataset_dir)
+
+    num_files = len(list(dataset_path.glob("*.json")))
+
+    extract_dataset()
+
+    drop_index(search_client, index_name)
+    init_index(search_client)
+
+    r = search_client.count(index=index_name)
+    if r["count"] != num_files:
+        print(
+            f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
+        )
+        indexing_docs(search_client)
+    else:
+        print(
+            f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
+        )
+
+    update_questions(llm_client, search_client)
+
+    indexing_embeddings(search_client)
 
     # Example query
     query_text = "What new functionalities do Humane AI pin, Rabbit R1, and ChatGPT's voice interface offer?"
@@ -249,27 +272,4 @@ if __name__ == "__main__":
 
     # print(search(search_client))
 
-    # dataset_dir = root_dir + "datasets/eth_denver_dataset"
-    # dataset_path = Path(dataset_dir)
-    #
-    # num_files = len(list(dataset_path.glob("*.json")))
-    #
-    # extract_dataset()
-    #
-    # drop_index(search_client, index_name)
-    # init_index(search_client)
-    #
-    # r = search_client.count(index=index_name)
-    # if r["count"] != num_files:
-    #     print(
-    #         f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
-    #     )
-    #     indexing_docs(search_client)
-    # else:
-    #     print(
-    #         f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
-    #     )
-    #
-    # update_questions(llm_client, search_client)
 
-    # indexing_embeddings(search_client)
