@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 import json
+
+import numpy as np
 from tqdm import tqdm
 import torch
 import openai
@@ -66,7 +68,7 @@ def init_index(search_client):
                         "question": {"type": "text"},
                         "embedding": {
                             "type": "dense_vector",
-                            "dims": 384,
+                            "dims": MAX_EMBEDDING_DIM,
                         },
                     }
                 }
@@ -154,13 +156,14 @@ def indexing_embeddings(search_client):
         doc_id = doc["_id"]
         text = doc["_source"]["text"]
 
-        embedding = text_to_embedding(text)
-        print(f"embedding :::::{embedding}")
+        embedding1 = text_embedding(text)[0]
+        embedding1 = pad_tensor(embedding1, max_len=MAX_EMBEDDING_DIM)
+        print(f"embedding :::::{embedding1}")
 
         search_client.update(
             index=index_name,
             id=doc_id,
-            body={"doc": {"embedding": embedding}, "doc_as_upsert": True},
+            body={"doc": {"embedding": embedding1.tolist()}, "doc_as_upsert": True},
         )
 
         if i == 90:
@@ -218,15 +221,19 @@ def vector_search(search_client, query_embedding, index, top_n=10):
                 "query": {"match_all": {}},
                 "script": {
                     "source": "cosineSimilarity(params.query_vector, doc['question_embedding']) + 1.0",
-                    "params": {"query_vector": query_embedding}
+                    "params": {"query_vector": query_embedding.tolist()}
                 }
             }
         },
-        "_source": ["episode_id", "episode_title", "episode_url", "created_at", "company_name", "segment_start_time", "segment_end_time", "text", "speaker", "segment_id", "doc_id"]
+        "_source": ["episode_id", "episode_title", "episode_url", "created_at", "company_name", "segment_start_time",
+                    "segment_end_time", "text", "speaker", "segment_id", "doc_id"]
     }
 
     res = search_client.search(index=index, body=search_query)
     return res['hits']['hits']
+
+
+
 
 
 if __name__ == "__main__":
@@ -253,33 +260,34 @@ if __name__ == "__main__":
 
     num_files = len(list(dataset_path.glob("*.json")))
 
-    # extract_dataset()
-    #
-    # drop_index(search_client, index_name)
-    # init_index(search_client)
-    #
-    # r = search_client.count(index=index_name)
-    # if r["count"] != num_files:
-    #     print(
-    #         f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
-    #     )
-    #     indexing_docs(search_client)
-    # else:
-    #     print(
-    #         f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
-    #     )
-    #
-    # update_questions(llm_client, search_client)
-    #
-    # indexing_embeddings(search_client)
+    extract_dataset()
+
+    drop_index(search_client, index_name)
+    init_index(search_client)
+
+    r = search_client.count(index=index_name)
+    if r["count"] != num_files:
+        print(
+            f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
+        )
+        indexing_docs(search_client)
+    else:
+        print(
+            f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
+        )
+
+    update_questions(llm_client, search_client)
+
+    indexing_embeddings(search_client)
 
     # Example query
     query_text = "What new functionalities do Humane AI pin, Rabbit R1, and ChatGPT's voice interface offer?"
-    query_embedding = text_to_embedding(query_text)
-    print(f"query_embedding:::{query_embedding}")
+    embedding = text_embedding(query_text)[0]
+    embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+    print(f"query_embedding:::{embedding.tolist()}")
 
     # Perform vector search
-    results = vector_search(search_client, query_embedding, index_name)
+    results = vector_search(search_client, embedding, index_name)
     print(f"RESULT::::{results}")
     # Display results
     for result in results:
@@ -288,5 +296,3 @@ if __name__ == "__main__":
         print()
 
     # print(search(search_client))
-
-
