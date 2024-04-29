@@ -1,5 +1,6 @@
 import os
 
+from dotenv import load_dotenv
 from elasticsearch import Elasticsearch
 
 index_name = "test_vectors"
@@ -58,6 +59,8 @@ def query(search_client):
 
 
 if __name__ == '__main__':
+    load_dotenv()
+
     search_client = Elasticsearch(
         os.environ["ELASTICSEARCH_HOST"],
         basic_auth=(
