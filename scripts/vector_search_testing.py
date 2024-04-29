@@ -104,7 +104,7 @@ def indexing_docs(search_client):
             doc = json.load(f)
             search_client.index(index=index_name, body=doc, id=doc["doc_id"])
 
-        if i ==1000:
+        if i == 1000:
             break
 
 
@@ -137,26 +137,34 @@ def update_questions(llm_client, search_client):
             break
 
 
+def text_to_embedding(text):
+    model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+    return model.encode(text)
+
+
 def indexing_embeddings(search_client):
     """Index embeddings of documents in Elasticsearch"""
+    i = 0
     for doc in tqdm(
             helpers.scan(search_client, index=index_name),
             desc="Indexing embeddings",
             total=search_client.count(index=index_name)["count"],
     ):
+        i = i + 1
         doc_id = doc["_id"]
         text = doc["_source"]["text"]
 
-        # Initialize the SentenceTransformer model
-        model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+        embedding = text_to_embedding(text)
+        print(f"embedding :::::{embedding}")
 
-        embedding = text_embedding(text)[0]
-        embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
         search_client.update(
             index=index_name,
             id=doc_id,
-            body={"doc": {"embedding": embedding.tolist()}, "doc_as_upsert": True},
+            body={"doc": {"embedding": embedding}, "doc_as_upsert": True},
         )
+
+        if i == 90:
+            break
 
 
 def search(search_client):
@@ -201,7 +209,9 @@ if __name__ == "__main__":
         max_retries=3,
     )
 
-    print(search(search_client))
+    indexing_embeddings(search_client)
+
+    # print(search(search_client))
 
     # dataset_dir = root_dir + "datasets/eth_denver_dataset"
     # dataset_path = Path(dataset_dir)
@@ -209,8 +219,6 @@ if __name__ == "__main__":
     # num_files = len(list(dataset_path.glob("*.json")))
     #
     # extract_dataset()
-    #
-    #
     #
     # drop_index(search_client, index_name)
     # init_index(search_client)
@@ -227,5 +235,5 @@ if __name__ == "__main__":
     #     )
     #
     # update_questions(llm_client, search_client)
-    #
-    # # indexing_embeddings(search_client)
+
+    # indexing_embeddings(search_client)
