@@ -225,8 +225,8 @@ def vector_search(search_client, query_embedding, index, top_n=10):
                 }
             }
         },
-        "_source": ["episode_id", "episode_title", "episode_url", "created_at", "company_name", "segment_start_time",
-                    "segment_end_time", "text", "speaker", "segment_id", "doc_id"]
+        # "_source": ["episode_id", "episode_title", "episode_url", "created_at", "company_name", "segment_start_time",
+        #             "segment_end_time", "text", "speaker", "segment_id", "doc_id"]
     }
 
     res = search_client.search(index=index, body=search_query)
