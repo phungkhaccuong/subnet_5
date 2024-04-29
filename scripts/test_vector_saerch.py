@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 from dotenv import load_dotenv
 from elasticsearch import Elasticsearch
 
@@ -93,12 +94,17 @@ def main(search_client):
 
     # Perform vector similarity search
     query_vector = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+    # Normalize query vector
+    query_vector = np.array(query_vector)
+    query_vector = query_vector / np.linalg.norm(query_vector)
+
     script_query = {
         "script_score": {
             "query": {"match_all": {}},
             "script": {
                 "source": "cosineSimilarity(params.query_vector, 'vector') + 1.0",
-                "params": {"query_vector": query_vector}
+                "params": {"query_vector": query_vector.tolist()}
             }
         }
     }
