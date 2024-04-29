@@ -31,6 +31,7 @@ def init_index(search_client):
 
 
 def insert_data(search_client):
+    print('Insert data')
     vectors = [
         {"text": "vector 1", "vector": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]},
         {"text": "vector 2", "vector": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]},
@@ -41,6 +42,7 @@ def insert_data(search_client):
 
 
 def query(search_client):
+    print('search query')
     query_vector = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     script_query = {
         "script_score": {
