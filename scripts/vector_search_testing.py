@@ -76,6 +76,7 @@ def init_index(search_client):
     else:
         print("Index already exists: ", index_name)
 
+
 def drop_index(search_client, index_name):
     """Drop index in Elasticsearch"""
 
@@ -85,6 +86,7 @@ def drop_index(search_client, index_name):
     else:
         print("Index does not exist: ", index_name)
 
+
 def indexing_docs(search_client):
     """Index documents in Elasticsearch"""
 
@@ -93,12 +95,18 @@ def indexing_docs(search_client):
 
     num_files = len(list(dataset_path.glob("*.json")))
     print(f"Indexing {num_files} files in {dataset_dir}")
+    i = 0
     for doc_file in tqdm(
-        dataset_path.glob("*.json"), total=num_files, desc="Indexing docs"
+            dataset_path.glob("*.json"), total=num_files, desc="Indexing docs"
     ):
+        i = i + 1
         with open(doc_file, "r") as f:
             doc = json.load(f)
             search_client.index(index=index_name, body=doc, id=doc["doc_id"])
+
+        if i ==1000:
+            break
+
 
 def update_questions(llm_client, search_client):
     """Index documents in Elasticsearch"""
@@ -109,14 +117,16 @@ def update_questions(llm_client, search_client):
     num_files = len(list(dataset_path.glob("*.json")))
     print(f"Indexing {num_files} files in {dataset_dir}")
     i = 0
-    for doc_file in tqdm(
-        dataset_path.glob("*.json"), total=num_files, desc="Indexing docs"
+
+    for doc in tqdm(
+            helpers.scan(search_client, index=index_name),
+            desc="update_questions",
+            total=search_client.count(index=index_name)["count"],
     ):
-        i = i+1
+        i = i + 1
         segments = []
-        with open(doc_file, "r") as f:
+        with open(doc, "r") as f:
             doc = json.load(f)
-            print(f"DOC::::::::::{doc}")
             segments.append(doc)
             doc_id = doc["_id"]
             question = generate_question_from_eth_denver_segments(
@@ -137,9 +147,9 @@ def update_questions(llm_client, search_client):
 def indexing_embeddings(search_client):
     """Index embeddings of documents in Elasticsearch"""
     for doc in tqdm(
-        helpers.scan(search_client, index=index_name),
-        desc="Indexing embeddings",
-        total=search_client.count(index=index_name)["count"],
+            helpers.scan(search_client, index=index_name),
+            desc="Indexing embeddings",
+            total=search_client.count(index=index_name)["count"],
     ):
         doc_id = doc["_id"]
         text = doc["_source"]["text"]
@@ -198,4 +208,4 @@ if __name__ == "__main__":
 
     update_questions(llm_client, search_client)
 
-    #indexing_embeddings(search_client)
+    # indexing_embeddings(search_client)
