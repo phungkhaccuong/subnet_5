@@ -234,7 +234,7 @@ if __name__ == "__main__":
     #indexing_embeddings(search_client)
 
     # Example query
-    query_text = "Why are incentive systems broken?"
+    query_text = "What new functionalities do Humane AI pin, Rabbit R1, and ChatGPT's voice interface offer?"
     query_embedding = text_to_embedding(query_text)
 
     # Perform vector search
