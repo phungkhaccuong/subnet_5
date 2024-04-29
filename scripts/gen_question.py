@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+
 from neurons.validator import Validator
 from openkaito.tasks import random_eth_denver_segments, generate_question_from_eth_denver_segments
 
@@ -10,11 +12,13 @@ def gen_question():
     dataset_dir = root_dir + "datasets/eth_denver_dataset"
     eth_denver_dataset_dir = dataset_dir
 
-    validator = Validator()
 
+    load_dotenv()
+
+    # for ranking results evaluation
     llm_client = openai.OpenAI(
-        api_key='sk-proj-u8ANkfogUxibhGknsui1T3BlbkFJHy9MH9wBXq5OJKGfGNX2',
-        organization='sM',
+        api_key=os.environ["OPENAI_API_KEY"],
+        organization=os.getenv("OPENAI_ORGANIZATION"),
         max_retries=3,
     )
 
@@ -25,7 +29,7 @@ def gen_question():
     print(f'segments::::::::::::::{segments}')
 
     question = generate_question_from_eth_denver_segments(
-        validator.llm_client, segments
+        llm_client, segments
     )
 
     print(f'question:::::::::::::::{question}')
