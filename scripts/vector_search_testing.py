@@ -247,6 +247,18 @@ def search_similar_questions(search_client, query_embedding, top_n=10):
             }
         }
 
+        query = {
+            "size": top_n,
+            "query": {
+                "knn": {
+                    "embedding": {
+                        "vector": query_embedding.tolist(),
+                        "k": top_n
+                    }
+                }
+            }
+        }
+
         # query = {
         #     "knn": {
         #         "field": "embedding",
