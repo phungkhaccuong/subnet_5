@@ -159,15 +159,40 @@ def indexing_embeddings(search_client):
         )
 
 
+def search(self):
+    es_query = {
+        "query": {
+            "bool": {
+                "must": [],
+            }
+        },
+        "size": 10,
+    }
+
+    es_query["query"]["bool"]["must"].append(
+        {
+            "terms": {
+                "doc_id": "mja-Lq6oob0.151",
+            }
+        }
+    )
+
+    print(f"es_query: {es_query}")
+
+    try:
+        response = self.search_client.search(
+            index=index_name,
+            body=es_query,
+        )
+        documents = response["hits"]["hits"]
+        return documents
+    except Exception as e:
+        print("recall error...", e)
+        return []
+
+
 if __name__ == "__main__":
     load_dotenv()
-
-    dataset_dir = root_dir + "datasets/eth_denver_dataset"
-    dataset_path = Path(dataset_dir)
-
-    num_files = len(list(dataset_path.glob("*.json")))
-
-    extract_dataset()
 
     search_client = Elasticsearch(
         os.environ["ELASTICSEARCH_HOST"],
@@ -185,20 +210,31 @@ if __name__ == "__main__":
         max_retries=3,
     )
 
-    drop_index(search_client, index_name)
-    init_index(search_client)
+    print(search())
 
-    r = search_client.count(index=index_name)
-    if r["count"] != num_files:
-        print(
-            f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
-        )
-        indexing_docs(search_client)
-    else:
-        print(
-            f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
-        )
-
-    update_questions(llm_client, search_client)
-
-    # indexing_embeddings(search_client)
+    # dataset_dir = root_dir + "datasets/eth_denver_dataset"
+    # dataset_path = Path(dataset_dir)
+    #
+    # num_files = len(list(dataset_path.glob("*.json")))
+    #
+    # extract_dataset()
+    #
+    #
+    #
+    # drop_index(search_client, index_name)
+    # init_index(search_client)
+    #
+    # r = search_client.count(index=index_name)
+    # if r["count"] != num_files:
+    #     print(
+    #         f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
+    #     )
+    #     indexing_docs(search_client)
+    # else:
+    #     print(
+    #         f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
+    #     )
+    #
+    # update_questions(llm_client, search_client)
+    #
+    # # indexing_embeddings(search_client)
