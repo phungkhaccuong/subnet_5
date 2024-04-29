@@ -110,12 +110,6 @@ def indexing_docs(search_client):
 
 def update_questions(llm_client, search_client):
     """Index documents in Elasticsearch"""
-
-    dataset_dir = root_dir + "datasets/eth_denver_dataset"
-    dataset_path = Path(dataset_dir)
-
-    num_files = len(list(dataset_path.glob("*.json")))
-    print(f"Indexing {num_files} files in {dataset_dir}")
     i = 0
 
     for doc in tqdm(
@@ -125,20 +119,19 @@ def update_questions(llm_client, search_client):
     ):
         i = i + 1
         segments = []
-        with open(doc, "r") as f:
-            print(f"DOC::::::::::{doc}")
-            segments.append(doc["_source"])
-            doc_id = doc["_id"]
-            question = generate_question_from_eth_denver_segments(
-                llm_client, segments
-            )
-            print(f"DOC::::::::::{doc} - question::::{question}")
+        print(f"DOC::::::::::{doc}")
+        segments.append(doc["_source"])
+        doc_id = doc["_id"]
+        question = generate_question_from_eth_denver_segments(
+            llm_client, segments
+        )
+        print(f"DOC::::::::::{doc} - question::::{question}")
 
-            search_client.update(
-                index=index_name,
-                id=doc_id,
-                body={"doc": {"question": question}, "doc_as_upsert": True},
-            )
+        search_client.update(
+            index=index_name,
+            id=doc_id,
+            body={"doc": {"question": question}, "doc_as_upsert": True},
+        )
 
         if i == 100:
             break
