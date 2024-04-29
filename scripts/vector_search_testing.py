@@ -159,7 +159,7 @@ def indexing_embeddings(search_client):
         )
 
 
-def search(self):
+def search(search_client):
     es_query = {
         "query": {
             "bool": {
@@ -180,7 +180,7 @@ def search(self):
     print(f"es_query: {es_query}")
 
     try:
-        response = self.search_client.search(
+        response = search_client.search(
             index=index_name,
             body=es_query,
         )
@@ -210,7 +210,7 @@ if __name__ == "__main__":
         max_retries=3,
     )
 
-    print(search())
+    print(search(search_client))
 
     # dataset_dir = root_dir + "datasets/eth_denver_dataset"
     # dataset_path = Path(dataset_dir)
