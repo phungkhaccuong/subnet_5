@@ -1,3 +1,4 @@
+from neurons.validator import Validator
 from openkaito.tasks import random_eth_denver_segments, generate_question_from_eth_denver_segments
 
 import openai
@@ -9,6 +10,7 @@ def gen_question():
     dataset_dir = root_dir + "datasets/eth_denver_dataset"
     eth_denver_dataset_dir = dataset_dir
 
+    validator = Validator()
 
     llm_client = openai.OpenAI(
         api_key='sk-proj-u8ANkfogUxibhGknsui1T3BlbkFJHy9MH9wBXq5OJKGfGNX2',
@@ -23,7 +25,7 @@ def gen_question():
     print(f'segments::::::::::::::{segments}')
 
     question = generate_question_from_eth_denver_segments(
-        llm_client, segments
+        validator.llm_client, segments
     )
 
     print(f'question:::::::::::::::{question}')
