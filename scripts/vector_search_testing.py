@@ -160,29 +160,20 @@ def indexing_embeddings(search_client):
 
 
 def search(search_client):
-    es_query = {
+    query = {
         "query": {
-            "bool": {
-                "must": [],
-            }
-        },
-        "size": 10,
-    }
-
-    es_query["query"]["bool"]["must"].append(
-        {
-            "terms": {
-                "speaker": "Jayden Windle",
+            "match": {
+                "speaker": "Jayden Windle"
             }
         }
-    )
+    }
 
-    print(f"es_query: {es_query}")
+    print(f"es_query: {query}")
 
     try:
         response = search_client.search(
             index=index_name,
-            body=es_query,
+            body=query,
         )
         documents = response["hits"]["hits"]
         return documents
