@@ -10,8 +10,8 @@ def gen_question():
     eth_denver_dataset_dir = dataset_dir
 
     llm_client = openai.OpenAI(
-        api_key=os.environ["OPENAI_API_KEY"],
-        organization=os.getenv("OPENAI_ORGANIZATION"),
+        api_key="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",
+        organization="",
         max_retries=3,
     )
 
