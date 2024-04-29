@@ -16,7 +16,6 @@ def init_index(search_client):
             body={
                 "mappings": {
                     "properties": {
-                        "text": {"type": "text"},
                         "vector": {
                             "type": "dense_vector",
                             "dims": 10
