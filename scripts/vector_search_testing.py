@@ -139,7 +139,7 @@ def update_questions(llm_client, search_client):
 
 def text_to_embedding(text):
     model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
-    return model.encode(text)
+    return model.encode(text).tolist()
 
 
 def indexing_embeddings(search_client):
