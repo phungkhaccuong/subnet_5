@@ -144,7 +144,8 @@ def generate_question_from_eth_denver_segments(llm_client, segments):
 
     try:
         output = llm_client.chat.completions.create(
-            model="gpt-4-turbo",
+            #model="gpt-4-turbo",
+            model="gpt-3.5-turbo",
             # response_format={"type": "json_object"},
             messages=[
                 {
