@@ -19,7 +19,7 @@ def init_index(search_client):
                         "text": {"type": "text"},
                         "vector": {
                             "type": "dense_vector",
-                            "dims": 10
+                            "dims": 9
                         }
                     }
                 }
@@ -57,6 +57,13 @@ def query(search_client):
         print(f"HIT:::{hit}")
         print(f"Vector: {hit['_source']['text']}, Score: {hit['_score']}")
 
+def drop_index(search_client):
+    if search_client.indices.exists(index=index_name):
+        search_client.indices.delete(index=index_name)
+        print("Index deleted: ", index_name)
+    else:
+        print("Index does not exist: ", index_name)
+
 
 if __name__ == '__main__':
     load_dotenv()
@@ -71,6 +78,7 @@ if __name__ == '__main__':
         ssl_show_warn=False,
     )
 
+    drop_index(search_client)
     # create index
     init_index(search_client)
 
