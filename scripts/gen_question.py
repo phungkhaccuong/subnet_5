@@ -15,17 +15,19 @@ def gen_question():
         max_retries=3,
     )
 
-    segments = random_eth_denver_segments(
-        eth_denver_dataset_dir, num_sources=3
-    )
+    print(f"eth_denver_dataset_dir::::{eth_denver_dataset_dir}")
 
-    print(f'segment::::::::::::::{segments}')
+    # segments = random_eth_denver_segments(
+    #     eth_denver_dataset_dir, num_sources=3
+    # )
 
-    question = generate_question_from_eth_denver_segments(
-        llm_client, segments
-    )
-
-    print(f'question:::::::::::::::{question}')
+    # print(f'segment::::::::::::::{segments}')
+    #
+    # question = generate_question_from_eth_denver_segments(
+    #     llm_client, segments
+    # )
+    #
+    # print(f'question:::::::::::::::{question}')
 
 if __name__ == '__main__':
     gen_question()
