@@ -236,6 +236,7 @@ if __name__ == "__main__":
     # Example query
     query_text = "What new functionalities do Humane AI pin, Rabbit R1, and ChatGPT's voice interface offer?"
     query_embedding = text_to_embedding(query_text)
+    print(f"query_embedding:::{query_embedding}")
 
     # Perform vector search
     results = vector_search(search_client, query_embedding, index_name)
