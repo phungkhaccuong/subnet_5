@@ -190,6 +190,28 @@ def search(search_client):
         return []
 
 
+def vector_search(search_client, query_embedding, index, top_n=10):
+    script_query = {
+        "script_score": {
+            "query": {"match_all": {}},
+            "script": {
+                "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
+                "params": {"query_vector": query_embedding}
+            }
+        }
+    }
+
+    search_query = {
+        "size": top_n,
+        "query": script_query,
+        "_source": ["episode_id", "episode_title", "episode_url", "created_at", "company_name",
+                    "segment_start_time", "segment_end_time", "text", "speaker", "segment_id", "doc_id"]
+    }
+
+    res = search_client.search(index=index, body=search_query)
+    return res['hits']['hits']
+
+
 if __name__ == "__main__":
     load_dotenv()
 
@@ -209,7 +231,20 @@ if __name__ == "__main__":
         max_retries=3,
     )
 
-    indexing_embeddings(search_client)
+    #indexing_embeddings(search_client)
+
+    # Example query
+    query_text = "Why are incentive systems broken?"
+    query_embedding = text_to_embedding(query_text)
+
+    # Perform vector search
+    results = vector_search(search_client, query_embedding, index_name)
+    print(f"RESULT::::{results}")
+    # Display results
+    for result in results:
+        print(f"RESULT::::{result}")
+        print(f"Score: {result['_score']}")
+        print()
 
     # print(search(search_client))
 
