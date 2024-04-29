@@ -68,7 +68,7 @@ def init_index(search_client):
                         "question": {"type": "text"},
                         "embedding": {
                             "type": "dense_vector",
-                            "dims": MAX_EMBEDDING_DIM,
+                            "dims": 1024,
                         },
                     }
                 }
@@ -155,7 +155,6 @@ def indexing_embeddings(search_client):
         i = i + 1
         doc_id = doc["_id"]
         text = doc["_source"]["text"]
-
         embedding1 = text_embedding(text)[0]
         embedding1 = pad_tensor(embedding1, max_len=MAX_EMBEDDING_DIM)
         print(f"embedding :::::{embedding1}")
@@ -193,47 +192,61 @@ def search(search_client):
         return []
 
 
-def vector_search(search_client, query_embedding, index, top_n=10):
-    # script_query = {
-    #     "script_score": {
-    #         "query": {"match_all": {}},
-    #         "script": {
-    #             "source": "cosineSimilarity(params.query_vector, doc['embedding']) + 1.0",
-    #             "params": {"query_vector": query_embedding}
-    #         }
-    #     }
-    # }
-    #
-    # search_query = {
-    #     "size": top_n,
-    #     "query": script_query,
-    #     "_source": ["episode_id", "episode_title", "episode_url", "created_at", "company_name",
-    #                 "segment_start_time", "segment_end_time", "text", "speaker", "segment_id", "doc_id"]
-    # }
-    #
-    # res = search_client.search(index=index, body=search_query)
-    # return res['hits']['hits']
+# def vector_search(search_client, query_embedding, index, top_n=10):
+#     # script_query = {
+#     #     "script_score": {
+#     #         "query": {"match_all": {}},
+#     #         "script": {
+#     #             "source": "cosineSimilarity(params.query_vector, doc['embedding']) + 1.0",
+#     #             "params": {"query_vector": query_embedding}
+#     #         }
+#     #     }
+#     # }
+#     #
+#     # search_query = {
+#     #     "size": top_n,
+#     #     "query": script_query,
+#     #     "_source": ["episode_id", "episode_title", "episode_url", "created_at", "company_name",
+#     #                 "segment_start_time", "segment_end_time", "text", "speaker", "segment_id", "doc_id"]
+#     # }
+#     #
+#     # res = search_client.search(index=index, body=search_query)
+#     # return res['hits']['hits']
+#
+#     search_query = {
+#         "size": top_n,
+#         "query": {
+#             "script_score": {
+#                 "query": {"match_all": {}},
+#                 "script": {
+#                     "source": "cosineSimilarity(params.query_vector, doc['question_embedding']) + 1.0",
+#                     "params": {"query_vector": query_embedding.tolist()}
+#                 }
+#             }
+#         },
+#         # "_source": ["episode_id", "episode_title", "episode_url", "created_at", "company_name", "segment_start_time",
+#         #             "segment_end_time", "text", "speaker", "segment_id", "doc_id"]
+#     }
+#
+#     res = search_client.search(index=index, body=search_query)
+#     return res['hits']['hits']
 
-    search_query = {
+def search_similar_questions(search_client, query_embedding, top_n=10):
+    """Search similar questions based on the query embedding"""
+    query = {
         "size": top_n,
         "query": {
             "script_score": {
                 "query": {"match_all": {}},
                 "script": {
-                    "source": "cosineSimilarity(params.query_vector, doc['question_embedding']) + 1.0",
+                    "source": f"cosineSimilarity(params.query_vector, 'embedding') + 1.0",
                     "params": {"query_vector": query_embedding.tolist()}
                 }
             }
-        },
-        # "_source": ["episode_id", "episode_title", "episode_url", "created_at", "company_name", "segment_start_time",
-        #             "segment_end_time", "text", "speaker", "segment_id", "doc_id"]
+        }
     }
-
-    res = search_client.search(index=index, body=search_query)
-    return res['hits']['hits']
-
-
-
+    res = search_client.search(index=index_name, body=query)
+    return res["hits"]["hits"]
 
 
 if __name__ == "__main__":
@@ -287,7 +300,7 @@ if __name__ == "__main__":
     print(f"query_embedding:::{embedding.tolist()}")
 
     # Perform vector search
-    results = vector_search(search_client, embedding, index_name)
+    results = search_similar_questions(search_client, embedding)
     print(f"RESULT::::{results}")
     # Display results
     for result in results:
