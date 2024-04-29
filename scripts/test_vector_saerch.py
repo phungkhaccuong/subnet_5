@@ -103,7 +103,7 @@ def main(search_client):
         "script_score": {
             "query": {"match_all": {}},
             "script": {
-                "source": "cosineSimilarity(params.query_vector, 'vector') + 1.0",
+                "source": "cosineSimilarity(params.query_vector, doc['vector']) + 1.0",
                 "params": {"query_vector": query_vector.tolist()}
             }
         }
