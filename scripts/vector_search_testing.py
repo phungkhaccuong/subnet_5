@@ -239,7 +239,7 @@ def search_similar_questions(search_client, query_embedding, top_n=10):
             "script_score": {
                 "query": {"match_all": {}},
                 "script": {
-                    "source": f"cosineSimilarity(params.query_vector, 'embedding') + 1.0",
+                    "source": f"cosineSimilarity(params.query_vector, doc['embedding']) + 1.0",
                     "params": {"query_vector": query_embedding.tolist()}
                 }
             }
