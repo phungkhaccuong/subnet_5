@@ -172,7 +172,7 @@ def search(search_client):
     es_query["query"]["bool"]["must"].append(
         {
             "terms": {
-                "doc_id": "mja-Lq6oob0.151",
+                "speaker": "Jayden Windle",
             }
         }
     )
