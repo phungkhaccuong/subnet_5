@@ -104,7 +104,7 @@ def indexing_docs(search_client):
             doc = json.load(f)
             search_client.index(index=index_name, body=doc, id=doc["doc_id"])
 
-        if i == 1000:
+        if i == 200:
             break
 
 
@@ -195,7 +195,7 @@ def vector_search(search_client, query_embedding, index, top_n=10):
         "script_score": {
             "query": {"match_all": {}},
             "script": {
-                "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
+                "source": "cosineSimilarity(params.query_vector, doc['embedding']) + 1.0",
                 "params": {"query_vector": query_embedding}
             }
         }

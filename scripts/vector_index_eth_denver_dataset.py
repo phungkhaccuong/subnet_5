@@ -108,7 +108,6 @@ def indexing_docs(search_client):
             doc = json.load(f)
             search_client.index(index=index_name, body=doc, id=doc["doc_id"])
 
-
 def indexing_embeddings(search_client):
     """Index embeddings of documents in Elasticsearch"""
     for doc in tqdm(
