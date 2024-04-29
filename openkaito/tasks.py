@@ -104,14 +104,12 @@ def random_eth_denver_segments(
     num_sources=3,
 ):
     dataset_path = Path(eth_denver_dataset_dir)
-    print(f"dataset_path::::::{dataset_path}")
     files = random.sample(list(dataset_path.glob("*.json")), num_sources)
     segments = []
     for file in files:
         with open(file) as f:
             data = json.load(f)
             segments.append(data)
-    bt.logging.info(f"random_eth_denver_segments:::::: {segments}")
     return segments
 
 
@@ -143,7 +141,6 @@ def generate_question_from_eth_denver_segments(llm_client, segments):
         "Please give the question text only, without any additional context or explanation."
     )
 
-    bt.logging.info(f"Prompt: {prompt}")
 
     try:
         output = llm_client.chat.completions.create(

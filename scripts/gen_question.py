@@ -19,7 +19,7 @@ def gen_question():
         eth_denver_dataset_dir, num_sources=3
     )
 
-    print(f'segment::::::::::::::{segments}')
+    print(f'segments::::::::::::::{segments}')
 
     question = generate_question_from_eth_denver_segments(
         llm_client, segments
