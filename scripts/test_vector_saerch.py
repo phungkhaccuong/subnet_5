@@ -55,6 +55,7 @@ def query(search_client):
     }
 
     search_results = search_client.search(index=index_name, body={"query": script_query})
+    print(f"search_results:::{search_results}")
     for hit in search_results['hits']['hits']:
         print(f"HIT:::{hit}")
         print(f"Vector: {hit['_source']['text']}, Score: {hit['_score']}")
