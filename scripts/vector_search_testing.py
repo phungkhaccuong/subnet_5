@@ -126,6 +126,7 @@ def update_questions(llm_client, search_client):
         i = i + 1
         segments = []
         with open(doc, "r") as f:
+            print(f"DOC::::::::::{doc}")
             segments.append(doc["_source"])
             doc_id = doc["_id"]
             question = generate_question_from_eth_denver_segments(
