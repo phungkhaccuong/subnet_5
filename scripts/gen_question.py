@@ -9,23 +9,25 @@ def gen_question():
     dataset_dir = root_dir + "datasets/eth_denver_dataset"
     eth_denver_dataset_dir = dataset_dir
 
-    llm_client = openai.OpenAI(
-        api_key=os.environ["OPENAI_API_KEY"],
-        organization=os.getenv("OPENAI_ORGANIZATION"),
-        max_retries=3,
-    )
-
-    segments = random_eth_denver_segments(
-        eth_denver_dataset_dir, num_sources=3
-    )
-
-    print(f'segments::::::::::::::{segments}')
-
-    question = generate_question_from_eth_denver_segments(
-        llm_client, segments
-    )
-
-    print(f'question:::::::::::::::{question}')
+    print(f"os.environ::::{os.environ['OPENAI_API_KEY']}")
+    print(f"os.environ1::::{os.getenv('OPENAI_ORGANIZATION')}")
+    # llm_client = openai.OpenAI(
+    #     api_key=os.environ["OPENAI_API_KEY"],
+    #     organization=os.getenv("OPENAI_ORGANIZATION"),
+    #     max_retries=3,
+    # )
+    #
+    # segments = random_eth_denver_segments(
+    #     eth_denver_dataset_dir, num_sources=3
+    # )
+    #
+    # print(f'segments::::::::::::::{segments}')
+    #
+    # question = generate_question_from_eth_denver_segments(
+    #     llm_client, segments
+    # )
+    #
+    # print(f'question:::::::::::::::{question}')
 
 if __name__ == '__main__':
     gen_question()
