@@ -11,7 +11,7 @@ def gen_question():
 
 
     llm_client = openai.OpenAI(
-        api_key='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',
+        api_key='sk-proj-u8ANkfogUxibhGknsui1T3BlbkFJHy9MH9wBXq5OJKGfGNX2',
         organization='sM',
         max_retries=3,
     )
