@@ -19,7 +19,7 @@ def init_index(search_client):
                         "text": {"type": "text"},
                         "vector": {
                             "type": "dense_vector",
-                            "dims": 768
+                            "dims": 9
                         }
                     }
                 }
