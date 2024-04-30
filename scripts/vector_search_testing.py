@@ -274,6 +274,7 @@ def search(search_client):
         response = search_client.search(
             index=index_name,
             body=query,
+            size=10000
         )
         documents = response["hits"]["hits"]
         for i, document in enumerate(documents):
