@@ -98,45 +98,20 @@ def indexing_docs(search_client):
 
     num_files = len(list(dataset_path.glob("*.json")))
     print(f"Indexing {num_files} files in {dataset_dir}")
-    i = 0
+
     for doc_file in tqdm(
             dataset_path.glob("*.json"), total=num_files, desc="Indexing docs"
     ):
         with open(doc_file, "r") as f:
             doc = json.load(f)
-            segments = [doc]
-            question = generate_question_from_eth_denver_segments(
-                llm_client, segments
-            )
-            doc['question'] = question
-            print(f"DOC::::::::::{doc}")
-            search_client.index(index=index_name, body=doc, id=doc["doc_id"])
-            i = i + 1
-
-        if i == 80:
-            break
-
-
-# def update_questions(llm_client, search_client):
-#     """Index documents in Elasticsearch"""
-#     print(f"helpers.scan total:::{search_client.count(index=index_name)['count']}")
-#     for doc in tqdm(
-#             helpers.scan(search_client, index=index_name),
-#             desc="update_questions",
-#             total=search_client.count(index=index_name)["count"],
-#     ):
-#         segments = [doc["_source"]]
-#         doc_id = doc["_id"]
-#         question = generate_question_from_eth_denver_segments(
-#             llm_client, segments
-#         )
-#         print(f"DOC::::::::::{doc} - question::::{question}")
-#
-#         search_client.update(
-#             index=index_name,
-#             id=doc_id,
-#             body={"doc": {"question": question}, "doc_as_upsert": True},
-#         )
+            if doc['episode_id'] in ["_cCwx5zaz1I" "_aRTKs6AmvI", "_ikuHdB0GSk", "_nNl0XqM8r4"]:
+                segments = [doc]
+                question = generate_question_from_eth_denver_segments(
+                    llm_client, segments
+                )
+                doc['question'] = question
+                print(f"DOC::::::::::{doc}")
+                search_client.index(index=index_name, body=doc, id=doc["doc_id"])
 
 
 def text_to_embedding(text):
@@ -182,21 +157,21 @@ def search_similar_questions(search_client, query_embedding, top_n=5):
             }
         }
 
-        query = {
-            "size": top_n,
-            "query": {
-                "script_score": {
-                    "query": {"match_all": {}},
-                    "script": {
-                        "source": "dotProduct(params.query_vector, 'embedding') + 1.0",
-                        "params": {"query_vector": query_embedding.tolist()}
-                    }
-                }
-            },
-            "_source": {
-                "excludes": ["embedding"]
-            }
-        }
+        # query = {
+        #     "size": top_n,
+        #     "query": {
+        #         "script_score": {
+        #             "query": {"match_all": {}},
+        #             "script": {
+        #                 "source": "dotProduct(params.query_vector, 'embedding') + 1.0",
+        #                 "params": {"query_vector": query_embedding.tolist()}
+        #             }
+        #         }
+        #     },
+        #     "_source": {
+        #         "excludes": ["embedding"]
+        #     }
+        # }
 
         # query = {
         #     "knn": {
@@ -274,26 +249,25 @@ if __name__ == "__main__":
 
     num_files = len(list(dataset_path.glob("*.json")))
 
-    # extract_dataset()
-    #
-    # drop_index(search_client, index_name)
-    # init_index(search_client)
-    #
-    # r = search_client.count(index=index_name)
+    extract_dataset()
+
+    drop_index(search_client, index_name)
+    init_index(search_client)
+
     indexing_docs(search_client)
-    #
-    # indexing_embeddings(search_client)
-    #
-    # search(search_client)
 
-    #Example query
-    query_text = "How does Gelato's solution differ from traditional smart contract platforms?"
-    embedding = text_embedding(query_text)[0]
-    embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+    indexing_embeddings(search_client)
 
-    # Perform vector search
-    results = search_similar_questions(search_client, embedding)
-    for i, result in enumerate(results):
-        print(f"INDEX::{i} -- DOC::{result}")
+    search(search_client)
+
+    # #Example query
+    # query_text = "How does Gelato's solution differ from traditional smart contract platforms?"
+    # embedding = text_embedding(query_text)[0]
+    # embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+    #
+    # # Perform vector search
+    # results = search_similar_questions(search_client, embedding)
+    # for i, result in enumerate(results):
+    #     print(f"INDEX::{i} -- DOC::{result}")
 
 
