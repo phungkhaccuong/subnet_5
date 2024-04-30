@@ -106,7 +106,7 @@ def indexing_docs(search_client):
             doc = json.load(f)
             search_client.index(index=index_name, body=doc, id=doc["doc_id"])
 
-        if i == 200:
+        if i == 500:
             break
 
 
@@ -135,7 +135,7 @@ def update_questions(llm_client, search_client):
             body={"doc": {"question": question}, "doc_as_upsert": True},
         )
 
-        if i == 100:
+        if i == 200:
             break
 
 
@@ -165,7 +165,7 @@ def indexing_embeddings(search_client):
             body={"doc": {"embedding": embedding1.tolist()}, "doc_as_upsert": True},
         )
 
-        if i == 90:
+        if i == 100:
             break
 
 
@@ -234,42 +234,42 @@ def search(search_client):
 def search_similar_questions(search_client, query_embedding, top_n=10):
     """Search similar questions based on the query embedding"""
     try:
-        query = {
-            "size": top_n,
-            "query": {
-                "script_score": {
-                    "query": {"match_all": {}},
-                    "script": {
-                        "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
-                        "params": {"query_vector": query_embedding.tolist()}
-                    }
-                }
-            }
-        }
-
-        query = {
-            "size": top_n,
-            "query": {
-                "knn": {
-                    "embedding": {
-                        "vector": query_embedding.tolist(),
-                        "k": top_n
-                    }
-                }
-            }
-        }
+        # query = {
+        #     "size": top_n,
+        #     "query": {
+        #         "script_score": {
+        #             "query": {"match_all": {}},
+        #             "script": {
+        #                 "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
+        #                 "params": {"query_vector": query_embedding.tolist()}
+        #             }
+        #         }
+        #     }
+        # }
 
         # query = {
-        #     "knn": {
-        #         "field": "embedding",
-        #         "query_vector": embedding.tolist(),
-        #         "k": 5,
-        #         "num_candidates": 5 * 5,
-        #     },
-        #     # "_source": {
-        #     #     "excludes": ["embedding"],
-        #     # },
+        #     "size": top_n,
+        #     "query": {
+        #         "knn": {
+        #             "embedding": {
+        #                 "vector": query_embedding.tolist(),
+        #                 "k": top_n
+        #             }
+        #         }
+        #     }
         # }
+
+        query = {
+            "knn": {
+                "field": "embedding",
+                "query_vector": embedding.tolist(),
+                "k": 5,
+                "num_candidates": 5 * 5,
+            },
+            # "_source": {
+            #     "excludes": ["embedding"],
+            # },
+        }
         res = search_client.search(index=index_name, body=query)
         return res["hits"]["hits"]
     except Exception as inst:
@@ -301,39 +301,38 @@ if __name__ == "__main__":
 
     num_files = len(list(dataset_path.glob("*.json")))
 
-    # extract_dataset()
-    #
-    # drop_index(search_client, index_name)
-    # init_index(search_client)
-    #
-    # r = search_client.count(index=index_name)
-    # if r["count"] != num_files:
-    #     print(
-    #         f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
-    #     )
-    #     indexing_docs(search_client)
-    # else:
-    #     print(
-    #         f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
-    #     )
-    #
-    # update_questions(llm_client, search_client)
-    #
-    # indexing_embeddings(search_client)
+    extract_dataset()
+
+    drop_index(search_client, index_name)
+    init_index(search_client)
+
+    r = search_client.count(index=index_name)
+    if r["count"] != num_files:
+        print(
+            f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
+        )
+        indexing_docs(search_client)
+    else:
+        print(
+            f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
+        )
+
+    update_questions(llm_client, search_client)
+
+    indexing_embeddings(search_client)
 
     # Example query
-    query_text = "What new functionalities do Humane AI pin, Rabbit R1, and ChatGPT's voice interface offer?"
-    embedding = text_embedding(query_text)[0]
-    embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
-    print(f"query_embedding:::{embedding.tolist()}")
+    # query_text = "What new functionalities do Humane AI pin, Rabbit R1, and ChatGPT's voice interface offer?"
+    # embedding = text_embedding(query_text)[0]
+    # embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+    # print(f"query_embedding:::{embedding.tolist()}")
+    #
+    # # Perform vector search
+    # results = search_similar_questions(search_client, embedding)
+    # print(f"RESULT::::{results}")
+    # # Display results
+    # for result in results:
+    #     print(f"RESULT::::{result}")
+    #     print(f"Score: {result['_score']}")
+    #     print()
 
-    # Perform vector search
-    results = search_similar_questions(search_client, embedding)
-    print(f"RESULT::::{results}")
-    # Display results
-    for result in results:
-        print(f"RESULT::::{result}")
-        print(f"Score: {result['_score']}")
-        print()
-
-    # print(search(search_client))
