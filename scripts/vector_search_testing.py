@@ -169,27 +169,6 @@ def indexing_embeddings(search_client):
             break
 
 
-def search(search_client):
-    query = {
-        "query": {
-            "match": {
-                "speaker": "Jayden Windle"
-            }
-        }
-    }
-
-    print(f"es_query: {query}")
-
-    try:
-        response = search_client.search(
-            index=index_name,
-            body=query,
-        )
-        documents = response["hits"]["hits"]
-        return documents
-    except Exception as e:
-        print("recall error...", e)
-        return []
 
 
 # def vector_search(search_client, query_embedding, index, top_n=10):
@@ -277,6 +256,28 @@ def search_similar_questions(search_client, query_embedding, top_n=10):
         print(f'ERROR:::{json.dumps(inst.args)}')
 
 
+def search(search_client):
+    query = {
+        "query": {
+            "match": {
+                "speaker": "John Paller"
+            }
+        }
+    }
+
+    print(f"es_query: {query}")
+
+    try:
+        response = search_client.search(
+            index=index_name,
+            body=query,
+        )
+        documents = response["hits"]["hits"]
+        return documents
+    except Exception as e:
+        print("recall error...", e)
+        return []
+
 if __name__ == "__main__":
     load_dotenv()
 
@@ -335,4 +336,6 @@ if __name__ == "__main__":
         print(f"RESULT::::{result}")
         print(f"Score: {result['_score']}")
         print()
+
+    print(search(search_client))
 
