@@ -152,14 +152,14 @@ def indexing_embeddings(search_client):
             total=search_client.count(index=index_name)["count"],
     ):
         doc_id = doc["_id"]
-        text = doc["_source"]["text"]
-        embedding1 = text_embedding(text)[0]
-        embedding1 = pad_tensor(embedding1, max_len=MAX_EMBEDDING_DIM)
+        text = doc["_source"]["question"]
+        emb = text_embedding(text)[0]
+        emb = pad_tensor(emb, max_len=MAX_EMBEDDING_DIM)
 
         search_client.update(
             index=index_name,
             id=doc_id,
-            body={"doc": {"embedding": embedding1.tolist()}, "doc_as_upsert": True},
+            body={"doc": {"embedding": emb.tolist()}, "doc_as_upsert": True},
         )
 
 
@@ -308,17 +308,15 @@ if __name__ == "__main__":
 
     num_files = len(list(dataset_path.glob("*.json")))
 
-    # extract_dataset()
-    #
-    # drop_index(search_client, index_name)
-    # init_index(search_client)
-    #
-    # r = search_client.count(index=index_name)
-    # indexing_docs(search_client)
-    #
-    # #update_questions(llm_client, search_client)
-    #
-    # indexing_embeddings(search_client)
+    extract_dataset()
+
+    drop_index(search_client, index_name)
+    init_index(search_client)
+
+    r = search_client.count(index=index_name)
+    indexing_docs(search_client)
+
+    indexing_embeddings(search_client)
 
     # search(search_client)
 
