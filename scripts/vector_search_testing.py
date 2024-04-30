@@ -244,30 +244,30 @@ if __name__ == "__main__":
         max_retries=3,
     )
 
-    dataset_dir = root_dir + "datasets/eth_denver_dataset"
-    dataset_path = Path(dataset_dir)
-
-    num_files = len(list(dataset_path.glob("*.json")))
-
-    extract_dataset()
-
-    drop_index(search_client, index_name)
-    init_index(search_client)
-
-    indexing_docs(search_client)
-
-    indexing_embeddings(search_client)
-
-    search(search_client)
-
-    # #Example query
-    # query_text = "How does Gelato's solution differ from traditional smart contract platforms?"
-    # embedding = text_embedding(query_text)[0]
-    # embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+    # dataset_dir = root_dir + "datasets/eth_denver_dataset"
+    # dataset_path = Path(dataset_dir)
     #
-    # # Perform vector search
-    # results = search_similar_questions(search_client, embedding)
-    # for i, result in enumerate(results):
-    #     print(f"INDEX::{i} -- DOC::{result}")
+    # num_files = len(list(dataset_path.glob("*.json")))
+    #
+    # extract_dataset()
+    #
+    # drop_index(search_client, index_name)
+    # init_index(search_client)
+    #
+    # indexing_docs(search_client)
+    #
+    # indexing_embeddings(search_client)
+    #
+    # search(search_client)
+
+    #Example query
+    query_text = "What are some use cases for Fluence's verifiable data preparation networks?"
+    embedding = text_embedding(query_text)[0]
+    embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+
+    # Perform vector search
+    results = search_similar_questions(search_client, embedding)
+    for i, result in enumerate(results):
+        print(f"INDEX::{i} -- DOC::{result}")
 
 
