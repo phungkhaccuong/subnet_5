@@ -104,7 +104,7 @@ def indexing_docs(search_client):
     ):
         with open(doc_file, "r") as f:
             doc = json.load(f)
-            if doc['episode_id'] in ["_cCwx5zaz1I" "_aRTKs6AmvI", "_ikuHdB0GSk", "_nNl0XqM8r4"]:
+            if doc['episode_id'] in ["_cCwx5zaz1I", "_aRTKs6AmvI", "_ikuHdB0GSk", "_nNl0XqM8r4"]:
                 segments = [doc]
                 question = generate_question_from_eth_denver_segments(
                     llm_client, segments
