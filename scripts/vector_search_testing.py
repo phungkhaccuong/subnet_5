@@ -157,33 +157,33 @@ def search_similar_questions(search_client, query_embedding, top_n=5):
         #     }
         # }
 
-        # query = {
-        #     "size": top_n,
-        #     "query": {
-        #         "script_score": {
-        #             "query": {"match_all": {}},
-        #             "script": {
-        #                 "source": "dotProduct(params.query_vector, 'embedding') + 1.0",
-        #                 "params": {"query_vector": query_embedding.tolist()}
-        #             }
-        #         }
-        #     },
-        #     "_source": {
-        #         "excludes": ["embedding"]
-        #     }
-        # }
-
         query = {
-            "knn": {
-                "field": "embedding",
-                "query_vector": query_embedding.tolist(),
-                "k": 5,
-                "num_candidates": 5 * 5,
+            "size": top_n,
+            "query": {
+                "script_score": {
+                    "query": {"match_all": {}},
+                    "script": {
+                        "source": "dotProduct(params.query_vector, 'embedding') + 1.0",
+                        "params": {"query_vector": query_embedding.tolist()}
+                    }
+                }
             },
             "_source": {
-                "excludes": ["embedding"],
-            },
+                "excludes": ["embedding"]
+            }
         }
+
+        # query = {
+        #     "knn": {
+        #         "field": "embedding",
+        #         "query_vector": query_embedding.tolist(),
+        #         "k": 5,
+        #         "num_candidates": 5 * 5,
+        #     },
+        #     "_source": {
+        #         "excludes": ["embedding"],
+        #     },
+        # }
         res = search_client.search(index=index_name, body=query)
         return res["hits"]["hits"]
     except Exception as inst:
