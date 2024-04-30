@@ -109,7 +109,7 @@ def indexing_docs(search_client):
             i = i + 1
             print(f"I:::{i}")
 
-        if i == 50:
+        if i == 200:
             break
 
 
