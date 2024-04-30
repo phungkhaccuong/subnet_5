@@ -318,21 +318,21 @@ if __name__ == "__main__":
 
     indexing_embeddings(search_client)
 
-    # search(search_client)
+    search(search_client)
 
     #Example query
-    query_text = "What does the speaker say after discussing real-world assets on-chain?"
-    embedding = text_embedding(query_text)[0]
-    embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
-    print(f"query_embedding:::{embedding.tolist()}")
-
-    # Perform vector search
-    results = search_similar_questions(search_client, embedding)
-    print(f"RESULT::::{results}")
-    # Display results
-    for result in results:
-        print(f"RESULT::::{result}")
-        print(f"Score: {result['_score']}")
-        print()
+    # query_text = "What does the speaker say after discussing real-world assets on-chain?"
+    # embedding = text_embedding(query_text)[0]
+    # embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+    # print(f"query_embedding:::{embedding.tolist()}")
+    #
+    # # Perform vector search
+    # results = search_similar_questions(search_client, embedding)
+    # print(f"RESULT::::{results}")
+    # # Display results
+    # for result in results:
+    #     print(f"RESULT::::{result}")
+    #     print(f"Score: {result['_score']}")
+    #     print()
 
 
