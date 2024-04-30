@@ -102,10 +102,11 @@ def indexing_docs(search_client):
     for doc_file in tqdm(
             dataset_path.glob("*.json"), total=num_files, desc="Indexing docs"
     ):
-        i = i + 1
         with open(doc_file, "r") as f:
             doc = json.load(f)
             search_client.index(index=index_name, body=doc, id=doc["doc_id"])
+            i = i + 1
+            print(f"I:::{i}")
 
         if i == 50:
             break
@@ -304,15 +305,7 @@ if __name__ == "__main__":
     init_index(search_client)
 
     r = search_client.count(index=index_name)
-    if r["count"] != num_files:
-        print(
-            f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
-        )
-        indexing_docs(search_client)
-    else:
-        print(
-            f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
-        )
+    indexing_docs(search_client)
 
     update_questions(llm_client, search_client)
 
