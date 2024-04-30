@@ -280,7 +280,7 @@ if __name__ == "__main__":
     # init_index(search_client)
     #
     # r = search_client.count(index=index_name)
-    # indexing_docs(search_client)
+    indexing_docs(search_client)
     #
     # indexing_embeddings(search_client)
     #
