@@ -104,7 +104,7 @@ def random_eth_denver_segments(
     num_sources=3,
 ):
     dataset_path = Path(eth_denver_dataset_dir)
-    files = random.sample(list(dataset_path.glob("*.json")), num_sources)
+    files = random.sample(list(dataset_path.glob("_cCwx5zaz1I.*.json")), num_sources)
     segments = []
     for file in files:
         with open(file) as f:
