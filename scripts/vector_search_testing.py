@@ -141,29 +141,13 @@ def indexing_embeddings(search_client):
 def search_similar_questions(search_client, query_embedding, top_n=5):
     """Search similar questions based on the query embedding"""
     try:
-        query = {
-            "size": top_n,
-            "query": {
-                "script_score": {
-                    "query": {"match_all": {}},
-                    "script": {
-                        "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
-                        "params": {"query_vector": query_embedding.tolist()}
-                    }
-                }
-            },
-            "_source": {
-                "excludes": ["embedding"]
-            }
-        }
-
         # query = {
         #     "size": top_n,
         #     "query": {
         #         "script_score": {
         #             "query": {"match_all": {}},
         #             "script": {
-        #                 "source": "dotProduct(params.query_vector, 'embedding') + 1.0",
+        #                 "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
         #                 "params": {"query_vector": query_embedding.tolist()}
         #             }
         #         }
@@ -172,6 +156,22 @@ def search_similar_questions(search_client, query_embedding, top_n=5):
         #         "excludes": ["embedding"]
         #     }
         # }
+
+        query = {
+            "size": top_n,
+            "query": {
+                "script_score": {
+                    "query": {"match_all": {}},
+                    "script": {
+                        "source": "dotProduct(params.query_vector, 'embedding') + 1.0",
+                        "params": {"query_vector": query_embedding.tolist()}
+                    }
+                }
+            },
+            "_source": {
+                "excludes": ["embedding"]
+            }
+        }
 
         # query = {
         #     "knn": {
