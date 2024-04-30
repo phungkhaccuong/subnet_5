@@ -104,6 +104,7 @@ def indexing_docs(search_client):
     ):
         with open(doc_file, "r") as f:
             doc = json.load(f)
+            print(f"DOCCCCC::::{doc}")
             search_client.index(index=index_name, body=doc, id=doc["doc_id"])
             i = i + 1
             print(f"I:::{i}")
