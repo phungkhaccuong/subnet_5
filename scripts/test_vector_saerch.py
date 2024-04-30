@@ -103,16 +103,12 @@ def main(search_client):
     # Perform vector similarity search
     query_vector = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
 
-    # Normalize query vector
-    query_vector = np.array(query_vector)
-    query_vector = query_vector / np.linalg.norm(query_vector)
-
     script_query = {
         "script_score": {
             "query": {"match_all": {}},
             "script": {
                 "source": "cosineSimilarity(params.queryVector, 'vector') + 1.0",
-                "params": {"queryVector": query_vector.tolist()}
+                "params": {"queryVector": query_vector}
             }
         }
     }
