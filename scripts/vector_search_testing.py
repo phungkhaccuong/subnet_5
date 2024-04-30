@@ -100,37 +100,43 @@ def indexing_docs(search_client):
     print(f"Indexing {num_files} files in {dataset_dir}")
     i = 0
     for doc_file in tqdm(
-            dataset_path.glob("*.json"), total=100, desc="Indexing docs"
+            dataset_path.glob("*.json"), total=num_files, desc="Indexing docs"
     ):
         with open(doc_file, "r") as f:
             doc = json.load(f)
+            segments = [doc]
+            question = generate_question_from_eth_denver_segments(
+                llm_client, segments
+            )
+            doc['question'] = question
+            print(f"DOC::::::::::{doc}")
             search_client.index(index=index_name, body=doc, id=doc["doc_id"])
             i = i + 1
 
-        if i == 140:
+        if i == 80:
             break
 
 
-def update_questions(llm_client, search_client):
-    """Index documents in Elasticsearch"""
-    print(f"helpers.scan total:::{search_client.count(index=index_name)['count']}")
-    for doc in tqdm(
-            helpers.scan(search_client, index=index_name),
-            desc="update_questions",
-            total=search_client.count(index=index_name)["count"],
-    ):
-        segments = [doc["_source"]]
-        doc_id = doc["_id"]
-        question = generate_question_from_eth_denver_segments(
-            llm_client, segments
-        )
-        print(f"DOC::::::::::{doc} - question::::{question}")
-
-        search_client.update(
-            index=index_name,
-            id=doc_id,
-            body={"doc": {"question": question}, "doc_as_upsert": True},
-        )
+# def update_questions(llm_client, search_client):
+#     """Index documents in Elasticsearch"""
+#     print(f"helpers.scan total:::{search_client.count(index=index_name)['count']}")
+#     for doc in tqdm(
+#             helpers.scan(search_client, index=index_name),
+#             desc="update_questions",
+#             total=search_client.count(index=index_name)["count"],
+#     ):
+#         segments = [doc["_source"]]
+#         doc_id = doc["_id"]
+#         question = generate_question_from_eth_denver_segments(
+#             llm_client, segments
+#         )
+#         print(f"DOC::::::::::{doc} - question::::{question}")
+#
+#         search_client.update(
+#             index=index_name,
+#             id=doc_id,
+#             body={"doc": {"question": question}, "doc_as_upsert": True},
+#         )
 
 
 def text_to_embedding(text):
@@ -245,11 +251,20 @@ def search_similar_questions(search_client, query_embedding, top_n=10):
 
 
 def search(search_client):
+    # query = {
+    #     "query": {
+    #         "match": {
+    #             "speaker": "John Paller"
+    #         }
+    #     }
+    # }
+
     query = {
+        "_source": {
+            "excludes": ["embedding"]
+        },
         "query": {
-            "match": {
-                "speaker": "John Paller"
-            }
+            "match_all": {}
         }
     }
 
@@ -266,12 +281,6 @@ def search(search_client):
         print("recall error...", e)
         return []
 
-def scan_all(search_client):
-    docs = scan(search_client, index=index_name)
-
-    # Iterate through the documents
-    for i, doc in enumerate(docs):
-        print(f"INDEX:::{i} - DOC::::{doc['_source']}")
 
 if __name__ == "__main__":
     load_dotenv()
@@ -305,11 +314,11 @@ if __name__ == "__main__":
     r = search_client.count(index=index_name)
     indexing_docs(search_client)
 
-    update_questions(llm_client, search_client)
+    #update_questions(llm_client, search_client)
 
     indexing_embeddings(search_client)
 
-    scan_all(search_client)
+    search(search_client)
 
     # #Example query
     # query_text = "What issues arise when bridging older NFTs to another blockchain?"
