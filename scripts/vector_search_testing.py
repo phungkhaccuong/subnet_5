@@ -277,6 +277,7 @@ if __name__ == "__main__":
 
     # Perform vector search
     results = search_similar_questions(search_client, embedding)
-    print(f"RESULT::::{results}")
+    for i, result in enumerate(results):
+        print(f"INDEX::{i} -- DOC::{result}")
 
 
