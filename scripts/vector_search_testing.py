@@ -176,6 +176,9 @@ def search_similar_questions(search_client, query_embedding, top_n=10):
                         "params": {"query_vector": query_embedding.tolist()}
                     }
                 }
+            },
+            "_source": {
+                "excludes": ["embedding"]
             }
         }
 
