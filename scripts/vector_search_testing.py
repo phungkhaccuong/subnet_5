@@ -163,7 +163,7 @@ def indexing_embeddings(search_client):
         )
 
 
-def search_similar_questions(search_client, query_embedding, top_n=10):
+def search_similar_questions(search_client, query_embedding, top_n=5):
     """Search similar questions based on the query embedding"""
     try:
         query = {
