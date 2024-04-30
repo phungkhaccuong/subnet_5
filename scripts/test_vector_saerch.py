@@ -131,12 +131,9 @@ def search(search_client):
     try:
         response = search_client.search(
             index=index_name,
-            body=query,
-            size=10000
+            body=query
         )
-        documents = response["hits"]["hits"]
-        for i, document in enumerate(documents):
-            print(f"INDEX::::{i} - DOC:::{document}")
+        print(f"RESPONSE::::{response}")
 
     except Exception as e:
         print("recall error...", e)
