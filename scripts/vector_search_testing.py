@@ -100,14 +100,12 @@ def indexing_docs(search_client):
     print(f"Indexing {num_files} files in {dataset_dir}")
     i = 0
     for doc_file in tqdm(
-            dataset_path.glob("*.json"), total=num_files, desc="Indexing docs"
+            dataset_path.glob("*.json"), total=100, desc="Indexing docs"
     ):
         with open(doc_file, "r") as f:
             doc = json.load(f)
-            print(f"DOCCCCC::::{doc}")
             search_client.index(index=index_name, body=doc, id=doc["doc_id"])
             i = i + 1
-            print(f"I:::{i}")
 
         if i == 140:
             break
@@ -121,7 +119,6 @@ def update_questions(llm_client, search_client):
             desc="update_questions",
             total=search_client.count(index=index_name)["count"],
     ):
-        print(f"DOC::::::::::{doc}")
         segments = [doc["_source"]]
         doc_id = doc["_id"]
         question = generate_question_from_eth_denver_segments(
