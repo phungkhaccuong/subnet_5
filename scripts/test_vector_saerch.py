@@ -20,9 +20,9 @@ def init_index(search_client):
                         "price": {
                             "type": "integer"
                         },
-                        "vector": {
+                        "title_vector": {
                             "type": "dense_vector",
-                            "dims": 10,
+                            "dims": 3,
                             "index": False
                         }
                     }
@@ -36,60 +36,6 @@ def init_index(search_client):
 
 def insert_data(search_client):
     print('Insert data')
-    vectors = [
-        {"price": 20, "vector": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]},
-        {"price": 19, "vector": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]},
-        {"price": 18, "vector": [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]}
-    ]
-    for i, vector in enumerate(vectors):
-        search_client.index(index=index_name, id=i, body=vector)
-
-
-def query(search_client):
-    print('search query')
-    query_vector = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    script_query = {
-        "script_score": {
-            "query": {"match_all": {}},
-            "script": {
-                "source": "cosineSimilarity(params.query_vector, 'vector') + 1.0",
-                "params": {"query_vector": query_vector}
-            }
-        }
-    }
-
-    search_results = search_client.search(index=index_name, body={"query": script_query})
-    print(f"search_results:::{search_results}")
-    for hit in search_results['hits']['hits']:
-        print(f"HIT:::{hit}")
-        print(f"Vector: {hit['_source']['text']}, Score: {hit['_score']}")
-
-def drop_index(search_client):
-    if search_client.indices.exists(index=index_name):
-        search_client.indices.delete(index=index_name)
-        print("Index deleted: ", index_name)
-    else:
-        print("Index does not exist: ", index_name)
-
-def main(search_client):
-    search_client.indices.create(
-        index=index_name,
-        body={
-            "mappings": {
-                "properties": {
-                    "price": {
-                        "type": "integer"
-                    },
-                    "title_vector": {
-                        "type": "dense_vector",
-                        "dims": 3,
-                        "index": False
-                    }
-                }
-            }
-        },
-    )
-
     # Index some vectors
     vectors = [
         {"title_vector": [2.2, 4.3, 1.8], "price": 23},
@@ -101,13 +47,16 @@ def main(search_client):
     for i, vector in enumerate(vectors):
         search_client.index(index=index_name, id=i, body=vector)
 
+
+def query(search_client):
+    print('search query')
     script_query = {
         "script_score": {
             "query": {"match_all": {}},
             "script": {
                 "source": "cosineSimilarity(params.queryVector, 'title_vector') + 1.0",
                 "params": {
-                  "queryVector": [2.2, 4.3, 1.8]
+                    "queryVector": [2.2, 4.3, 1.8]
                 }
             }
         }
@@ -115,8 +64,14 @@ def main(search_client):
 
     search_results = search_client.search(index=index_name, body={"query": script_query})
     print(f"RESULT:{search_results}")
-    for hit in search_results['hits']['hits']:
-        print(f"Vector: {hit['_source']['text']}, Score: {hit['_score']}")
+
+def drop_index(search_client):
+    if search_client.indices.exists(index=index_name):
+        search_client.indices.delete(index=index_name)
+        print("Index deleted: ", index_name)
+    else:
+        print("Index does not exist: ", index_name)
+
 
 
 def search(search_client):
@@ -153,12 +108,13 @@ if __name__ == '__main__':
 
     drop_index(search_client)
     # # create index
-    # init_index(search_client)
+    init_index(search_client)
     #
     # # insert data
-    # insert_data(search_client)
+    insert_data(search_client)
     #
-    # # query data
-    # query(search_client)
+
     search(search_client)
-    main(search_client)
+    # # query data
+    query(search_client)
+
