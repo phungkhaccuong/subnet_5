@@ -113,11 +113,13 @@ def indexing_docs(search_client):
 
 def update_questions(llm_client, search_client):
     """Index documents in Elasticsearch"""
+    print(f"helpers.scan total:::{search_client.count(index=index_name)['count']}")
     for doc in tqdm(
             helpers.scan(search_client, index=index_name),
             desc="update_questions",
             total=search_client.count(index=index_name)["count"],
     ):
+        print(f"DOC::::::::::{doc}")
         segments = [doc["_source"]]
         doc_id = doc["_id"]
         question = generate_question_from_eth_denver_segments(
