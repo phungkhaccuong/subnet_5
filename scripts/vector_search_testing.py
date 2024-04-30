@@ -224,6 +224,23 @@ def search(search_client):
     except Exception as e:
         print("recall error...", e)
 
+def list_file():
+    dataset_dir = root_dir + "datasets/eth_denver_dataset"
+    dataset_path = Path(dataset_dir)
+
+    patterns = [
+        "_cCwx5zaz1I.*.json",
+        "_aRTKs6AmvI.*.json",
+        "_ikuHdB0GSk.*.json",
+        "_nNl0XqM8r4.*.json"
+    ]
+
+    # Create a list of file paths
+    file_list = [file for pattern in patterns for file in dataset_path.glob(pattern)]
+
+    print(f"number:::::{len(file_list)}")
+
+
 
 if __name__ == "__main__":
     load_dotenv()
@@ -261,13 +278,15 @@ if __name__ == "__main__":
     # search(search_client)
 
     #Example query
-    query_text = "What is the architecture of Cloudless Functions in Fluence?"
-    embedding = text_embedding(query_text)[0]
-    embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+    # query_text = "What is the architecture of Cloudless Functions in Fluence?"
+    # embedding = text_embedding(query_text)[0]
+    # embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+    #
+    # # Perform vector search
+    # results = search_similar_questions(search_client, embedding)
+    # for i, result in enumerate(results):
+    #     print(f"INDEX::{i} -- DOC::{result}")
 
-    # Perform vector search
-    results = search_similar_questions(search_client, embedding)
-    for i, result in enumerate(results):
-        print(f"INDEX::{i} -- DOC::{result}")
+    list_file()
 
 
