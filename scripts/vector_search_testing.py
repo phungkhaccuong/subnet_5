@@ -174,9 +174,6 @@ def search_similar_questions(search_client, query_embedding, top_n=10):
                     "script": {
                         "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
                         "params": {"query_vector": query_embedding.tolist()}
-                    },
-                    "_source": {
-                        "excludes": ["embedding"]
                     }
                 }
             }
@@ -278,10 +275,5 @@ if __name__ == "__main__":
     # Perform vector search
     results = search_similar_questions(search_client, embedding)
     print(f"RESULT::::{results}")
-    # Display results
-    for result in results:
-        print(f"RESULT::::{result}")
-        print(f"Score: {result['_score']}")
-        print()
 
 
