@@ -307,17 +307,17 @@ if __name__ == "__main__":
 
     num_files = len(list(dataset_path.glob("*.json")))
 
-    extract_dataset()
-
-    drop_index(search_client, index_name)
-    init_index(search_client)
-
-    r = search_client.count(index=index_name)
-    indexing_docs(search_client)
-
-    #update_questions(llm_client, search_client)
-
-    indexing_embeddings(search_client)
+    # extract_dataset()
+    #
+    # drop_index(search_client, index_name)
+    # init_index(search_client)
+    #
+    # r = search_client.count(index=index_name)
+    # indexing_docs(search_client)
+    #
+    # #update_questions(llm_client, search_client)
+    #
+    # indexing_embeddings(search_client)
 
     search(search_client)
 
