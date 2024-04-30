@@ -266,9 +266,9 @@ def search_similar_questions(search_client, query_embedding, top_n=10):
                 "k": 5,
                 "num_candidates": 5 * 5,
             },
-            # "_source": {
-            #     "excludes": ["embedding"],
-            # },
+            "_source": {
+                "excludes": ["embedding"],
+            },
         }
         res = search_client.search(index=index_name, body=query)
         return res["hits"]["hits"]
