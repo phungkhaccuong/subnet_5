@@ -163,86 +163,33 @@ def indexing_embeddings(search_client):
         )
 
 
-
-
-# def vector_search(search_client, query_embedding, index, top_n=10):
-#     # script_query = {
-#     #     "script_score": {
-#     #         "query": {"match_all": {}},
-#     #         "script": {
-#     #             "source": "cosineSimilarity(params.query_vector, doc['embedding']) + 1.0",
-#     #             "params": {"query_vector": query_embedding}
-#     #         }
-#     #     }
-#     # }
-#     #
-#     # search_query = {
-#     #     "size": top_n,
-#     #     "query": script_query,
-#     #     "_source": ["episode_id", "episode_title", "episode_url", "created_at", "company_name",
-#     #                 "segment_start_time", "segment_end_time", "text", "speaker", "segment_id", "doc_id"]
-#     # }
-#     #
-#     # res = search_client.search(index=index, body=search_query)
-#     # return res['hits']['hits']
-#
-#     search_query = {
-#         "size": top_n,
-#         "query": {
-#             "script_score": {
-#                 "query": {"match_all": {}},
-#                 "script": {
-#                     "source": "cosineSimilarity(params.query_vector, doc['question_embedding']) + 1.0",
-#                     "params": {"query_vector": query_embedding.tolist()}
-#                 }
-#             }
-#         },
-#         # "_source": ["episode_id", "episode_title", "episode_url", "created_at", "company_name", "segment_start_time",
-#         #             "segment_end_time", "text", "speaker", "segment_id", "doc_id"]
-#     }
-#
-#     res = search_client.search(index=index, body=search_query)
-#     return res['hits']['hits']
-
 def search_similar_questions(search_client, query_embedding, top_n=10):
     """Search similar questions based on the query embedding"""
     try:
-        # query = {
-        #     "size": top_n,
-        #     "query": {
-        #         "script_score": {
-        #             "query": {"match_all": {}},
-        #             "script": {
-        #                 "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
-        #                 "params": {"query_vector": query_embedding.tolist()}
-        #             }
-        #         }
-        #     }
-        # }
-
-        # query = {
-        #     "size": top_n,
-        #     "query": {
-        #         "knn": {
-        #             "embedding": {
-        #                 "vector": query_embedding.tolist(),
-        #                 "k": top_n
-        #             }
-        #         }
-        #     }
-        # }
-
         query = {
-            "knn": {
-                "field": "embedding",
-                "query_vector": query_embedding.tolist(),
-                "k": 5,
-                "num_candidates": 5 * 5,
-            },
-            "_source": {
-                "excludes": ["embedding"],
-            },
+            "size": top_n,
+            "query": {
+                "script_score": {
+                    "query": {"match_all": {}},
+                    "script": {
+                        "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
+                        "params": {"query_vector": query_embedding.tolist()}
+                    }
+                }
+            }
         }
+
+        # query = {
+        #     "knn": {
+        #         "field": "embedding",
+        #         "query_vector": query_embedding.tolist(),
+        #         "k": 5,
+        #         "num_candidates": 5 * 5,
+        #     },
+        #     "_source": {
+        #         "excludes": ["embedding"],
+        #     },
+        # }
         res = search_client.search(index=index_name, body=query)
         return res["hits"]["hits"]
     except Exception as inst:
@@ -324,7 +271,6 @@ if __name__ == "__main__":
     query_text = "How does Gelato's solution differ from traditional smart contract platforms?"
     embedding = text_embedding(query_text)[0]
     embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
-    print(f"query_embedding:::{embedding.tolist()}")
 
     # Perform vector search
     results = search_similar_questions(search_client, embedding)
