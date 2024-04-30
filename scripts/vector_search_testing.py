@@ -321,7 +321,7 @@ if __name__ == "__main__":
     # search(search_client)
 
     #Example query
-    query_text = "How can building good UX for smart contract wallets benefit global users?"
+    query_text = "How does Gelato's solution differ from traditional smart contract platforms?"
     embedding = text_embedding(query_text)[0]
     embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
     print(f"query_embedding:::{embedding.tolist()}")
