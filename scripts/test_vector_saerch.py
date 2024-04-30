@@ -3,7 +3,6 @@ import os
 import numpy as np
 from dotenv import load_dotenv
 from elasticsearch import Elasticsearch
-from sympy import false
 
 index_name = "test_vectors"
 
@@ -24,7 +23,7 @@ def init_index(search_client):
                         "vector": {
                             "type": "dense_vector",
                             "dims": 10,
-                            "index": false
+                            "index": False
                         }
                     }
                 }
@@ -84,7 +83,7 @@ def main(search_client):
                     "vector": {
                         "type": "dense_vector",
                         "dims": 10,
-                        "index": false
+                        "index": False
                     }
                 }
             }
