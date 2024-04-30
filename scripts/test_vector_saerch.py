@@ -3,6 +3,7 @@ import os
 import numpy as np
 from dotenv import load_dotenv
 from elasticsearch import Elasticsearch
+from sympy import false
 
 index_name = "test_vectors"
 
@@ -17,9 +18,13 @@ def init_index(search_client):
             body={
                 "mappings": {
                     "properties": {
+                        "price": {
+                            "type": "integer"
+                        },
                         "vector": {
                             "type": "dense_vector",
-                            "dims": 10
+                            "dims": 10,
+                            "index": false
                         }
                     }
                 }
@@ -33,9 +38,9 @@ def init_index(search_client):
 def insert_data(search_client):
     print('Insert data')
     vectors = [
-        {"text": "vector 1", "vector": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]},
-        {"text": "vector 2", "vector": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]},
-        {"text": "vector 3", "vector": [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]}
+        {"price": 20, "vector": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]},
+        {"price": 19, "vector": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]},
+        {"price": 18, "vector": [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]}
     ]
     for i, vector in enumerate(vectors):
         search_client.index(index=index_name, id=i, body=vector)
@@ -68,32 +73,36 @@ def drop_index(search_client):
         print("Index does not exist: ", index_name)
 
 def main(search_client):
-    mapping = {
-        "mappings": {
-            "properties": {
-                "vector": {
-                    "type": "dense_vector",
-                    "dims": 10  # Change the dimensions to match your vectors or less
+    search_client.indices.create(
+        index=index_name,
+        body={
+            "mappings": {
+                "properties": {
+                    "price": {
+                        "type": "integer"
+                    },
+                    "vector": {
+                        "type": "dense_vector",
+                        "dims": 10,
+                        "index": false
+                    }
                 }
             }
-        }
-    }
-
-    # Create the index
-    search_client.indices.create(index=index_name, body=mapping, ignore=400)
+        },
+    )
 
     # Index some vectors
     vectors = [
-        {"text": "vector 1", "vector": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]},
-        {"text": "vector 2", "vector": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]},
-        {"text": "vector 3", "vector": [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]}
+        {"price": 20, "vector": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]},
+        {"price": 19, "vector": [11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0]},
+        {"price": 18, "vector": [21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0]}
     ]
 
     for i, vector in enumerate(vectors):
         search_client.index(index=index_name, id=i, body=vector)
 
     # Perform vector similarity search
-    query_vector = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    query_vector = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
 
     # Normalize query vector
     query_vector = np.array(query_vector)
@@ -103,8 +112,8 @@ def main(search_client):
         "script_score": {
             "query": {"match_all": {}},
             "script": {
-                "source": "cosineSimilarity(params.query_vector, doc['vector']) + 1.0",
-                "params": {"query_vector": query_vector.tolist()}
+                "source": "cosineSimilarity(params.queryVector, 'vector') + 1.0",
+                "params": {"queryVector": query_vector.tolist()}
             }
         }
     }
