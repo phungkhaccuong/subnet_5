@@ -276,10 +276,11 @@ def search(search_client):
             body=query,
         )
         documents = response["hits"]["hits"]
-        return documents
+        for i, document in enumerate(documents):
+            print(f"INDEX::::{i} - DOC:::{document}")
+
     except Exception as e:
         print("recall error...", e)
-        return []
 
 
 if __name__ == "__main__":
