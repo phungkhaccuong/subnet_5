@@ -135,7 +135,7 @@ def update_questions(llm_client, search_client):
             body={"doc": {"question": question}, "doc_as_upsert": True},
         )
 
-        if i == 200:
+        if i == 100:
             break
 
 
@@ -262,7 +262,7 @@ def search_similar_questions(search_client, query_embedding, top_n=10):
         query = {
             "knn": {
                 "field": "embedding",
-                "query_vector": embedding.tolist(),
+                "query_vector": query_embedding.tolist(),
                 "k": 5,
                 "num_candidates": 5 * 5,
             },
@@ -321,18 +321,18 @@ if __name__ == "__main__":
 
     indexing_embeddings(search_client)
 
-    # Example query
-    # query_text = "What new functionalities do Humane AI pin, Rabbit R1, and ChatGPT's voice interface offer?"
-    # embedding = text_embedding(query_text)[0]
-    # embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
-    # print(f"query_embedding:::{embedding.tolist()}")
-    #
-    # # Perform vector search
-    # results = search_similar_questions(search_client, embedding)
-    # print(f"RESULT::::{results}")
-    # # Display results
-    # for result in results:
-    #     print(f"RESULT::::{result}")
-    #     print(f"Score: {result['_score']}")
-    #     print()
+    #Example query
+    query_text = "What issues arise when bridging older NFTs to another blockchain?"
+    embedding = text_embedding(query_text)[0]
+    embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+    print(f"query_embedding:::{embedding.tolist()}")
+
+    # Perform vector search
+    results = search_similar_questions(search_client, embedding)
+    print(f"RESULT::::{results}")
+    # Display results
+    for result in results:
+        print(f"RESULT::::{result}")
+        print(f"Score: {result['_score']}")
+        print()
 
