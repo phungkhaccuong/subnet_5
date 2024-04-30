@@ -16,7 +16,7 @@ from openkaito.tasks import generate_question_from_eth_denver_segments
 from openkaito.utils.embeddings import pad_tensor, text_embedding, MAX_EMBEDDING_DIM
 
 root_dir = __file__.split("scripts")[0]
-index_name = "eth_denver_vector_search"
+index_name = "eth_denver_vector_search_v1"
 
 
 ### Extract Eth Denver dataset
