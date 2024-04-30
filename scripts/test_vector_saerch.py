@@ -80,9 +80,9 @@ def main(search_client):
                     "price": {
                         "type": "integer"
                     },
-                    "vector": {
+                    "title_vector": {
                         "type": "dense_vector",
-                        "dims": 10,
+                        "dims": 3,
                         "index": False
                     }
                 }
@@ -92,23 +92,23 @@ def main(search_client):
 
     # Index some vectors
     vectors = [
-        {"price": 20, "vector": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]},
-        {"price": 19, "vector": [11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0]},
-        {"price": 18, "vector": [21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0]}
+        {"title_vector": [2.2, 4.3, 1.8], "price": 23},
+        {"title_vector": [3.1, 0.7, 8.2], "price": 9},
+        {"title_vector": [1.4, 5.6, 3.9], "price": 124},
+        {"title_vector": [1.1, 4.4, 2.9], "price": 1457}
     ]
 
     for i, vector in enumerate(vectors):
         search_client.index(index=index_name, id=i, body=vector)
 
-    # Perform vector similarity search
-    query_vector = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
-
     script_query = {
         "script_score": {
             "query": {"match_all": {}},
             "script": {
-                "source": "cosineSimilarity(params.queryVector, 'vector') + 1.0",
-                "params": {"queryVector": query_vector}
+                "source": "cosineSimilarity(params.queryVector, 'title_vector') + 1.0",
+                "params": {
+                  "queryVector": [2.2, 4.3, 1.8]
+                }
             }
         }
     }
@@ -118,6 +118,28 @@ def main(search_client):
     for hit in search_results['hits']['hits']:
         print(f"Vector: {hit['_source']['text']}, Score: {hit['_score']}")
 
+
+def search(search_client):
+    query = {
+        "query": {
+            "match_all": {}
+        }
+    }
+
+    print(f"es_query: {query}")
+
+    try:
+        response = search_client.search(
+            index=index_name,
+            body=query,
+            size=10000
+        )
+        documents = response["hits"]["hits"]
+        for i, document in enumerate(documents):
+            print(f"INDEX::::{i} - DOC:::{document}")
+
+    except Exception as e:
+        print("recall error...", e)
 
 if __name__ == '__main__':
     load_dotenv()
@@ -141,4 +163,5 @@ if __name__ == '__main__':
     #
     # # query data
     # query(search_client)
+    search(search_client)
     main(search_client)
