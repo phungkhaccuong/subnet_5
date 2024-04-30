@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 
 import numpy as np
+from elasticsearch.helpers import scan
 from tqdm import tqdm
 import torch
 import openai
@@ -106,23 +107,18 @@ def indexing_docs(search_client):
             doc = json.load(f)
             search_client.index(index=index_name, body=doc, id=doc["doc_id"])
 
-        if i == 500:
+        if i == 50:
             break
 
 
 def update_questions(llm_client, search_client):
     """Index documents in Elasticsearch"""
-    i = 0
-
     for doc in tqdm(
             helpers.scan(search_client, index=index_name),
             desc="update_questions",
             total=search_client.count(index=index_name)["count"],
     ):
-        i = i + 1
-        segments = []
-        print(f"DOC::::::::::{doc}")
-        segments.append(doc["_source"])
+        segments = [doc["_source"]]
         doc_id = doc["_id"]
         question = generate_question_from_eth_denver_segments(
             llm_client, segments
@@ -135,9 +131,6 @@ def update_questions(llm_client, search_client):
             body={"doc": {"question": question}, "doc_as_upsert": True},
         )
 
-        if i == 100:
-            break
-
 
 def text_to_embedding(text):
     model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
@@ -146,27 +139,21 @@ def text_to_embedding(text):
 
 def indexing_embeddings(search_client):
     """Index embeddings of documents in Elasticsearch"""
-    i = 0
     for doc in tqdm(
             helpers.scan(search_client, index=index_name),
             desc="Indexing embeddings",
             total=search_client.count(index=index_name)["count"],
     ):
-        i = i + 1
         doc_id = doc["_id"]
         text = doc["_source"]["text"]
         embedding1 = text_embedding(text)[0]
         embedding1 = pad_tensor(embedding1, max_len=MAX_EMBEDDING_DIM)
-        print(f"embedding :::::{embedding1}")
 
         search_client.update(
             index=index_name,
             id=doc_id,
             body={"doc": {"embedding": embedding1.tolist()}, "doc_as_upsert": True},
         )
-
-        if i == 100:
-            break
 
 
 
@@ -278,6 +265,13 @@ def search(search_client):
         print("recall error...", e)
         return []
 
+def scan_all(search_client):
+    docs = scan(search_client, index=index_name)
+
+    # Iterate through the documents
+    for i, doc in enumerate(docs):
+        print(f"INDEX:::{i} - DOC::::{doc['_source']}")
+
 if __name__ == "__main__":
     load_dotenv()
 
@@ -302,40 +296,42 @@ if __name__ == "__main__":
 
     num_files = len(list(dataset_path.glob("*.json")))
 
-    # extract_dataset()
-    #
-    # drop_index(search_client, index_name)
-    # init_index(search_client)
-    #
-    # r = search_client.count(index=index_name)
-    # if r["count"] != num_files:
-    #     print(
-    #         f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
-    #     )
-    #     indexing_docs(search_client)
-    # else:
-    #     print(
-    #         f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
-    #     )
-    #
-    # update_questions(llm_client, search_client)
-    #
-    # indexing_embeddings(search_client)
+    extract_dataset()
 
-    #Example query
-    query_text = "What issues arise when bridging older NFTs to another blockchain?"
-    embedding = text_embedding(query_text)[0]
-    embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
-    print(f"query_embedding:::{embedding.tolist()}")
+    drop_index(search_client, index_name)
+    init_index(search_client)
 
-    # Perform vector search
-    results = search_similar_questions(search_client, embedding)
-    print(f"RESULT::::{results}")
-    # Display results
-    for result in results:
-        print(f"RESULT::::{result}")
-        print(f"Score: {result['_score']}")
-        print()
+    r = search_client.count(index=index_name)
+    if r["count"] != num_files:
+        print(
+            f"Number of docs in {index_name}: {r['count']} != total files {num_files}, reindexing docs..."
+        )
+        indexing_docs(search_client)
+    else:
+        print(
+            f"Number of docs in {index_name}: {r['count']} == total files {num_files}, no need to reindex docs"
+        )
 
-    print(search(search_client))
+    update_questions(llm_client, search_client)
+
+    indexing_embeddings(search_client)
+
+    scan_all(search_client)
+
+    # #Example query
+    # query_text = "What issues arise when bridging older NFTs to another blockchain?"
+    # embedding = text_embedding(query_text)[0]
+    # embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+    # print(f"query_embedding:::{embedding.tolist()}")
+    #
+    # # Perform vector search
+    # results = search_similar_questions(search_client, embedding)
+    # print(f"RESULT::::{results}")
+    # # Display results
+    # for result in results:
+    #     print(f"RESULT::::{result}")
+    #     print(f"Score: {result['_score']}")
+    #     print()
+    #
+    # print(search(search_client))
 
