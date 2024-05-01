@@ -378,7 +378,7 @@ if __name__ == "__main__":
 
 
     #execute query
-    query_text = "What is the architecture of Cloudless Functions in Fluence?"
+    query_text = "What languages are used to code functions in decentralized serverless compute by Fluence?"
     rank(evaluator, query_text)
 
 
