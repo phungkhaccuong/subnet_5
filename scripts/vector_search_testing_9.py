@@ -234,13 +234,15 @@ if __name__ == "__main__":
     extract_dataset()
 
     #drop_index(search_client, index_name)
-    init_index(search_client)
+    #init_index(search_client)
 
-    episode_ids = ['0eeOWeObrUw', 'MoWoeswytFw', 'wru-kVPLkEs', 'QwQ6SR4waC0', 'pDDGDqA4r04', 'aJaBESkGMp0',
-                   'HmfJxgVEXAU', 'G-MHnsoCFyU', 'Pz-VE6okapU', 'dTRpQaCoD1c', '89sODrEVabM', 'KWiHSkLa7xQ',
-                   'lcZD-WW5XwU', 'aqhddRq8jDY', '0167cLII0p0', '0zoNIXDg4IQ', 'bI_NfkUmOPQ', 'cO0mPzjl-mQ',
-                   'U7n4xMpMcWM', 'OYR7x6g-PDI', 'wLy14NgkYO0', 'cVJurWODvDQ', 'kJNXYWji74U', '2YeRlYRazwg',
-                   'TrLbTglwzXg', 'nl_AO8MQzYc', '1ohlR_tPlVM', '5A6LCO5Cc_Y', 'KPin7-azDQU', '1RTdrQtmtAw']
+    episode_ids = ['yBsb2dZ5mtk', 'YhigzdQ0BMc', '2TjVEqSDVRI', 'M3yb6fbXJck', 'ET92uUCOLwE', 'j4ynTvaLbiI', 'faQoa1TROeQ',
+                   'tvFA94stwy8', 'ZANXi-hOsjw', 'IMsx9nfKLiI', '8nq9j49lAXY', 'b9831cN65Xo', '5qrAKkKVHnY', '8IV5JUBzHuk',
+                   'lDXe944L-BQ', 'WtPHrs_ykMw', 'CU0Qi3ZTifk', 'kOSTpA4bujY', 'LnhEa-lzBEc', 'aeLV2lpxOyk', 'fqmJ8hVwt0k',
+                   '26OhVhPcnrc', 'Y_lzuUGc5II', '3e5sBHrojGY', 'MLu0F3lW_UI', '0XtqTn7RNk8', 'TWHmXYq_ch4', 'KkNn12OKBsc',
+                   '6W3NF3RmPMY', 'fmO3rAaIWls', 'ajE1UpuanHY', 'C0lswwELgls', 'eN9hZexuloQ', 'usVy1skW7qk', 'fbbK4oli5k8',
+                   'vQ-Aib6xOQQ', 'XoVLPEUgFuE', 'FGOHucIxtPw', 'UyL4IyzI8Mc', 'irUM-aB9UFk', 'FQ-GLXzSO24', 'K8G9Fe0qgCA',
+                   'sp7xyskRYis', 'yqe19RkMakI', 'J4dIV-k_AxU']
     indexing_docs(search_client, episode_ids)
 
     indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM, episode_ids)
