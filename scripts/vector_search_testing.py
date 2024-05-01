@@ -7,6 +7,7 @@ from elasticsearch.helpers import scan
 from tqdm import tqdm
 import torch
 import openai
+import csv
 from sentence_transformers import SentenceTransformer
 
 from elasticsearch import Elasticsearch, helpers
