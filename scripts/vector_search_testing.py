@@ -141,16 +141,20 @@ def indexing_embeddings(search_client):
             desc="Indexing embeddings",
             total=search_client.count(index=index_name)["count"],
     ):
-        doc_id = doc["_id"]
-        text = doc["_source"]["question"]
-        emb = text_embedding(text)[0]
-        emb = pad_tensor(emb, max_len=MAX_EMBEDDING_DIM)
+        try:
+            doc_id = doc["_id"]
+            text = doc["_source"]["question"] if (doc["_source"]["question"] is not None) else ""
+            emb = text_embedding(text)[0]
+            emb = pad_tensor(emb, max_len=MAX_EMBEDDING_DIM)
 
-        search_client.update(
-            index=index_name,
-            id=doc_id,
-            body={"doc": {"embedding": emb.tolist()}, "doc_as_upsert": True},
-        )
+            search_client.update(
+                index=index_name,
+                id=doc_id,
+                body={"doc": {"embedding": emb.tolist()}, "doc_as_upsert": True},
+            )
+        except Exception as e:
+            print(f"Exception:::{e}")
+
 
 
 def search_similar_questions(search_client, query_embedding, top_n=5):
@@ -322,17 +326,17 @@ if __name__ == "__main__":
 
     evaluator = Evaluator(llm_client, twitter_crawler)
 
-    dataset_dir = root_dir + "datasets/eth_denver_dataset"
-    dataset_path = Path(dataset_dir)
-
-    num_files = len(list(dataset_path.glob("*.json")))
-
-    extract_dataset()
-
-    drop_index(search_client, index_name)
-    init_index(search_client)
-
-    indexing_docs(search_client)
+    # dataset_dir = root_dir + "datasets/eth_denver_dataset"
+    # dataset_path = Path(dataset_dir)
+    #
+    # num_files = len(list(dataset_path.glob("*.json")))
+    #
+    # extract_dataset()
+    #
+    # drop_index(search_client, index_name)
+    # init_index(search_client)
+    #
+    # indexing_docs(search_client)
 
     indexing_embeddings(search_client)
 
