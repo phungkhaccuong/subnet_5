@@ -239,7 +239,7 @@ if __name__ == "__main__":
     #drop_index(search_client, index_name)
     #init_index(search_client)
 
-    episode_ids = ['saJlEpV5X1U', '7SmwCaKt5CE', 'xBN-cew6Fu8']
+    episode_ids = ['_aRTKs6AmvI']
     indexing_docs(search_client, episode_ids)
 
     indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM, episode_ids)
