@@ -51,29 +51,3 @@ def text_embedding(text, model_name="bert-base-uncased"):
     # Note: miners are encouraged to explore more pooling strategies, finetune the model, etc.
 
     return embedding
-
-import torch
-from transformers import BertModel, BertTokenizer
-
-def text_embedding(text, model_name="bert-base-uncased", max_length=512):
-    """Get text embedding using Bert model"""
-
-    tokenizer = BertTokenizer.from_pretrained(model_name)
-    model = BertModel.from_pretrained(model_name)
-
-    # Truncate the text if its length exceeds the maximum sequence length
-    if len(text) > max_length:
-        text = text[:max_length]
-
-    encoded_input = tokenizer(text, padding=True, truncation=True, return_tensors="pt")
-
-    with torch.no_grad():
-        model_output = model(**encoded_input)
-
-    # mean pooling
-    embedding = torch.mean(model_output.last_hidden_state, dim=1)
-
-    # Note: miners are encouraged to explore more pooling strategies, finetune the model, etc.
-
-    return embedding
-
