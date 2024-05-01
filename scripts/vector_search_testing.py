@@ -280,6 +280,7 @@ def rank(evaluator, query_text):
 def get_distinct_episode_ids():
     dataset_dir = root_dir + "datasets/eth_denver_dataset"
     dataset_path = Path(dataset_dir)
+    num_files = len(list(dataset_path.glob("*.json")))
 
     episode_ids_set = set()
     for doc_file in tqdm(
