@@ -245,7 +245,7 @@ if __name__ == "__main__":
                    'sp7xyskRYis', 'yqe19RkMakI', 'J4dIV-k_AxU']
     indexing_docs(search_client, episode_ids)
 
-    indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM, episode_ids)
+    #indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM, episode_ids)
 
     print("DONE..........................................................")
     time.sleep(60 * 60 * 24)
