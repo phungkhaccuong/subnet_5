@@ -371,15 +371,15 @@ if __name__ == "__main__":
     #
     # indexing_docs(search_client)
 
-    indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM)
-
-    search(search_client)
+    # indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM)
+    #
+    # search(search_client)
 
 
 
     #execute query
-    # query_text = "When and where can further details about the Fluence workshop be found?"
-    # rank(evaluator, query_text)
+    query_text = "How does deploying a function with Fluence and Aqua work?"
+    rank(evaluator, query_text)
 
 
 
