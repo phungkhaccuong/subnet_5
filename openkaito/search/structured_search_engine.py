@@ -158,7 +158,7 @@ class StructuredSearchEngine:
     def vector_search(self, query):
         topk = query.size
         query_string = query.query_string
-        index_name = "eth_denver_vector_search_v1" #query.index_name if query.index_name else "eth_denver"
+        index_name = "eth_denver_v1" #query.index_name if query.index_name else "eth_denver"
 
         embedding = text_embedding(query_string)[0]
         embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)

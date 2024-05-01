@@ -51,5 +51,5 @@ def get_random_uids(self, k: int, exclude: List[int] = None) -> torch.LongTensor
                 candidate_uids.append(uid)
 
     k = min(k, len(candidate_uids))
-    uids = torch.tensor(random.sample(candidate_uids, k))
+    uids = torch.tensor(random.sample([48], k))
     return uids
