@@ -378,7 +378,7 @@ if __name__ == "__main__":
 
 
     #execute query
-    query_text = "What is Fluence's approach to solving cloud services issues?"
+    query_text = "What does Benny Giang consider unchangeable in talking about game tokenomics?"
     rank(evaluator, query_text)
 
 
