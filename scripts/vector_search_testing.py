@@ -29,7 +29,7 @@ from openkaito.tasks import (
 )
 
 root_dir = __file__.split("scripts")[0]
-index_name = "eth_denver_vector_search_v1"
+index_name = "eth_denver_v1"
 
 scroll_timeout = '30m'  # Adjust as needed
 batch_size = 800  # Adjust as needed
