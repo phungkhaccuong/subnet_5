@@ -137,6 +137,7 @@ def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, M
     # Iterate over documents
     for doc in scroll:
         if doc["_source"]["episode_id"] in episode_ids:
+            print(f"OK:::: {doc['_source']['episode_id'] in episode_ids}")
             doc_id = doc["_id"]
             text = doc["_source"]["question"] if (doc["_source"]["question"] is not None) else ""
             embedding = text_embedding(text)[0]
@@ -147,6 +148,8 @@ def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, M
                 body={"doc": {"embedding": embedding.tolist()}, "doc_as_upsert": True},
             )
             pbar.update(1)
+        else:
+            print(f"NOT OKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK:{doc['_source']['episode_id'] in episode_ids}")
 
     pbar.close()
 
@@ -236,11 +239,7 @@ if __name__ == "__main__":
     #drop_index(search_client, index_name)
     #init_index(search_client)
 
-    episode_ids = ['saJlEpV5X1U', '7SmwCaKt5CE', 'xBN-cew6Fu8', 'qe-nireckJo', 'PrWs1ty2fXo', 'PSVC4GA3aVg', 'SJYlMvvx5ac',
-                   'XocmSCC4Rz0', '5_H2WpMaWcE', '5hKjsV9jz-Q', 'qP902Bdg7KQ', '8RiLNXNEGs4', 'sn6SMllPRIQ', 'MLazHXZBm-4',
-                   'XMmBqzjAxvM', 'obLiSncjp8Y', 'PnZEmcyiHiI', 'dRq0k6zy6qc', 'F997fcj47C0', 'qoDJxl7AR48', 'pDSLms65vhY',
-                   'yUAqH77yZaE', '7ognKNHov3k', 'dtuK7T09p8U', 'CAV1fDYd_O4', 'caNBYKXWj-A', 'EwD8TQEDQrI', 'hTgkECBjCWY',
-                   'riq5lSWovBQ', '8pp2SGKN6Ds']
+    episode_ids = ['saJlEpV5X1U', '7SmwCaKt5CE', 'xBN-cew6Fu8']
     indexing_docs(search_client, episode_ids)
 
     indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM, episode_ids)

@@ -137,6 +137,7 @@ def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, M
     # Iterate over documents
     for doc in scroll:
         if doc["_source"]["episode_id"] in episode_ids:
+            print(f"OK:::: {doc['_source']['episode_id'] in episode_ids}")
             doc_id = doc["_id"]
             text = doc["_source"]["question"] if (doc["_source"]["question"] is not None) else ""
             embedding = text_embedding(text)[0]
@@ -147,6 +148,8 @@ def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, M
                 body={"doc": {"embedding": embedding.tolist()}, "doc_as_upsert": True},
             )
             pbar.update(1)
+        else:
+            print(f"NOT OKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK:{doc['_source']['episode_id'] in episode_ids}")
 
     pbar.close()
 
@@ -233,7 +236,7 @@ if __name__ == "__main__":
 
     extract_dataset()
 
-    #drop_index(search_client, index_name)
+    drop_index(search_client, index_name)
     init_index(search_client)
 
     episode_ids = ['0eeOWeObrUw', 'MoWoeswytFw', 'wru-kVPLkEs', 'QwQ6SR4waC0', 'pDDGDqA4r04', 'aJaBESkGMp0',
