@@ -298,6 +298,7 @@ def rank(evaluator, query_text):
 
     # Perform vector search
     results = search_similar_questions(search_client, embedding)
+    print(f"RESULTS::::{results}")
     responses = []
     for i, result in enumerate(results):
         print(f"INDEX::{i} -- DOC::{result}")
