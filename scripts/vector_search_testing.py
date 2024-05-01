@@ -334,40 +334,6 @@ def get_distinct_episode_ids():
     print(f"episode_ids_set:::::{episode_ids_set}")
 
 
-def save_questions_to_csv(index_name, file_name):
-    # Define CSV file headers
-    headers = ["question"]
-
-    # Initialize CSV file
-    with open(file_name, 'w', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=headers)
-        writer.writeheader()
-
-        # Elasticsearch query to retrieve all 'question' data using scroll API
-        query = {
-            "size": 5000,
-            "query": {
-                "match_all": {}
-            }
-        }
-
-        # Initialize scroll
-        response = search_client.search(index=index_name, body=query, scroll='4m')
-
-        # Extract 'question' data and write to CSV
-        sid = response['_scroll_id']
-        scroll_size = len(response['hits']['hits'])
-
-        while scroll_size > 0:
-            for hit in response['hits']['hits']:
-                question = hit['_source'].get('question', '')
-                writer.writerow({'question': question})
-
-            response = search_client.scroll(scroll_id=sid, scroll='4m')
-            sid = response['_scroll_id']
-            scroll_size = len(response['hits']['hits'])
-
-
 if __name__ == "__main__":
     load_dotenv()
 
@@ -410,10 +376,8 @@ if __name__ == "__main__":
 
 
     #execute query
-    # query_text = "What does Benny Giang consider unchangeable in talking about game tokenomics?"
-    # rank(evaluator, query_text)
-
-    save_questions_to_csv(search_client, 'questions.csv')
+    query_text = "What does Benny Giang consider unchangeable in talking about game tokenomics?"
+    rank(evaluator, query_text)
 
 
 
