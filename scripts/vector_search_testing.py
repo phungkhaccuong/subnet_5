@@ -31,6 +31,9 @@ from openkaito.tasks import (
 root_dir = __file__.split("scripts")[0]
 index_name = "eth_denver_vector_search_v1"
 
+scroll_timeout = '30m'  # Adjust as needed
+batch_size = 800  # Adjust as needed
+
 
 ### Extract Eth Denver dataset
 def extract_dataset():
@@ -134,26 +137,56 @@ def text_to_embedding(text):
     return model.encode(text).tolist()
 
 
-def indexing_embeddings(search_client):
-    """Index embeddings of documents in Elasticsearch"""
-    for doc in tqdm(
-            helpers.scan(search_client, index=index_name),
-            desc="Indexing embeddings",
-            total=search_client.count(index=index_name)["count"],
-    ):
-        try:
-            doc_id = doc["_id"]
-            text = doc["_source"]["question"] if (doc["_source"]["question"] is not None) else ""
-            emb = text_embedding(text)[0]
-            emb = pad_tensor(emb, max_len=MAX_EMBEDDING_DIM)
+# def indexing_embeddings(search_client):
+#     """Index embeddings of documents in Elasticsearch"""
+#     for doc in tqdm(
+#             helpers.scan(search_client, index=index_name),
+#             desc="Indexing embeddings",
+#             total=search_client.count(index=index_name)["count"],
+#     ):
+#         try:
+#             doc_id = doc["_id"]
+#             text = doc["_source"]["question"] if (doc["_source"]["question"] is not None) else ""
+#             emb = text_embedding(text)[0]
+#             emb = pad_tensor(emb, max_len=MAX_EMBEDDING_DIM)
+#
+#             search_client.update(
+#                 index=index_name,
+#                 id=doc_id,
+#                 body={"doc": {"embedding": emb.tolist()}, "doc_as_upsert": True},
+#             )
+#         except Exception as e:
+#             print(f"Exception:::{e}")
 
-            search_client.update(
-                index=index_name,
-                id=doc_id,
-                body={"doc": {"embedding": emb.tolist()}, "doc_as_upsert": True},
-            )
-        except Exception as e:
-            print(f"Exception:::{e}")
+def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM):
+    # Get total count of documents
+    total_docs = search_client.count(index=index_name)["count"]
+
+    # Initialize the scroll
+    scroll = helpers.scan(
+        search_client,
+        index=index_name,
+        scroll=scroll_timeout,
+        size=batch_size,
+        clear_scroll=False
+    )
+
+    pbar = tqdm(total=total_docs, desc="Indexing embeddings")
+
+    # Iterate over documents
+    for doc in scroll:
+        doc_id = doc["_id"]
+        text = doc["_source"]["question"] if (doc["_source"]["question"] is not None) else ""
+        embedding = text_embedding(text)[0]
+        embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+        search_client.update(
+            index=index_name,
+            id=doc_id,
+            body={"doc": {"embedding": embedding.tolist()}, "doc_as_upsert": True},
+        )
+        pbar.update(1)
+
+    pbar.close()
 
 
 
@@ -338,7 +371,7 @@ if __name__ == "__main__":
     #
     # indexing_docs(search_client)
 
-    indexing_embeddings(search_client)
+    indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM)
 
     search(search_client)
 
