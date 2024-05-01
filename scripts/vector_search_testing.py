@@ -104,7 +104,8 @@ def indexing_docs(search_client):
     ):
         with open(doc_file, "r") as f:
             doc = json.load(f)
-            if doc['episode_id'] in ["_cCwx5zaz1I", "_aRTKs6AmvI", "_ikuHdB0GSk", "_nNl0XqM8r4"]:
+            if doc['episode_id'] in ["_cCwx5zaz1I", "_aRTKs6AmvI", "_ikuHdB0GSk", "_nNl0XqM8r4", "_92SG2nJOro", "_IlwpC8A_gE", "_sK3ibvKU5k", "_tGxAKso-WA",
+                                     "0zoNIXDg4IQ"]:
                 segments = [doc]
                 question = generate_question_from_eth_denver_segments(
                     llm_client, segments
@@ -261,21 +262,21 @@ if __name__ == "__main__":
         max_retries=3,
     )
 
-    # dataset_dir = root_dir + "datasets/eth_denver_dataset"
-    # dataset_path = Path(dataset_dir)
-    #
-    # num_files = len(list(dataset_path.glob("*.json")))
-    #
-    # extract_dataset()
-    #
-    # drop_index(search_client, index_name)
-    # init_index(search_client)
-    #
-    # indexing_docs(search_client)
-    #
-    # indexing_embeddings(search_client)
-    #
-    # search(search_client)
+    dataset_dir = root_dir + "datasets/eth_denver_dataset"
+    dataset_path = Path(dataset_dir)
+
+    num_files = len(list(dataset_path.glob("*.json")))
+
+    extract_dataset()
+
+    drop_index(search_client, index_name)
+    init_index(search_client)
+
+    indexing_docs(search_client)
+
+    indexing_embeddings(search_client)
+
+    search(search_client)
 
     #Example query
     # query_text = "What is the architecture of Cloudless Functions in Fluence?"
@@ -287,6 +288,5 @@ if __name__ == "__main__":
     # for i, result in enumerate(results):
     #     print(f"INDEX::{i} -- DOC::{result}")
 
-    list_file()
 
 
