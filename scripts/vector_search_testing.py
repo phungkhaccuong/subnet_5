@@ -301,8 +301,10 @@ if __name__ == "__main__":
 
     # Perform vector search
     results = search_similar_questions(search_client, embedding)
+    responses = []
     for i, result in enumerate(results):
         print(f"INDEX::{i} -- DOC::{result}")
+        responses.append(result['_source'])
 
     search_query = generate_semantic_search_task(
         query_string=query_text,
@@ -312,7 +314,7 @@ if __name__ == "__main__":
 
     dataset_dir = root_dir + "datasets/eth_denver_dataset"
     rewards = evaluator.evaluate_semantic_search(
-        search_query, [results], dataset_dir
+        search_query, [responses], dataset_dir
     )
 
     print(rewards)
