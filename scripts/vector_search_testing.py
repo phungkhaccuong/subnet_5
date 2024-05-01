@@ -117,7 +117,9 @@ def indexing_docs(search_client):
     ):
         with open(doc_file, "r") as f:
             doc = json.load(f)
-            if doc['episode_id'] in ["_cCwx5zaz1I", "_aRTKs6AmvI", "_ikuHdB0GSk", "_nNl0XqM8r4", "_92SG2nJOro"]:
+            if doc['episode_id'] in ['_cCwx5zaz1I', "_aRTKs6AmvI", "_ikuHdB0GSk", "_nNl0XqM8r4", "_92SG2nJOro",
+                                     'A8BVAdn7mV4', 'sQ38uwJNnxM', 'qc9p8emCjD8', 'Ee6RLuq-myE', 'TUCHkExPURw', 'qMjrvUmr_j4', 'XoyvZxOe4Ww', 'S4Lgb0a9VmM', 'dYGj7Ugk75E',
+                                     'e-ack9r3WSI', 'P6TFcBEXESk', 'CnFH6bYUsNw', 'ivYuGMYh6e0', 'rhueyjK1-78', 'KeV7qd4r2Og', 'kFXrrO95Wuw', 'nyhw-KNx12k', '6fjTd7L9DHQ']:
                 segments = [doc]
                 question = generate_question_from_eth_denver_segments(
                     llm_client, segments
@@ -320,23 +322,21 @@ if __name__ == "__main__":
 
     evaluator = Evaluator(llm_client, twitter_crawler)
 
-    # dataset_dir = root_dir + "datasets/eth_denver_dataset"
-    # dataset_path = Path(dataset_dir)
-    #
-    # num_files = len(list(dataset_path.glob("*.json")))
-    #
-    # extract_dataset()
-    #
-    # drop_index(search_client, index_name)
-    # init_index(search_client)
-    #
-    # indexing_docs(search_client)
-    #
-    # indexing_embeddings(search_client)
-    #
-    # search(search_client)
+    dataset_dir = root_dir + "datasets/eth_denver_dataset"
+    dataset_path = Path(dataset_dir)
 
-    get_distinct_episode_ids()
+    num_files = len(list(dataset_path.glob("*.json")))
+
+    extract_dataset()
+
+    drop_index(search_client, index_name)
+    init_index(search_client)
+
+    indexing_docs(search_client)
+
+    indexing_embeddings(search_client)
+
+    search(search_client)
 
 
 
