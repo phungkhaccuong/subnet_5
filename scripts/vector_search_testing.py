@@ -276,44 +276,44 @@ if __name__ == "__main__":
 
     evaluator = Evaluator(llm_client, twitter_crawler)
 
-    dataset_dir = root_dir + "datasets/eth_denver_dataset"
-    dataset_path = Path(dataset_dir)
-
-    num_files = len(list(dataset_path.glob("*.json")))
-
-    extract_dataset()
-
-    drop_index(search_client, index_name)
-    init_index(search_client)
-
-    indexing_docs(search_client)
-
-    indexing_embeddings(search_client)
-
-    search(search_client)
+    # dataset_dir = root_dir + "datasets/eth_denver_dataset"
+    # dataset_path = Path(dataset_dir)
+    #
+    # num_files = len(list(dataset_path.glob("*.json")))
+    #
+    # extract_dataset()
+    #
+    # drop_index(search_client, index_name)
+    # init_index(search_client)
+    #
+    # indexing_docs(search_client)
+    #
+    # indexing_embeddings(search_client)
+    #
+    # search(search_client)
 
     #Example query
-    # query_text = "What is the architecture of Cloudless Functions in Fluence?"
-    # embedding = text_embedding(query_text)[0]
-    # embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
-    #
-    # # Perform vector search
-    # results = search_similar_questions(search_client, embedding)
-    # for i, result in enumerate(results):
-    #     print(f"INDEX::{i} -- DOC::{result}")
-    #
-    # search_query = generate_semantic_search_task(
-    #     query_string=query_text,
-    #     index_name=index_name,
-    #     version=get_version(),
-    # )
-    #
-    # dataset_dir = root_dir + "datasets/eth_denver_dataset"
-    # rewards = evaluator.evaluate_semantic_search(
-    #     search_query, [results], dataset_dir
-    # )
-    #
-    # print(rewards)
+    query_text = "What is the architecture of Cloudless Functions in Fluence?"
+    embedding = text_embedding(query_text)[0]
+    embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+
+    # Perform vector search
+    results = search_similar_questions(search_client, embedding)
+    for i, result in enumerate(results):
+        print(f"INDEX::{i} -- DOC::{result}")
+
+    search_query = generate_semantic_search_task(
+        query_string=query_text,
+        index_name=index_name,
+        version=get_version(),
+    )
+
+    dataset_dir = root_dir + "datasets/eth_denver_dataset"
+    rewards = evaluator.evaluate_semantic_search(
+        search_query, [results], dataset_dir
+    )
+
+    print(rewards)
 
 
 
