@@ -333,8 +333,29 @@ def get_distinct_episode_ids():
     print(f"episode_ids_set:::::{episode_ids_set}")
 
 
+# Function to fetch all 'question' data from Elasticsearch and save to CSV
+def save_questions_to_csv(search_client, file_name):
+    headers = ["question"]
 
+    # Initialize CSV file
+    with open(file_name, 'w', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=headers)
+        writer.writeheader()
 
+        # Elasticsearch query to retrieve all 'question' data
+        query = {
+            "query": {
+                "match_all": {}
+            }
+        }
+
+        # Execute Elasticsearch search query
+        response = search_client.search(index=index_name, body=query, size=20000)
+
+        # Extract 'question' data and write to CSV
+        for hit in response['hits']['hits']:
+            question = hit['_source'].get('question', '')
+            writer.writerow({'question': question})
 
 
 if __name__ == "__main__":
@@ -379,8 +400,10 @@ if __name__ == "__main__":
 
 
     #execute query
-    query_text = "What does Benny Giang consider unchangeable in talking about game tokenomics?"
-    rank(evaluator, query_text)
+    # query_text = "What does Benny Giang consider unchangeable in talking about game tokenomics?"
+    # rank(evaluator, query_text)
+
+    save_questions_to_csv(search_client, 'questions.csv')
 
 
 
