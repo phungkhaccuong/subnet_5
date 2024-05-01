@@ -139,7 +139,13 @@ def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, M
         doc_id = doc["_id"]
         text = doc["_source"]["question"] if (doc["_source"]["question"] is not None) else "default"
         print(f"TEXT::: {text}")
-        embedding = text_embedding(text)[0]
+        try:
+            embedding = text_embedding(text)[0]
+        except Exception as e:
+            print(f"EXCEPTION::::{e}")
+            pbar.update(1)
+            continue
+
         embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
         search_client.update(
             index=index_name,
