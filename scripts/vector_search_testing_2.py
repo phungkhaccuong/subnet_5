@@ -137,6 +137,7 @@ def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, M
     # Iterate over documents
     for doc in scroll:
         if doc["_source"]["episode_id"] in episode_ids:
+            print("OK")
             doc_id = doc["_id"]
             text = doc["_source"]["question"] if (doc["_source"]["question"] is not None) else ""
             embedding = text_embedding(text)[0]
@@ -147,6 +148,8 @@ def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, M
                 body={"doc": {"embedding": embedding.tolist()}, "doc_as_upsert": True},
             )
             pbar.update(1)
+        else:
+            print("NOT OKEEEEEEEEEEEEEEEEE")
 
     pbar.close()
 
@@ -236,12 +239,22 @@ if __name__ == "__main__":
     #drop_index(search_client, index_name)
     #init_index(search_client)
 
-    episode_ids = ['Vk57ZGJM0Rg', 'PO3r4nfTp4U', 'gRRQQyQE_9w', '5yyaf6dyUmA', 'hTVkYVzfMII', 'i2U5QTepDwA', 'J4KMTk8Rq_4',
-                   'hHFl02APV0M', 'v9_FmVPpkHY', 'Ck9q-bn_7Gg', '-yhm-hBoPvg', 'UDISNqga8w0', 'bD5RYXxJKBc', 'tObiEV-mppE',
-                   'vb6gvCgl-uc', '5GJnk66znfc', 'FQk4ZG0SHRs', 'iaaf7DOdLvc', 'E2vR1r_599E', 'skgwA9Ht5Gc', 'H_FQaR6whNg',
-                   'HkoZnGUEIbs', 'bhPWgyN-iq0', 'n_lRelJSslk', 'Va_tv0-vflg', 'sjDdDuhADKg', 'YhjRlHfmqHM', 'fJJukF1j9Lw',
-                   'munvUoEpT5A', 'kP7yn_60cQE']
-    indexing_docs(search_client, episode_ids)
+    episode_ids = ['r4YXV2FPDj4', 'fSw8DzfE1gI', 'jNOD1DnYMlQ', 'anviEp25e0Y', 'wgelSfc8iRk', '_92SG2nJOro', 'qTZfWct18cg',
+                   'pbfGQ4DmgUg', 'orHevIzqBaY', 'ZiECPjIpcFk', 'JeDMWr1FqMg', 'yVNvQpDGu5g', 'L5zdmGNegnQ', 'rJUzyIa_ChE',
+                   'UOdbDJZqlgo', '32DKp9CX4NQ', 'Gnb26lTNHLk', 'ZmoFP4W5Qa0', 'QqI5r059EbY', 'JuCaB1QIdbA', 'vBekw5cGTPc',
+                   'KVn8UJD3Y5w', '6vYC7_t3LM0', 'rNi_mn7o6Bc', 'ff_IYOuQn_s', 'WmZYGDbP1vA', 'p6mSNvvQVug', '5RGlxUzJ0vI',
+                   'UUMvcBVB6W4', 'DLNEBazYs5Y', '9m3y7pA7vac', '7WMr3Bl2NTA', 'khpmBCxDS7Y', '18yCsATfvB0', 'Cpf1yHwr3wQ',
+                   '85251eBKFqI', 'HS-Nf-Epv-8', '02ivZ4PpyWo', 'GjFLz_CKCCg', 'xPGGJYqSkSM', 'hers_ZPFUSg', 'zt52yEn0dog',
+                   'X0-H2UWFNN4', 'qpCNzKnk8LE', 'WuNn-yEQSC0', 'tmOWRQllv_I', 'ssx6Wf2Vg-U', 'chMt_TyetSI', 'WA1Uq_Hx5Oc',
+                   'zs6xPSit_5c', 'eXRZcsl6Le4', 'RSyYNdfN33I', '6UTUsZA_d_E', 'ZMdfGsxMlqo', 'eZ7nHBaC9yQ', '7tXXxoydMY0',
+                   'jFnIFkhryMI', '4ptmD8yGT34', 'GxfB0ZbQpaQ', 'VzwrrjiZ5lI', 'yBsb2dZ5mtk', 'YhigzdQ0BMc', '2TjVEqSDVRI',
+                   'M3yb6fbXJck', 'ET92uUCOLwE', 'j4ynTvaLbiI', 'faQoa1TROeQ', 'tvFA94stwy8', 'ZANXi-hOsjw', 'IMsx9nfKLiI',
+                   '8nq9j49lAXY', 'b9831cN65Xo', '5qrAKkKVHnY', '8IV5JUBzHuk', 'lDXe944L-BQ', 'WtPHrs_ykMw', 'CU0Qi3ZTifk',
+                   'kOSTpA4bujY', 'LnhEa-lzBEc', 'aeLV2lpxOyk', 'fqmJ8hVwt0k', '26OhVhPcnrc', 'Y_lzuUGc5II', '3e5sBHrojGY',
+                   'MLu0F3lW_UI', '0XtqTn7RNk8', 'TWHmXYq_ch4', 'KkNn12OKBsc', '6W3NF3RmPMY', 'fmO3rAaIWls', 'ajE1UpuanHY',
+                   'C0lswwELgls', 'eN9hZexuloQ', 'usVy1skW7qk', 'fbbK4oli5k8', 'vQ-Aib6xOQQ', 'XoVLPEUgFuE', 'FGOHucIxtPw',
+                   'UyL4IyzI8Mc', 'irUM-aB9UFk', 'FQ-GLXzSO24', 'K8G9Fe0qgCA', 'sp7xyskRYis', 'yqe19RkMakI', 'J4dIV-k_AxU']
+    #indexing_docs(search_client, episode_ids)
 
     indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM, episode_ids)
 

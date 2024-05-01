@@ -120,7 +120,7 @@ def text_to_embedding(text):
     return model.encode(text).tolist()
 
 
-def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM):
+def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM, episode_ids):
     total_docs = search_client.count(index=index_name)["count"]
 
     # Initialize the scroll
@@ -136,16 +136,20 @@ def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, M
 
     # Iterate over documents
     for doc in scroll:
-        doc_id = doc["_id"]
-        text = doc["_source"]["question"] if (doc["_source"]["question"] is not None) else ""
-        embedding = text_embedding(text)[0]
-        embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
-        search_client.update(
-            index=index_name,
-            id=doc_id,
-            body={"doc": {"embedding": embedding.tolist()}, "doc_as_upsert": True},
-        )
-        pbar.update(1)
+        if doc["_source"]["episode_id"] in episode_ids:
+            print("OKKKK")
+            doc_id = doc["_id"]
+            text = doc["_source"]["question"] if (doc["_source"]["question"] is not None) else ""
+            embedding = text_embedding(text)[0]
+            embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+            search_client.update(
+                index=index_name,
+                id=doc_id,
+                body={"doc": {"embedding": embedding.tolist()}, "doc_as_upsert": True},
+            )
+            pbar.update(1)
+        else:
+            print("NOT OKEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
 
     pbar.close()
 
@@ -235,14 +239,27 @@ if __name__ == "__main__":
     # #drop_index(search_client, index_name)
     # init_index(search_client)
     #
-    # episode_ids = ['0eeOWeObrUw', 'MoWoeswytFw', 'wru-kVPLkEs', 'QwQ6SR4waC0', 'pDDGDqA4r04', 'aJaBESkGMp0',
-    #                'HmfJxgVEXAU', 'G-MHnsoCFyU', 'Pz-VE6okapU', 'dTRpQaCoD1c', '89sODrEVabM', 'KWiHSkLa7xQ',
-    #                'lcZD-WW5XwU', 'aqhddRq8jDY', '0167cLII0p0', '0zoNIXDg4IQ', 'bI_NfkUmOPQ', 'cO0mPzjl-mQ',
-    #                'U7n4xMpMcWM', 'OYR7x6g-PDI', 'wLy14NgkYO0', 'cVJurWODvDQ', 'kJNXYWji74U', '2YeRlYRazwg',
-    #                'TrLbTglwzXg', 'nl_AO8MQzYc', '1ohlR_tPlVM', '5A6LCO5Cc_Y', 'KPin7-azDQU', '1RTdrQtmtAw']
+    episode_ids = ['0eeOWeObrUw', 'MoWoeswytFw', 'wru-kVPLkEs', 'QwQ6SR4waC0', 'pDDGDqA4r04', 'aJaBESkGMp0', 'HmfJxgVEXAU',
+                   'G-MHnsoCFyU', 'Pz-VE6okapU', 'dTRpQaCoD1c', '89sODrEVabM', 'KWiHSkLa7xQ', 'lcZD-WW5XwU', 'aqhddRq8jDY',
+                   '0167cLII0p0', '0zoNIXDg4IQ', 'bI_NfkUmOPQ', 'cO0mPzjl-mQ', 'U7n4xMpMcWM', 'OYR7x6g-PDI', 'wLy14NgkYO0',
+                   'cVJurWODvDQ', 'kJNXYWji74U', '2YeRlYRazwg', 'TrLbTglwzXg', 'nl_AO8MQzYc', '1ohlR_tPlVM', '5A6LCO5Cc_Y',
+                   'KPin7-azDQU', '1RTdrQtmtAw', 'saJlEpV5X1U', '7SmwCaKt5CE', 'xBN-cew6Fu8', 'qe-nireckJo', 'PrWs1ty2fXo',
+                   'PSVC4GA3aVg', 'SJYlMvvx5ac', 'XocmSCC4Rz0', '5_H2WpMaWcE', '5hKjsV9jz-Q', 'qP902Bdg7KQ', '8RiLNXNEGs4',
+                   'sn6SMllPRIQ', 'MLazHXZBm-4', 'XMmBqzjAxvM', 'obLiSncjp8Y', 'PnZEmcyiHiI', 'dRq0k6zy6qc', 'F997fcj47C0',
+                   'qoDJxl7AR48', 'pDSLms65vhY', 'yUAqH77yZaE', '7ognKNHov3k', 'dtuK7T09p8U', 'CAV1fDYd_O4', 'caNBYKXWj-A',
+                   'EwD8TQEDQrI', 'hTgkECBjCWY', 'riq5lSWovBQ', '8pp2SGKN6Ds', 'Vk57ZGJM0Rg', 'PO3r4nfTp4U', 'gRRQQyQE_9w',
+                   '5yyaf6dyUmA', 'hTVkYVzfMII', 'i2U5QTepDwA', 'J4KMTk8Rq_4', 'hHFl02APV0M', 'v9_FmVPpkHY', 'Ck9q-bn_7Gg',
+                   '-yhm-hBoPvg', 'UDISNqga8w0', 'bD5RYXxJKBc', 'tObiEV-mppE', 'vb6gvCgl-uc', '5GJnk66znfc', 'FQk4ZG0SHRs',
+                   'iaaf7DOdLvc', 'E2vR1r_599E', 'skgwA9Ht5Gc', 'H_FQaR6whNg', 'HkoZnGUEIbs', 'bhPWgyN-iq0', 'n_lRelJSslk',
+                   'Va_tv0-vflg', 'sjDdDuhADKg', 'YhjRlHfmqHM', 'fJJukF1j9Lw', 'munvUoEpT5A', 'kP7yn_60cQE', 'bScMZuymOfE',
+                   'APy0RvnqDB8', 'sfL6GqA9Q8s', 's0T_ZD-pSHc', '3XdSP4220bY', '6ON9_RLIYB0', '9FgbBA4ZwQQ', 'tOWHr8lqmjg',
+                   'VnWmNqHV-Zc', 'lvVqdOvsFTE', 'aFKhwxdKzw0', 'Q0XR7ZcJx0w', 'SfXfeu-SSqo', 'gim-mGVodDc', 'J9Jb5Dk3JYs',
+                   'YLwsIXWvX74', 'JRRhcMccuKM', 'Co8lyviAn5c', 'nVA161Yx47k', '6epz81M0iJg', 'ncuL1Bb3hyo', '4gy91IC-5iU',
+                   'UdY9KfkYdbM', 'R8chhf70YkI', 'In7jq5NxUA8', 'WAVKec2xPhw', 'XGDg6pbCA1o', 'rcbGd_jw7Ro', 'Hkaa6OIAmF8',
+                   'uv5TG25sKZ4']
     # indexing_docs(search_client, episode_ids)
 
-    indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM)
+    indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM, episode_ids)
 
     print("DONE..........................................................")
     time.sleep(60 * 60 * 24)
