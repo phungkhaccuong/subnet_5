@@ -149,7 +149,8 @@ class Validator(BaseValidatorNeuron):
                 search_query.timeout = 90
             else:
                 # 60% chance to send semantic search task
-                if random_number < 0.6:
+                #if random_number < 0.6:
+                if random_number < 1:
                     segments = random_eth_denver_segments(
                         self.eth_denver_dataset_dir, num_sources=3
                     )
