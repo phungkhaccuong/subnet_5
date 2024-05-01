@@ -137,7 +137,8 @@ def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, M
     # Iterate over documents
     for doc in scroll:
         doc_id = doc["_id"]
-        text = doc["_source"]["question"] if (doc["_source"]["question"] is not None) else ""
+        text = doc["_source"]["question"] if (doc["_source"]["question"] is not None) else "default"
+        print(f"TEXT::: {text}")
         embedding = text_embedding(text)[0]
         embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
         search_client.update(
