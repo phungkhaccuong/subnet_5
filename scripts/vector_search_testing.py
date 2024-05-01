@@ -253,6 +253,47 @@ def list_file():
 
     print(f"number:::::{len(file_list)}")
 
+def rank(evaluator, query_text):
+    embedding = text_embedding(query_text)[0]
+    embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+
+    # Perform vector search
+    results = search_similar_questions(search_client, embedding)
+    responses = []
+    for i, result in enumerate(results):
+        print(f"INDEX::{i} -- DOC::{result}")
+        responses.append(result['_source'])
+
+    search_query = generate_semantic_search_task(
+        query_string=query_text,
+        index_name=index_name,
+        version=get_version(),
+    )
+
+    dataset_dir = root_dir + "datasets/eth_denver_dataset"
+    rewards = evaluator.evaluate_semantic_search(
+        search_query, [responses], dataset_dir
+    )
+
+    print(rewards)
+
+def get_distinct_episode_ids():
+    dataset_dir = root_dir + "datasets/eth_denver_dataset"
+    dataset_path = Path(dataset_dir)
+
+    episode_ids_set = set()
+    for doc_file in tqdm(
+            dataset_path.glob("*.json"), total=num_files, desc="Indexing docs"
+    ):
+        with open(doc_file, "r") as f:
+            doc = json.load(f)
+            episode_ids_set.add(doc["episode_id"])
+
+    print(f"episode_ids_set:::::{episode_ids_set}")
+
+
+
+
 
 
 if __name__ == "__main__":
@@ -294,30 +335,13 @@ if __name__ == "__main__":
     #
     # search(search_client)
 
-    #Example query
-    query_text = "When and where can further details about the Fluence workshop be found?"
-    embedding = text_embedding(query_text)[0]
-    embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+    get_distinct_episode_ids()
 
-    # Perform vector search
-    results = search_similar_questions(search_client, embedding)
-    responses = []
-    for i, result in enumerate(results):
-        print(f"INDEX::{i} -- DOC::{result}")
-        responses.append(result['_source'])
 
-    search_query = generate_semantic_search_task(
-        query_string=query_text,
-        index_name=index_name,
-        version=get_version(),
-    )
 
-    dataset_dir = root_dir + "datasets/eth_denver_dataset"
-    rewards = evaluator.evaluate_semantic_search(
-        search_query, [responses], dataset_dir
-    )
-
-    print(rewards)
+    #execute query
+    # query_text = "When and where can further details about the Fluence workshop be found?"
+    # rank(evaluator, query_text)
 
 
 
