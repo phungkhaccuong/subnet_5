@@ -239,27 +239,18 @@ if __name__ == "__main__":
     #drop_index(search_client, index_name)
     #init_index(search_client)
 
-    episode_ids = ['onWVGMkrTdQ', '6Dz9P4c7e0s', 'jZ0H1EWsdhI', 'B4WVJCvkcPY', '_nNl0XqM8r4', '_aRTKs6AmvI', 'A8BVAdn7mV4',
-                   'sQ38uwJNnxM', 'qc9p8emCjD8', 'Ee6RLuq-myE', 'TUCHkExPURw', 'qMjrvUmr_j4', 'XoyvZxOe4Ww', 'S4Lgb0a9VmM',
-                   'dYGj7Ugk75E', 'KbeEsC_QG6o', 'kcZA2XrjCyw', 'ikHJbUlXjks', 'I5rdnH14x1s', 'qAnp-_58PVM', 'P3TGECWVd7c',
-                   'zey1Fd8niZc', 'zjnAM3kdK88', 'couO1JCWQs4', 'drzW2lN8TUc', 'InhFk4YZRZM', 'Y6DDfzy48EA', 'OjGN65JG_mo',
-                   'r9fXJ_QuR0Q', 'zzeM5nFt2tM', 'pwx_0YIwRvQ', '-WHjOtYEgxg', '9gbwrn3PR5U', 'S6AGsyg8v-I', 'psnXQWxRiPk',
-                   'Fzq8Bm9Oyss', 'ZED3pNsLZ6Q', 'MNVaYm2x2dA', 'jjgHc_K6AcE', 'uHhdEw403QM', 'ikjeEvO6mDM', 'OvgyipeJM5U',
-                   'PDPzvcENv0w', '6fujouJ26n8', '00LTcpT9T8c', 'PrYssW3hS8I', 'lIyNPcOMR84', 'slVrfXAwF5k', 'VhS_oSikQQw',
-                   '-WjgNW_xGu8', 'g0ty68rvib4', '-jjYVCAQkNE', 'h9bnFS1PKX0', 'LVyz4bYzScA', '_ikuHdB0GSk', 'poxxucX_O_s',
-                   '8mpBYmslhOk', 'ETc0GZ03k6I', 'SgEGGUhqlJU', 'JEcJDCPWHrg', 'J2YvE2JLL7o', 'C_LgrIwPW5Y', 'mNmNgniJZC8',
-                   'sU2OHndKVQ0', 'vfsktAnK7NQ', 'ac-nDleRC4E', 'JWA8kp_Bcvc', 'LwhOrvHcOAo', '2kksD0Rm_io', '8bj1dWcMslY',
-                   '4bdmzihVeac', 'MhZhajQ4Tfc', 'gYOM91aa0DM', 'vVKXdbisqMQ', 'NxbWt4Q9P4w', 'W9DJTQWfcBw', 'wePegGHDNv4',
-                   'kHeWvHmof9g', 'zvFuXiJXfhQ', 'e-ack9r3WSI', 'P6TFcBEXESk', 'CnFH6bYUsNw', 'ivYuGMYh6e0', 'rhueyjK1-78',
-                   'KeV7qd4r2Og', 'kFXrrO95Wuw', 'nyhw-KNx12k', '6fjTd7L9DHQ', 'Ym7qaSK1mKE', 'V-lecm_fGKs', 'PJuzWhiwkXU',
-                   'nK99SElAGfU', 'gHMxi-TdwM8', 'fCl_PucMytU', 'T3G98kJQMwg', 'jS3_BCFzgQA', 'huRbNrEZX6U', 'tN07fDW3S9Q',
-                   'VAfBnDCWPtc', '_tGxAKso-WA', '4I89sWGSyys', 'kEboO1_QGGg', '3Nh2fGzX9-0', 'Y-hwsm8qO-Q', 'NMwkUIWRr5U',
-                   'wYsYNy7UDig', 'dQLZCArP53I', 'zg5RQcVsD5o', '_sK3ibvKU5k', 'd-Pr_8KBCYA', 's4AhK73V7p4', 'fwM_Q-3beZ4',
-                   'w4Y8g_Yg1yk', '6QjZqdCV8ZQ', '0AxA4Vvhr_k', 'jd8f6ejUQSA', '95Yk-DlAPZM', '7p1JtKXdl4o', '82w-touyHOw',
-                   'O7VERaQCxQ4', 'PdWBlwmb5i0', 'iuoK65w1rj4', 'm5jJkvCG338', 'RbfiF4kEbnU']
-    #indexing_docs(search_client, episode_ids)
+    episode_ids = ['bScMZuymOfE', 'APy0RvnqDB8', 'sfL6GqA9Q8s', 's0T_ZD-pSHc', '3XdSP4220bY', '6ON9_RLIYB0',
+                   '9FgbBA4ZwQQ',
+                   'tOWHr8lqmjg', 'VnWmNqHV-Zc', 'lvVqdOvsFTE', 'aFKhwxdKzw0', 'Q0XR7ZcJx0w', 'SfXfeu-SSqo',
+                   'gim-mGVodDc',
+                   'J9Jb5Dk3JYs', 'YLwsIXWvX74', 'JRRhcMccuKM', 'Co8lyviAn5c', 'nVA161Yx47k', '6epz81M0iJg',
+                   'ncuL1Bb3hyo',
+                   '4gy91IC-5iU', 'UdY9KfkYdbM', 'R8chhf70YkI', 'In7jq5NxUA8', 'WAVKec2xPhw', 'XGDg6pbCA1o',
+                   'rcbGd_jw7Ro',
+                   'Hkaa6OIAmF8', 'uv5TG25sKZ4']
+    indexing_docs(search_client, episode_ids)
 
-    indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM, episode_ids)
+    #indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM, episode_ids)
 
     print("DONE..........................................................")
     time.sleep(60 * 60 * 24)
