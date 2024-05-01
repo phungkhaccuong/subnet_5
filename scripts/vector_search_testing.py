@@ -16,6 +16,8 @@ from openkaito.tasks import generate_question_from_eth_denver_segments
 from openkaito.utils.embeddings import pad_tensor, text_embedding, MAX_EMBEDDING_DIM
 from openkaito.evaluation.evaluator import Evaluator
 from openkaito.crawlers.twitter.apidojo import ApiDojoTwitterCrawler
+from openkaito.utils.uids import get_random_uids
+from openkaito.utils.version import get_version
 
 from openkaito.tasks import (
     generate_author_index_task,
