@@ -14,6 +14,16 @@ from dotenv import load_dotenv
 
 from openkaito.tasks import generate_question_from_eth_denver_segments
 from openkaito.utils.embeddings import pad_tensor, text_embedding, MAX_EMBEDDING_DIM
+from openkaito.evaluation.evaluator import Evaluator
+
+from openkaito.tasks import (
+    generate_author_index_task,
+    generate_question_from_eth_denver_segments,
+    generate_structured_search_task,
+    random_eth_denver_segments,
+    random_query,
+    generate_semantic_search_task,
+)
 
 root_dir = __file__.split("scripts")[0]
 index_name = "eth_denver_vector_search_v1"
@@ -104,8 +114,7 @@ def indexing_docs(search_client):
     ):
         with open(doc_file, "r") as f:
             doc = json.load(f)
-            if doc['episode_id'] in ["_cCwx5zaz1I", "_aRTKs6AmvI", "_ikuHdB0GSk", "_nNl0XqM8r4", "_92SG2nJOro", "_IlwpC8A_gE", "_sK3ibvKU5k", "_tGxAKso-WA",
-                                     "0zoNIXDg4IQ"]:
+            if doc['episode_id'] in ["_cCwx5zaz1I", "_aRTKs6AmvI", "_ikuHdB0GSk", "_nNl0XqM8r4", "_92SG2nJOro"]:
                 segments = [doc]
                 question = generate_question_from_eth_denver_segments(
                     llm_client, segments
@@ -262,6 +271,10 @@ if __name__ == "__main__":
         max_retries=3,
     )
 
+    twitter_crawler = ApiDojoTwitterCrawler(os.environ["APIFY_API_KEY"])
+
+    evaluator = Evaluator(llm_client, twitter_crawler)
+
     dataset_dir = root_dir + "datasets/eth_denver_dataset"
     dataset_path = Path(dataset_dir)
 
@@ -287,6 +300,19 @@ if __name__ == "__main__":
     # results = search_similar_questions(search_client, embedding)
     # for i, result in enumerate(results):
     #     print(f"INDEX::{i} -- DOC::{result}")
+    #
+    # search_query = generate_semantic_search_task(
+    #     query_string=query_text,
+    #     index_name=index_name,
+    #     version=get_version(),
+    # )
+    #
+    # dataset_dir = root_dir + "datasets/eth_denver_dataset"
+    # rewards = evaluator.evaluate_semantic_search(
+    #     search_query, [results], dataset_dir
+    # )
+    #
+    # print(rewards)
 
 
 

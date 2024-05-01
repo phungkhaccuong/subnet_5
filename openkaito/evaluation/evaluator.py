@@ -219,7 +219,7 @@ class Evaluator:
 
         for i, response in enumerate(responses):
             try:
-                bt.logging.trace(f"Processing {i}-th response")
+                print(f"Processing {i}-th response")
                 if response is None or not response or len(response) > size:
                     zero_score_mask[i] = 0
                     continue
@@ -247,6 +247,7 @@ class Evaluator:
                 llm_ranking_scores = self.llm_semantic_search_evaluation(
                     query_string, groundtruth_docs
                 )
+                print(f"llm_ranking_scores:::{llm_ranking_scores}")
                 rank_scores[i] = ndcg_score(llm_ranking_scores, size)
 
                 bt.logging.info(f"Semantic search quality score: {rank_scores[i]}")
@@ -259,6 +260,8 @@ class Evaluator:
 
         # relative scores in a batch
         scores = scores / (scores.max() + 1e-5)
+
+        print(f"scores:::{scores}")
 
         return scores * zero_score_mask
 
@@ -564,9 +567,9 @@ relevant: Comprehensive, insightful content suitable for answering the given que
 
         try:
             result = json.loads(output.choices[0].message.content)
-            # bt.logging.debug(f"LLM result: {result}")
+            print(f"LLM result: {result}")
             ranking = parse_llm_result(result)
-            bt.logging.info(f"LLM ranking: {ranking}")
+            print(f"LLM ranking: {ranking}")
             if len(ranking) != len(docs):
                 raise ValueError(
                     f"Length of ranking {len(ranking)} does not match input docs length {len(docs)}"
