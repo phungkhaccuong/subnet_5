@@ -295,7 +295,7 @@ if __name__ == "__main__":
     # search(search_client)
 
     #Example query
-    query_text = "What is the architecture of Cloudless Functions in Fluence?"
+    query_text = "How does deploying a function with Fluence and Aqua work?"
     embedding = text_embedding(query_text)[0]
     embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
 
