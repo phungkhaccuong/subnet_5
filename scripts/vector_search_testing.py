@@ -378,7 +378,7 @@ if __name__ == "__main__":
 
 
     #execute query
-    query_text = "How does deploying a function with Fluence and Aqua work?"
+    query_text = "What is the architecture of Cloudless Functions in Fluence?"
     rank(evaluator, query_text)
 
 
