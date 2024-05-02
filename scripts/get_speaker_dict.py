@@ -30,7 +30,7 @@ def get_speaker_dict():
                 speaker_dict[speaker] = [episode_id]
 
     # Convert sets to lists
-    speaker_episode_dict = {speaker: list(set(episode_ids)) for speaker, episode_ids in speaker_episode_dict.items()}
+    speaker_dict = {speaker: list(set(episode_ids)) for speaker, episode_ids in speaker_dict.items()}
 
     # Save speaker_episode_dict to a JSON file
     with open('speaker_dict.json', 'w') as json_file:
