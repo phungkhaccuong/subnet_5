@@ -194,49 +194,56 @@ def indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, M
 def search_similar_questions(search_client, query_embedding, top_n=5):
     """Search similar questions based on the query embedding"""
     try:
-        query = {
-            "size": top_n,
-            "query": {
-                "script_score": {
-                    "query": {"match_all": {}},
-                    "script": {
-                        "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
-                        "params": {"query_vector": query_embedding.tolist()}
+        episode_ids = get_episode_ids(query_text)
+        print(f"episode_ids::::::::{episode_ids}")
+        if episode_ids is None:
+            query = {
+                "size": top_n,
+                "query": {
+                    "script_score": {
+                        "query": {"match_all": {}},
+                        "script": {
+                            "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
+                            "params": {"query_vector": query_embedding.tolist()}
+                        }
+                    }
+                },
+                "_source": {
+                    "excludes": ["embedding"]
+                }
+            }
+        else:
+            query = {
+                    "size": top_n,
+                    "query": {
+                        "bool": {
+                            "filter": {
+                                "terms": {
+                                    "episode_id": episode_ids
+                                }
+                            },
+                            "should": [
+                                {
+                                    "script_score": {
+                                        "query": {
+                                            "match_all": {}
+                                        },
+                                        "script": {
+                                            "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
+                                            "params": {
+                                                "query_vector": query_embedding.tolist()
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "_source": {
+                        "excludes": ["embedding"]
                     }
                 }
-            },
-            "_source": {
-                "excludes": ["embedding"]
-            }
-        }
 
-        query = {
-            "size": top_n,
-            "query": {
-                "script_score": {
-                    "query": {"match_all": {}},
-                    "script": {
-                        "source": "dotProduct(params.query_vector, 'embedding') + 1.0",
-                        "params": {"query_vector": query_embedding.tolist()}
-                    }
-                }
-            },
-            "_source": {
-                "excludes": ["embedding"]
-            }
-        }
-
-        # query = {
-        #     "knn": {
-        #         "field": "embedding",
-        #         "query_vector": query_embedding.tolist(),
-        #         "k": 5,
-        #         "num_candidates": 5 * 5,
-        #     },
-        #     "_source": {
-        #         "excludes": ["embedding"],
-        #     },
-        # }
         res = search_client.search(index=index_name, body=query)
         return res["hits"]["hits"]
     except Exception as inst:
@@ -293,11 +300,25 @@ def list_file():
 
     print(f"number:::::{len(file_list)}")
 
+def load_speaker_dict():
+    with open('speaker_dict.json', 'r') as json_file:
+        speaker_dict = json.load(json_file)
+
+    return speaker_dict
+
+def get_episode_ids(query):
+    speaker_dict = load_speaker_dict()
+    for key, value in speaker_episode_dict.items():
+        if key in query:
+            return value
+    return None
+
 def rank(evaluator, query_text):
     embedding = text_embedding(query_text)[0]
     embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
 
-    # Perform vector search
+    if episode_ids is None:
+
     results = search_similar_questions(search_client, embedding)
     print(f"RESULTS::::{results}")
     responses = []
@@ -356,24 +377,6 @@ if __name__ == "__main__":
     twitter_crawler = ApiDojoTwitterCrawler(os.environ["APIFY_API_KEY"])
 
     evaluator = Evaluator(llm_client, twitter_crawler)
-
-    # dataset_dir = root_dir + "datasets/eth_denver_dataset"
-    # dataset_path = Path(dataset_dir)
-    #
-    # num_files = len(list(dataset_path.glob("*.json")))
-    #
-    # extract_dataset()
-    #
-    # drop_index(search_client, index_name)
-    # init_index(search_client)
-    #
-    # indexing_docs(search_client)
-
-    # indexing_embeddings(search_client, index_name, text_embedding, pad_tensor, MAX_EMBEDDING_DIM)
-    #
-    # search(search_client)
-
-
 
     #execute query
     query_text = "What does Benny Giang consider unchangeable in talking about game tokenomics?"

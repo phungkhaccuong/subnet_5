@@ -39,6 +39,10 @@ def get_speaker_dict():
     print("JSON file has been created successfully!")
     print(speaker_dict)
 
+    # Load speaker_episode_dict from JSON file
+    with open('speaker_dict.json', 'r') as json_file:
+        speaker_dict = json.load(json_file)
+
 
 
 if __name__ == "__main__":
