@@ -75,7 +75,7 @@ class Miner(BaseMinerNeuron):
             relevance_ranking_model=ranking_model,
             twitter_crawler=twitter_crawler,
             #recall_size=self.config.neuron.search_recall_size,
-            recall_size=100,
+            recall_size=400,
         )
 
     async def forward_search(self, query: SearchSynapse) -> SearchSynapse:
