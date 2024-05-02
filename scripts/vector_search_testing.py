@@ -308,7 +308,7 @@ def load_speaker_dict():
 
 def get_episode_ids(query):
     speaker_dict = load_speaker_dict()
-    for key, value in speaker_episode_dict.items():
+    for key, value in speaker_dict.items():
         if key in query:
             return value
     return None
