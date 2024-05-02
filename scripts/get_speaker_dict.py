@@ -1,5 +1,7 @@
 
 from tqdm import tqdm
+import os
+from pathlib import Path
 import json
 
 root_dir = __file__.split("scripts")[0]
