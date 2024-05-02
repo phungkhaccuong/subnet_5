@@ -162,16 +162,32 @@ class StructuredSearchEngine:
 
         embedding = text_embedding(query_string)[0]
         embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
+        # body = {
+        #     "knn": {
+        #         "field": "embedding",
+        #         "query_vector": embedding.tolist(),
+        #         "k": topk,
+        #         "num_candidates": 5 * topk,
+        #     },
+        #     "_source": {
+        #         "excludes": ["embedding"],
+        #     },
+        # }
+
         body = {
-            "knn": {
-                "field": "embedding",
-                "query_vector": embedding.tolist(),
-                "k": topk,
-                "num_candidates": 5 * topk,
+            "size": topk,
+            "query": {
+                "script_score": {
+                    "query": {"match_all": {}},
+                    "script": {
+                        "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
+                        "params": {"query_vector": embedding.tolist()}
+                    }
+                }
             },
             "_source": {
-                "excludes": ["embedding"],
-            },
+                "excludes": ["embedding"]
+            }
         }
 
         bt.logging.info(f"body search :::::::::::::::::: {body}")
