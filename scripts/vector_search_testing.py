@@ -316,9 +316,6 @@ def get_episode_ids(query):
 def rank(evaluator, query_text):
     embedding = text_embedding(query_text)[0]
     embedding = pad_tensor(embedding, max_len=MAX_EMBEDDING_DIM)
-
-    if episode_ids is None:
-
     results = search_similar_questions(search_client, embedding)
     print(f"RESULTS::::{results}")
     responses = []
