@@ -61,12 +61,10 @@ class Miner(BaseMinerNeuron):
             ssl_show_warn=False,
         )
 
-        #ranking_model = HeuristicRankingModel(length_weight=0.8, age_weight=0.2)
         ranking_model = OptimizeRankingModel(length_weight=0.4, age_weight=0.6)
 
         # optional, for crawling data
         twitter_crawler = (
-            # MicroworldsTwitterCrawler(os.environ["APIFY_API_KEY"])
             ApiDojoTwitterCrawler(os.environ["APIFY_API_KEY"])
             if os.environ.get("APIFY_API_KEY")
             else None
@@ -123,17 +121,6 @@ class Miner(BaseMinerNeuron):
             f"received StructuredSearchSynapse... timeout:{query.timeout}s ", query
         )
         self.check_version(query)
-
-        # miners may adjust this timeout config by themselves according to their own crawler speed and latency
-        #if query.timeout > 12:
-            # do crawling and indexing, otherwise search from the existing index directly
-            # crawl_size = max(self.config.neuron.crawl_size, query.size)
-            # self.structured_search_engine.crawl_and_index_data(
-            #     query_string=query.query_string,
-            #     author_usernames=query.author_usernames,
-            #     # crawl and index more data than needed to ensure we have enough to rank
-            #     max_size=crawl_size,
-            # )
 
         # disable crawling for structured search by default
         ranked_docs = self.structured_search_engine.search(query)
