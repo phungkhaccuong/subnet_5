@@ -377,7 +377,7 @@ if __name__ == "__main__":
     evaluator = Evaluator(llm_client, twitter_crawler)
 
     #execute query
-    query_text = "What are effective strategies Theodore Essery suggests for building strong crypto communities?"
+    query_text = "What led Michelle to start working in the Web3 space?"
     rank(evaluator, query_text)
 
 
