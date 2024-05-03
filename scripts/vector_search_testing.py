@@ -377,7 +377,7 @@ if __name__ == "__main__":
     evaluator = Evaluator(llm_client, twitter_crawler)
 
     #execute query
-    query_text = "What does Benny Giang consider unchangeable in talking about game tokenomics?"
+    query_text = "What do venture investment DAOs control according to Cameron Brown?"
     rank(evaluator, query_text)
 
 
