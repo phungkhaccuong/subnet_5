@@ -32,16 +32,17 @@ def get_speaker_dict():
     # Convert sets to lists
     speaker_dict = {speaker: list(set(episode_ids)) for speaker, episode_ids in speaker_dict.items()}
 
+    speaker_dict = dict(sorted(speaker_dict.items(), key=lambda x: len(x[0]), reverse=True))
+
     # Save speaker_episode_dict to a JSON file
     with open('speaker_dict.json', 'w') as json_file:
         json.dump(speaker_dict, json_file)
 
     print("JSON file has been created successfully!")
-    print(speaker_dict)
 
-    # Load speaker_episode_dict from JSON file
-    with open('speaker_dict.json', 'r') as json_file:
-        speaker_dict = json.load(json_file)
+    # # Load speaker_episode_dict from JSON file
+    # with open('speaker_dict.json', 'r') as json_file:
+    #     speaker_dict = json.load(json_file)
 
 
 
