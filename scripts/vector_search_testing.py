@@ -377,7 +377,7 @@ if __name__ == "__main__":
     evaluator = Evaluator(llm_client, twitter_crawler)
 
     #execute query
-    query_text = "What do venture investment DAOs control according to Cameron Brown?"
+    query_text = "What use cases has Web3.js v4 explored for its plugins?"
     rank(evaluator, query_text)
 
 
