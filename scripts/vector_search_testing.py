@@ -377,7 +377,7 @@ if __name__ == "__main__":
     evaluator = Evaluator(llm_client, twitter_crawler)
 
     #execute query
-    query_text = "How does Warpcast streamline the process of acquiring NFTs?"
+    query_text = "What does Luis Schliesske say about Gelato's development since ETHDenver two years ago?"
     rank(evaluator, query_text)
 
 
