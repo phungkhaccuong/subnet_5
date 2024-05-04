@@ -377,7 +377,7 @@ if __name__ == "__main__":
     evaluator = Evaluator(llm_client, twitter_crawler)
 
     #execute query
-    query_text = "What are the challenges of integrating MagCB according to Preston Van Loon?"
+    query_text = "What protocols are enhancing DeFi's user experience according to Ryan's segment at ETH Denver 2024?"
     rank(evaluator, query_text)
 
 
