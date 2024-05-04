@@ -377,7 +377,7 @@ if __name__ == "__main__":
     evaluator = Evaluator(llm_client, twitter_crawler)
 
     #execute query
-    query_text = "What is the abbreviation DePIN stand for in Tyler Boscolo's talk?"
+    query_text = "What are the challenges of integrating MagCB according to Preston Van Loon?"
     rank(evaluator, query_text)
 
 
