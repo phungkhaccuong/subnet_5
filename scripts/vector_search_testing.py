@@ -377,7 +377,7 @@ if __name__ == "__main__":
     evaluator = Evaluator(llm_client, twitter_crawler)
 
     #execute query
-    query_text = "What does Kenan Besic find exciting about the future Ethereum upgrades?"
+    query_text = "What investment strategies does Chris suggest for VCs in DeSci?"
     rank(evaluator, query_text)
 
 
